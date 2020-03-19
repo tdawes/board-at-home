@@ -27,5 +27,65 @@ export default (io: socket.Server, gameController: GameController) => {
         });
       },
     );
+
+    socket.on(
+      "kick player",
+      ({ code, playerId }: { code: string; playerId: string }) => {
+        logger.log("kick player", code, playerId);
+
+        updateGame(code, () => {
+          gameController.kickPlayer(code, playerId);
+        });
+      },
+    );
+
+    socket.on(
+      "set player name",
+      ({
+        code,
+        playerId,
+        name,
+      }: {
+        code: string;
+        playerId: string;
+        name: string;
+      }) => {
+        logger.log("set player name", code, playerId, name);
+
+        updateGame(code, () => {
+          gameController.setPlayerName(code, playerId, name);
+        });
+      },
+    );
+
+    socket.on(
+      "start game",
+      ({ code, config }: { code: string; config: any }) => {
+        logger.log("start game", code, config);
+
+        updateGame(code, () => {
+          gameController.startGame(code, config);
+        });
+      },
+    );
+
+    socket.on(
+      "action",
+      ({
+        code,
+        playerId,
+        action,
+      }: {
+        code: string;
+        playerId: string;
+        action: any;
+      }) => {
+        logger.log("action", playerId, action);
+
+        updateGame(code, () => {
+          gameController.applyPlayerAction(code, playerId, action);
+        });
+      },
+    );
   });
 };

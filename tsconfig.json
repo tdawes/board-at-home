@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "client" },
+    { "path": "server" },
+    { "path": "packages/api" },
+    { "path": "games/tic-tac-toe" }
+  ]
+}

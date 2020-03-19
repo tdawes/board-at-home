@@ -2,15 +2,18 @@
   "name": "board-at-home",
   "version": "1.0.0",
   "workspaces": [
-    "client/",
-    "server/"
+    "client",
+    "server",
+    "packages/*",
+    "games/*"
   ],
   "scripts": {
     "build": "set -ex; tsc --build",
     "build:watch": "yarn build --watch",
-    "build:client": "yarn workspace board-at-home-client build",
-    "build:server": "yarn workspace board-at-home-server build",
-    "start:server": "yarn workspace board-at-home-server start",
+    "build:client": "yarn workspace @board-at-home/client build",
+    "start:client": "yarn workspace @board-at-home/client start",
+    "build:server": "yarn workspace @board-at-home/server build",
+    "start:server": "yarn workspace @board-at-home/server start",
     "clean": "wsrun clean",
     "test": "wsrun test",
     "lint": "wsrun lint"

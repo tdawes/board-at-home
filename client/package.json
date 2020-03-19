@@ -1,5 +1,5 @@
 {
-  "name": "board-at-home-client",
+  "name": "@board-at-home/client",
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
@@ -51,6 +51,13 @@
     "yarpm": "^0.2.1"
   },
   "dependencies": {
+    "@board-at-home/api": "*",
+    "@board-at-home/tic-tac-toe": "*",
+    "@emotion/core": "^10.0.28",
+    "@emotion/styled": "^10.0.27",
+    "@fortawesome/fontawesome-svg-core": "^1.2.27",
+    "@fortawesome/free-solid-svg-icons": "^5.12.1",
+    "@fortawesome/react-fontawesome": "^0.1.9",
     "@prodo/core": "^0.1.5",
     "@prodo/local": "^0.1.6",
     "@prodo/logger": "^0.1.5",

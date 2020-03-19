@@ -13,15 +13,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "composite": true
   },
   "include": ["src", "typings"],
-  "references": [
-    {
-      "path": "../packages/api"
-    },
-    {
-      "path": "../games/tic-tac-toe"
-    }
-  ]
+  "references": [{ "path": "../../packages/api" }]
 }

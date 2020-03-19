@@ -3,6 +3,7 @@ import { Select, Input, Button, Container } from "theme-ui";
 import axios from "axios";
 import { watch, local, dispatch } from "../model";
 import { push } from "@prodo/route";
+import games from "../games";
 
 const createNewGame = async (gameType: string, userId: string) => {
   const response = await axios.post("/api/game", {
@@ -18,18 +19,16 @@ const joinGame = (code: string) => {
   dispatch(push)({ path: `/game/${code}` });
 };
 
-const availableGames = ["tic-tac-toe"];
-
 const CreateNewGame = () => {
   const [gameType, setGameType] = React.useState<string | undefined>(
-    availableGames[0],
+    Object.keys(games)[0],
   );
   const userId = watch(local.userId)!;
   return (
     <div>
       <label>Select a game:</label>
-      <Select value={gameType} onChange={e => setGameType(e.target.value)}>
-        {availableGames.map(game => (
+      <Select value={gameType} onChange={e => setGameType(e.target.value)} >
+        {Object.keys(games).map(game => (
           <option key={game}>{game}</option>
         ))}
       </Select>

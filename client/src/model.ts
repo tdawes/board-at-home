@@ -2,10 +2,11 @@ import { createModel } from "@prodo/core";
 import localPlugin from "@prodo/local";
 import loggerPlugin from "@prodo/logger";
 import routePlugin from "@prodo/route";
+import { Game } from "@board-at-home/api";
 
 export interface State {
   socket?: SocketIOClient.Socket;
-  gameState?: any;
+  game?: Game<any>;
   serverMessage?: string;
 }
 

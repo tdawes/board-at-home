@@ -20,12 +20,23 @@ export interface Player {
   name?: string;
 }
 
-export interface GameEngine<S, A> {
+export interface GameEngine<S, A, C> {
   isFull: (game: UnstartedGame) => boolean;
-  start: (game: UnstartedGame) => void;
+  start: (game: UnstartedGame, config: C) => void;
   applyPlayerAction: (
     game: StartedGame<S>,
     playerId: string,
     action: A,
   ) => void;
+}
+
+export interface ConfigProps<Config> {
+  config: Config;
+  setConfig: (config: Partial<Config>) => void;
+}
+
+export interface BoardProps<State, Action> {
+  game: StartedGame<State>;
+  playerId: string;
+  act: (action: Action) => void;
 }

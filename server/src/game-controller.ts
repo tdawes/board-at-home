@@ -1,13 +1,20 @@
 import * as MemoryCache from "memory-cache";
-import { Game, UnstartedGame, StartedGame, Player, GameEngine } from "./types";
-import ticTacToe from "./games/ticTacToe";
+import {
+  Game,
+  UnstartedGame,
+  StartedGame,
+  Player,
+  GameEngine,
+} from "@board-at-home/api";
+import ticTacToe from "@board-at-home/tic-tac-toe/dist/engine";
 import { randomCode } from "./utils";
 
 export interface GameController {
   newGame: (type: string, owner: string) => string;
   joinGame: (code: string, id: string) => void;
+  kickPlayer: (code: string, id: string) => void;
   setPlayerName: (code: string, playerId: string, name: string) => void;
-  startGame: (code: string) => void;
+  startGame: (code: string, config: any) => void;
   listGames: () => Game<any>[];
   getGame: <S>(code: string) => Game<S>;
   applyPlayerAction: (code: string, playerId: string, action: any) => void;
@@ -15,15 +22,15 @@ export interface GameController {
 
 const GAME_LIFESPAN = 1000 * 60 * 60; // 1 hour
 
-const engines: { [key: string]: GameEngine<any, any> } = {
-  "tic-tac-toe": ticTacToe,
+const engines: { [key: string]: GameEngine<any, any, any> } = {
+  ticTacToe: ticTacToe,
 };
 
 const getEngine = (type: string) => {
   if (!(type in engines)) {
     throw new Error(`No engine for type ${type}`);
   }
-  return engines[type] as GameEngine<any, any>;
+  return engines[type] as GameEngine<any, any, any>;
 };
 
 export default (): GameController => {
@@ -110,6 +117,14 @@ export default (): GameController => {
     }
   };
 
+  const kickPlayer = (code: string, player: string) => {
+    const game = getGame(code);
+
+    assertGameNotStarted(game);
+
+    delete game.players[player];
+  };
+
   const setPlayerName = (code: string, playerId: string, name: string) => {
     const game = getGame(code);
 
@@ -122,14 +137,14 @@ export default (): GameController => {
   const listGames = () =>
     store.keys().map(key => store.get(key)) as Game<any>[];
 
-  const startGame = (code: string) => {
+  const startGame = (code: string, config: any) => {
     const game = getGame(code);
 
     if (game.started) {
       throw new Error("Game has already started.");
     }
 
-    getEngine(game.type).start(game);
+    getEngine(game.type).start(game, config);
 
     refresh(game);
   };
@@ -148,6 +163,7 @@ export default (): GameController => {
   return {
     newGame,
     joinGame,
+    kickPlayer,
     setPlayerName,
     startGame,
     listGames,

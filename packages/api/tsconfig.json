@@ -10,11 +10,8 @@
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "strict": true
+    "strict": true,
+    "composite": true
   },
-  "include": ["src", "typings"],
-  "references": [
-    { "path": "../packages/api" },
-    { "path": "../games/tic-tac-toe" }
-  ]
+  "include": ["src", "typings"]
 }

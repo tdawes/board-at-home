@@ -1,15 +1,16 @@
-import { state, local, dispatch } from "./model";
+import { state, local } from "./model";
+import { Dispatch } from "@prodo/core/lib/types";
 
 export const registerSocket = (
   socket: SocketIOClient.Socket,
-  dispatch: any,
+  dispatch: Dispatch,
 ) => {
   state.socket = socket;
   socket.on("disconnect", () => {
     dispatch(unregisterSocket)();
   });
-  socket.on("update", (gameState: any) => {
-    dispatch(setGameState)(gameState);
+  socket.on("update", (game: any) => {
+    dispatch(setGame)(game);
   });
   socket.on("error", (message: string) => {
     dispatch(setServerError)(message);
@@ -24,17 +25,40 @@ export const setServerError = (message: string) => {
   state.serverMessage = message;
 };
 
-export const setGameState = (gameState: any) => {
-  state.gameState = gameState;
+export const setGame = (game: any) => {
+  state.game = game;
 };
 
 export const joinGame = (code: string) => {
   if (state.socket) {
     state.socket.emit("join game", { code, playerId: local.userId! });
+  }
+};
 
-    state.socket.on("update", (gameState: any) => {
-      console.log("Received update", gameState);
-      dispatch(setGameState)(gameState);
-    });
+export const kickPlayer = (code: string, playerId: string) => {
+  if (state.socket) {
+    state.socket.emit("kick player", { code, playerId });
+  }
+};
+
+export const startGame = (code: string, config: any) => {
+  if (state.socket) {
+    state.socket.emit("start game", { code, config });
+  }
+};
+
+export const applyPlayerAction = (
+  code: string,
+  playerId: string,
+  action: any,
+) => {
+  if (state.socket) {
+    state.socket.emit("action", { code, playerId, action });
+  }
+};
+
+export const setPlayerName = (code: string, playerId: string, name: string) => {
+  if (state.socket) {
+    state.socket.emit("set player name", { code, playerId, name });
   }
 };

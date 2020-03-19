@@ -1,5 +1,5 @@
 {
-  "name": "board-at-home-server",
+  "name": "@board-at-home/server",
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
@@ -12,6 +12,7 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
+    "@babel/node": "^7.8.7",
     "@types/jest": "^25.1.4",
     "@types/koa": "^2.11.2",
     "@types/koa-bodyparser": "^4.3.0",
@@ -22,15 +23,13 @@
     "@types/socket.io": "^2.1.4",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
-    "prettier": "^1.19.1",
     "ts-jest": "^25.2.1",
     "ts-node": "^8.6.2",
-    "tslint": "^6.1.0",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.2.0",
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@board-at-home/api": "*",
+    "@board-at-home/tic-tac-toe": "*",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
     "koa-logger": "^3.2.1",
