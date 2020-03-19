@@ -15,6 +15,7 @@
   "include": ["src", "typings"],
   "references": [
     { "path": "../packages/api" },
-    { "path": "../games/tic-tac-toe" }
+    { "path": "../games/tic-tac-toe" },
+    { "path": "../games/hanabi" }
   ]
 }

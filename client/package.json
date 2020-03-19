@@ -53,6 +53,7 @@
   "dependencies": {
     "@board-at-home/api": "*",
     "@board-at-home/tic-tac-toe": "*",
+    "@board-at-home/hanabi": "*",
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
     "@fortawesome/fontawesome-svg-core": "^1.2.27",

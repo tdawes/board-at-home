@@ -7,6 +7,7 @@ import {
   GameEngine,
 } from "@board-at-home/api";
 import ticTacToe from "@board-at-home/tic-tac-toe/dist/engine";
+import hanabi from "@board-at-home/hanabi/dist/engine";
 import { randomCode } from "./utils";
 
 export interface GameController {
@@ -24,6 +25,7 @@ const GAME_LIFESPAN = 1000 * 60 * 60; // 1 hour
 
 const engines: { [key: string]: GameEngine<any, any, any> } = {
   ticTacToe: ticTacToe,
+  hanabi: hanabi,
 };
 
 const getEngine = (type: string) => {
