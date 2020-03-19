@@ -1,6 +1,6 @@
 import { GameEngine, UnstartedGame, StartedGame } from "@board-at-home/api";
 import { State, Action, Config, Board, Card } from "../api";
-import * as _ from "lodash";
+import { createDeck, deal } from "./deck";
 
 const checkForFinish = (_board: Board) => {
   // TODO Check if all piles completed
@@ -27,11 +27,9 @@ const engine: GameEngine<State, Action, Config> = {
       throw new Error("Game is not full.");
     }
     ((game as any) as StartedGame<State>).started = true;
-    // TODO: deal randomly
-    // 4/5 players -> 4 cards each, otherwise 5
-    const deck: Card[] = [];
-    const hands: Card[][] = [];
-    console.log("bbb");
+    const deck: Card[] = createDeck();
+    const hands: Card[][] = deal(deck, Object.keys(game.players).length);
+    console.log(hands, deck);
     ((game as any) as StartedGame<State>).state = {
       board: {
         piles: { red: 0, green: 0, blue: 0, white: 0, yellow: 0 },
@@ -50,6 +48,7 @@ const engine: GameEngine<State, Action, Config> = {
     _playerId: string,
     action: Action,
   ) => {
+    // draw: deck.shift()
     if (action.type === "play") {
       // TODO play
     } else if (action.type === "discard") {

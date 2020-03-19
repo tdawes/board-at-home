@@ -1,5 +1,5 @@
 import * as React from "react";
-import { State, Action, Config } from "../api";
+import { State, Action, Config, Card, Color } from "../api";
 import { ConfigProps, BoardProps, StartedGame } from "@board-at-home/api";
 
 export const defaultConfig: Config = {
@@ -30,14 +30,48 @@ const Message = ({
   return <div>Waiting for other players.</div>;
 };
 
+const CardDisplay = ({ card }: { card: Card }) => (
+  <span
+    style={{ color: card.color, backgroundColor: "grey", fontSize: "16px" }}
+  >
+    {card.num}
+  </span>
+);
+
 export const Board = ({ game, playerId }: BoardProps<State, Action>) => {
   //const canPlay = game.players[game.state.currentPlayer].id === playerId;
-  console.log("test", playerId, game);
 
+  // TODO: pretty display with something resembling cards and tokens
+  // TODO: hide your hand, and give others sensible names
   return (
     <div className="board" style={{ display: "flex", flexDirection: "column" }}>
       <Message playerId={playerId} game={game} />
-      TODO
+      <div>Information tokens left: {game.state.infoTokens}</div>
+      <div>Fuse tokens left: {game.state.fuseTokens}</div>
+      <div>
+        {Object.keys(game.state.board.hands).map(hand => (
+          <div>
+            Player {hand} hand:{" "}
+            {game.state.board.hands[parseInt(hand)].map(card => (
+              <CardDisplay card={card} />
+            ))}
+          </div>
+        ))}
+      </div>
+      <div>
+        Discard pile:{" "}
+        {game.state.board.discardPile.map(card => (
+          <CardDisplay card={card} />
+        ))}
+      </div>
+      <div>
+        Piles on the table:{" "}
+        {(Object.keys(game.state.board.piles) as Color[]).map(
+          (color: Color) => (
+            <CardDisplay card={{ color, num: game.state.board.piles[color] }} />
+          ),
+        )}
+      </div>
     </div>
   );
 };
