@@ -2,54 +2,45 @@ import { GameEngine, UnstartedGame, StartedGame } from "@board-at-home/api";
 import { State, Action, Config, Board } from "../api";
 import * as _ from "lodash";
 
-const checkForWin = (board: Board) =>
-  [
-    [
-      [0, 0],
-      [0, 1],
-      [0, 2],
-    ],
-    [
-      [1, 0],
-      [1, 1],
-      [1, 2],
-    ],
-    [
-      [2, 0],
-      [2, 1],
-      [2, 2],
-    ],
-    [
-      [0, 0],
-      [1, 0],
-      [2, 0],
-    ],
-    [
-      [0, 1],
-      [1, 1],
-      [2, 1],
-    ],
-    [
-      [0, 2],
-      [1, 2],
-      [2, 2],
-    ],
-    [
-      [0, 0],
-      [1, 1],
-      [2, 2],
-    ],
-    [
-      [0, 2],
-      [1, 1],
-      [2, 0],
-    ],
-  ].some(
-    ([a, b, c]) =>
-      board[a[0]][a[1]] != null &&
-      board[a[0]][a[1]] === board[b[0]][b[1]] &&
-      board[a[0]][a[1]] === board[c[0]][c[1]],
-  );
+const checkForWin = (board: Board) => {
+  // Rows
+  for (let i = 0; i < board.length; i++) {
+    const first = board[i][0];
+    if (first != null) {
+      if (_.range(1, board[i].length).every(j => first === board[i][j])) {
+        return true;
+      }
+    }
+  }
+  // Columns
+  for (let j = 0; j < board[0].length; j++) {
+    const first = board[0][j];
+    if (first != null) {
+      if (_.range(1, board.length).every(i => first === board[i][j])) {
+        return true;
+      }
+    }
+  }
+
+  // Diagonals
+  const topLeft = board[0][0];
+  if (topLeft != null) {
+    if (_.range(1, board.length).every(i => topLeft === board[i][i])) {
+      return true;
+    }
+  }
+  const topRight = board[0][board[0].length - 1];
+  if (topRight != null) {
+    if (
+      _.range(1, board.length).every(
+        i => topRight === board[i][board.length - 1 - i],
+      )
+    ) {
+      return true;
+    }
+  }
+  return false;
+};
 
 const checkForDraw = (board: Board) => {
   return board.every(row => row.every(cell => cell != null));
