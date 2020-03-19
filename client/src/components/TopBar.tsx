@@ -35,7 +35,7 @@ const PlayerName = ({ code, player }: { code: string; player: Player }) => {
     };
 
     return (
-      <Flex sx={{ alignItems: "center" }}>
+      <Flex sx={{ alignItems: "center" }} ml={1}>
         <Input
           value={tempValue}
           onChange={e => setTempValue(e.target.value)}
@@ -46,7 +46,7 @@ const PlayerName = ({ code, player }: { code: string; player: Player }) => {
             }
           }}
         />
-        <Button onClick={submit}>
+        <Button onClick={submit} ml={1} mr={1}>
           <FontAwesomeIcon icon={faCheck} />
         </Button>
         <Button

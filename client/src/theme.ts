@@ -66,4 +66,9 @@ export default {
       },
     },
   },
+  alerts: {
+    error: {
+      bg: "darkred",
+    },
+  },
 };

@@ -8,8 +8,9 @@ import {
   startGame,
   applyPlayerAction,
   kickPlayer,
+  clearServerError,
 } from "../actions";
-import { jsx, Button } from "theme-ui";
+import { jsx, Alert, Container, Button, Close } from "theme-ui";
 import games from "../games";
 import TopBar from "../components/TopBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,6 +19,19 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 export interface Props {
   code: string;
 }
+
+const ErrorMessage = ({
+  message,
+  onClose,
+}: {
+  message: string;
+  onClose?: () => any;
+}) => (
+  <Alert variant="error">
+    Error: {message}
+    {onClose && <Close ml="auto" mr={-2} onClick={onClose} />}
+  </Alert>
+);
 
 export default ({ code }: Props) => {
   React.useEffect(() => {
@@ -32,6 +46,7 @@ export default ({ code }: Props) => {
 
   const game = watch(state.game);
   const userId = watch(local.userId)!;
+  const serverMessage = watch(state.serverMessage);
 
   const [config, setConfig] = React.useState(null);
 
@@ -42,20 +57,31 @@ export default ({ code }: Props) => {
   }, [game && game.type]);
 
   if (game == null) {
-    return <div>Loading...</div>;
+    return (
+      <Container p={3}>
+        {serverMessage && <ErrorMessage message={serverMessage} />}
+        Loading...
+      </Container>
+    );
   }
 
   if (!(userId in game.players)) {
     return (
-      <div>
+      <Container p={3}>
         You have been kicked from the game. Please refresh your page to rejoin.
-      </div>
+      </Container>
     );
   }
 
   const { ConfigPanel, Board } = games[game.type];
   return (
-    <div>
+    <Container p={3}>
+      {serverMessage && (
+        <ErrorMessage
+          message={serverMessage}
+          onClose={() => dispatch(clearServerError)()}
+        />
+      )}
       <TopBar game={game} player={game.players[userId]} />
       <p>Welcome to game {code}.</p>
       <div>
@@ -100,6 +126,6 @@ export default ({ code }: Props) => {
           game={game}
         />
       )}
-    </div>
+    </Container>
   );
 };
