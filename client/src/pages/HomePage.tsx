@@ -27,7 +27,11 @@ const CreateNewGame = () => {
   return (
     <div>
       <label>Select a game:</label>
-      <Select value={gameType} onChange={e => setGameType(e.target.value)} >
+      <Select
+        value={gameType}
+        onChange={e => setGameType(e.target.value)}
+        mb={1}
+      >
         {Object.keys(games).map(game => (
           <option key={game}>{game}</option>
         ))}
@@ -48,7 +52,7 @@ const JoinGame = () => {
   return (
     <div>
       <label>Enter code:</label>
-      <Input onChange={e => setCode(e.target.value)} value={code} />
+      <Input onChange={e => setCode(e.target.value)} value={code} mb={1} />
       <Button
         disabled={code.length !== 4}
         variant={code.length !== 4 ? "disabled" : "primary"}
@@ -62,7 +66,7 @@ const JoinGame = () => {
 
 export default () => {
   return (
-    <Container>
+    <Container p={3}>
       <CreateNewGame />
       <p>or</p>
       <JoinGame />

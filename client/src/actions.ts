@@ -11,6 +11,7 @@ export const registerSocket = (
   });
   socket.on("update", (game: any) => {
     dispatch(setGame)(game);
+    dispatch(clearServerError)();
   });
   socket.on("error", (message: string) => {
     dispatch(setServerError)(message);
@@ -23,6 +24,10 @@ export const unregisterSocket = () => {
 
 export const setServerError = (message: string) => {
   state.serverMessage = message;
+};
+
+export const clearServerError = () => {
+  state.serverMessage = undefined;
 };
 
 export const setGame = (game: any) => {
