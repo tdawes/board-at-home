@@ -10,7 +10,16 @@ import {
   kickPlayer,
   clearServerError,
 } from "../actions";
-import { jsx, Alert, Container, Button, Close } from "theme-ui";
+import {
+  jsx,
+  Alert,
+  Container,
+  Button,
+  Close,
+  Spinner,
+  IconButton,
+  Flex,
+} from "theme-ui";
 import games from "../games";
 import TopBar from "../components/TopBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -58,9 +67,9 @@ export default ({ code }: Props) => {
 
   if (game == null) {
     return (
-      <Container p={3}>
+      <Container p={3} sx={{ textAlign: "center" }}>
         {serverMessage && <ErrorMessage message={serverMessage} />}
-        Loading...
+        <Spinner />
       </Container>
     );
   }
@@ -83,49 +92,48 @@ export default ({ code }: Props) => {
         />
       )}
       <TopBar game={game} player={game.players[userId]} />
-      <p>Welcome to game {code}.</p>
-      <div>
+      <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
         Players:
         <ul>
           {Object.keys(game.players).map(playerId => (
             <li key={playerId}>
               {game.players[playerId].name || playerId}
               {userId === game.owner && userId !== playerId && (
-                <Button
+                <IconButton
                   sx={{ p: 2 }}
                   onClick={() => dispatch(kickPlayer)(code, playerId)}
                 >
                   <FontAwesomeIcon icon={faTimes} />
-                </Button>
+                </IconButton>
               )}
             </li>
           ))}
         </ul>
-      </div>
-      {!game.started ? (
-        userId === game.owner && (
-          <div>
-            <ConfigPanel
-              config={config || games[game.type].defaultConfig}
-              setConfig={(c: any) =>
-                setConfig({
-                  ...(config || games[game.type].defaultConfig),
-                  ...c,
-                })
-              }
-            />
-            <Button onClick={() => dispatch(startGame)(code, config)}>
-              Start
-            </Button>
-          </div>
-        )
-      ) : (
-        <Board
-          playerId={userId}
-          act={action => dispatch(applyPlayerAction)(code, userId, action)}
-          game={game}
-        />
-      )}
+        {!game.started ? (
+          userId === game.owner && (
+            <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
+              <ConfigPanel
+                config={config || games[game.type].defaultConfig}
+                setConfig={(c: any) =>
+                  setConfig({
+                    ...(config || games[game.type].defaultConfig),
+                    ...c,
+                  })
+                }
+              />
+              <Button onClick={() => dispatch(startGame)(code, config)} mt={3}>
+                Start game
+              </Button>
+            </Flex>
+          )
+        ) : (
+          <Board
+            playerId={userId}
+            act={action => dispatch(applyPlayerAction)(code, userId, action)}
+            game={game}
+          />
+        )}
+      </Flex>
     </Container>
   );
 };
