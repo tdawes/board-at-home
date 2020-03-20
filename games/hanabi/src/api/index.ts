@@ -15,26 +15,26 @@ export interface Board {
   hands: Card[][];
   piles: { [key in Color]: number };
   discardPile: Card[];
+  fuseTokens: number;
+  infoTokens: number;
 }
 
 export interface State {
   board: Board;
   currentPlayer: number;
-  fuseTokens: number;
-  infoTokens: number;
   finished: boolean;
 }
 
 export interface PlayAction {
   type: "play";
   playerId: string;
-  card: Card;
+  cardIdx: number;
 }
 
 export interface DiscardAction {
   type: "discard";
   playerId: string;
-  card: Card;
+  cardIdx: number;
 }
 
 export interface InfoAction {

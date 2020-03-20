@@ -1,12 +1,15 @@
 import { GameEngine, UnstartedGame, StartedGame } from "@board-at-home/api";
 import { State, Action, Config, Board, Card } from "../api";
 import { createDeck, deal } from "./deck";
+import * as _ from "lodash";
 
-const checkForFinish = (_board: Board) => {
-  // TODO Check if all piles completed
-  // Check if too many mistakes have been made
-  // Check if game is impossible to win? (Have this as config option?)
-  return false;
+const checkForFinish = (board: Board) => {
+  // TODO Check if game is impossible to win? (Have this as config option?)
+  // e.g. if you discard both blue 3; or allow to continue for score?
+  return (
+    _.every(Object.values(board.piles), num => num == 5) ||
+    board.fuseTokens <= 0
+  );
 };
 
 const MAX_INFO_TOKENS = 8;
@@ -29,17 +32,16 @@ const engine: GameEngine<State, Action, Config> = {
     ((game as any) as StartedGame<State>).started = true;
     const deck: Card[] = createDeck();
     const hands: Card[][] = deal(deck, Object.keys(game.players).length);
-    console.log(hands, deck);
     ((game as any) as StartedGame<State>).state = {
       board: {
         piles: { red: 0, green: 0, blue: 0, white: 0, yellow: 0 },
         discardPile: [],
         deck,
         hands,
+        infoTokens: MAX_INFO_TOKENS,
+        fuseTokens: MAX_FUSE_TOKENS,
       },
       finished: false,
-      infoTokens: MAX_INFO_TOKENS,
-      fuseTokens: MAX_FUSE_TOKENS,
       currentPlayer: 0,
     };
   },
@@ -48,20 +50,46 @@ const engine: GameEngine<State, Action, Config> = {
     _playerId: string,
     action: Action,
   ) => {
-    // draw: deck.shift()
     if (action.type === "play") {
-      // TODO play
+      const card = game.state.board.hands[game.state.currentPlayer].splice(
+        action.cardIdx,
+        1,
+      )[0];
+      if (game.state.board.piles[card.color] === card.num - 1) {
+        game.state.board.piles[card.color] = card.num;
+        if (card.num == 5 && game.state.board.infoTokens < MAX_INFO_TOKENS) {
+          game.state.board.infoTokens += 1;
+        }
+      } else {
+        game.state.board.discardPile.push(card);
+        game.state.board.fuseTokens -= 1;
+      }
+      // TODO maintain order, or allow user to reorder and make notes?
+      // At least clarify which card is newly drawn?
+      const drawnCard = game.state.board.deck.shift();
+      if (drawnCard) {
+        game.state.board.hands[game.state.currentPlayer].push(drawnCard);
+      }
     } else if (action.type === "discard") {
-      // TODO discard
-      if (game.state.infoTokens <= MAX_INFO_TOKENS) {
-        game.state.infoTokens += 1;
+      const card = game.state.board.hands[game.state.currentPlayer].splice(
+        action.cardIdx,
+        1,
+      )[0];
+      game.state.board.discardPile.push(card);
+      if (game.state.board.infoTokens < MAX_INFO_TOKENS) {
+        game.state.board.infoTokens += 1;
+      }
+      // TODO maintain order, or allow user to reorder and make notes?
+      // At least clarify which card is newly drawn?
+      const drawnCard = game.state.board.deck.shift();
+      if (drawnCard) {
+        game.state.board.hands[game.state.currentPlayer].push(drawnCard);
       }
     } else if (action.type === "info") {
-      // TODO clue
-      if (game.state.infoTokens <= 0) {
+      if (game.state.board.infoTokens <= 0) {
         throw new Error("No information tokens left.");
       }
-      game.state.infoTokens -= 1;
+      game.state.board.infoTokens -= 1;
     }
     if (checkForFinish(game.state.board)) {
       game.state.finished = true;
