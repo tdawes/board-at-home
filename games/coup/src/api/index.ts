@@ -40,11 +40,20 @@ export interface State {
   players: { [key: string]: Hand };
   deck: Card[];
   treasury: number;
-  stack: {
-    action: PlayAction | ReactAction | ChallengeAction;
-    committed: boolean;
-    resolved: boolean;
-  }[];
+  stack: ({
+    id: string;
+    action: PlayAction | ReactAction;
+    playerId: string;
+  } & (
+    | {
+        status: "played" | "committed" | "resolved";
+      }
+    | { status: "challenged"; challenger: string }
+  ))[];
+  playerOrder: string[];
+  currentPlayer: number;
+  finished: boolean;
+  winner?: string;
 }
 
 export interface PlayAction {
@@ -77,4 +86,16 @@ export interface DiscardAction {
   cards: Card[];
 }
 
-export type Action = PlayAction;
+export interface LoseAction {
+  type: "lose";
+  playerId: string;
+  cards: Card[];
+}
+
+export type Action =
+  | PlayAction
+  | ReactAction
+  | ChallengeAction
+  | RevealAction
+  | DiscardAction
+  | LoseAction;

@@ -8,12 +8,16 @@
   "dependencies": {
     "@board-at-home/api": "*",
     "lodash": "^4.17.15",
+    "pluralize": "^8.0.0",
     "react": "^16.13.0",
+    "react-modal": "^3.11.2",
     "theme-ui": "^0.3.1"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.149",
+    "@types/pluralize": "^0.0.29",
     "@types/react": "^16.9.23",
+    "@types/react-modal": "^3.10.5",
     "@types/theme-ui": "^0.3.0",
     "tslint": "^6.1.0",
     "tslint-config-prettier": "^1.18.0",

@@ -1,5 +1,6 @@
 import { system } from "@theme-ui/presets";
 import chroma from "chroma-js";
+import { Theme } from "theme-ui";
 
 export default {
   ...system,
@@ -17,23 +18,31 @@ export default {
     accent: "#12d8fa",
     muted: "#7f90f6",
     border: "#b0b0b0",
+    white: "#fdfdfd",
+    black: "#0d0d0d",
     grey: {
       400: "#a2a2a2",
       500: "grey",
     },
     error: "red",
   },
+  borderWidths: [1, 2, 4, 8],
+  borderStyles: ["solid"],
+  borderColor: "black",
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
-  a: {
-    color: "text",
-    textDecoration: "underline",
-    transition: "all 250ms ease-in-out",
-    cursor: "pointer",
+  styles: {
+    ...system.styles,
+    a: {
+      color: "text",
+      textDecoration: "underline",
+      transition: "all 250ms ease-in-out",
+      cursor: "pointer",
 
-    "&:hover": {
-      bg: "primary",
-      color: "white",
+      "&:hover": {
+        bg: "primary",
+        color: "white",
+      },
     },
   },
   buttons: {
@@ -71,4 +80,4 @@ export default {
       bg: "darkred",
     },
   },
-};
+} as Theme;

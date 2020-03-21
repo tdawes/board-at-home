@@ -7,7 +7,7 @@ import {
   GameEngine,
 } from "@board-at-home/api";
 import ticTacToe from "@board-at-home/tic-tac-toe/dist/engine";
-import coup from "@board-at-home/tic-tac-toe/dist/engine";
+import coup from "@board-at-home/coup/dist/engine";
 
 import { randomCode } from "./utils";
 
@@ -130,8 +130,6 @@ export default (): GameController => {
 
   const setPlayerName = (code: string, playerId: string, name: string) => {
     const game = getGame(code);
-
-    assertGameNotStarted(game);
 
     const player = getPlayer(game, playerId);
     player.name = name;
