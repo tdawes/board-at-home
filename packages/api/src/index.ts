@@ -21,14 +21,14 @@ export interface Player {
   name?: string;
 }
 
-export interface GameEngine<S, A, C> {
+export interface GameEngine<State, Action, Config> {
   isFull: (game: UnstartedGame) => boolean;
-  start: (game: UnstartedGame, config: C) => S;
+  start: (game: UnstartedGame, config: Config) => State;
   applyPlayerAction: (
-    game: StartedGame<S, C>,
+    game: StartedGame<State, Config>,
     playerId: string,
-    action: A,
-  ) => void;
+    action: Action,
+  ) => State;
 }
 
 export interface ConfigProps<Config> {
