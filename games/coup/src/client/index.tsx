@@ -34,7 +34,7 @@ export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
   </div>
 );
 
-const Treasury = ({ game }: { game: StartedGame<State> }) => (
+const Treasury = ({ game }: { game: StartedGame<State, Config> }) => (
   <div>Treasury: {game.state.treasury} coins</div>
 );
 
@@ -42,7 +42,7 @@ const Message = ({
   game,
   playerId,
 }: {
-  game: StartedGame<State>;
+  game: StartedGame<State, Config>;
   playerId: string;
 }) => {
   if (game.state.finished) {
@@ -90,7 +90,7 @@ const OtherPlayers = ({
   game,
   playerId,
 }: {
-  game: StartedGame<State>;
+  game: StartedGame<State, Config>;
   playerId: string;
 }) => (
   <Flex sx={{ width: "100%" }}>
@@ -133,7 +133,11 @@ const Hand = ({ hand }: { hand: Hand }) => (
   </div>
 );
 
-export const Board = ({ game, playerId, act }: BoardProps<State, Action>) => {
+export const Board = ({
+  game,
+  playerId,
+  act,
+}: BoardProps<State, Action, Config>) => {
   console.log(game);
   return (
     <div className="board" style={{ display: "flex", flexDirection: "column" }}>

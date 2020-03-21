@@ -26,7 +26,7 @@ const Message = ({
   game,
   playerId,
 }: {
-  game: StartedGame<State>;
+  game: StartedGame<State, Config>;
   playerId: string;
 }) => {
   if (game.state.finished) {
@@ -60,7 +60,11 @@ const Message = ({
   );
 };
 
-export const Board = ({ game, playerId, act }: BoardProps<State, Action>) => {
+export const Board = ({
+  game,
+  playerId,
+  act,
+}: BoardProps<State, Action, Config>) => {
   const canPlay =
     (game.state.firstPlayer === playerId) === game.state.firstPlayersTurn;
 

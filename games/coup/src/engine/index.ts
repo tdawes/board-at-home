@@ -1,6 +1,7 @@
 import { GameEngine, UnstartedGame, StartedGame } from "@board-at-home/api";
 import { State, Action, Config, Hand, Card } from "../api";
 import * as _ from "lodash";
+import produce from "immer";
 
 const newDeck = (numberOfEachCard: number, useExpansion: boolean) =>
   _.flatten(
@@ -38,8 +39,7 @@ const engine: GameEngine<State, Action, Config> = {
       }),
       {},
     );
-    ((game as any) as StartedGame<State>).started = true;
-    ((game as any) as StartedGame<State>).state = {
+    return {
       players,
       deck,
       finished: false,
@@ -50,97 +50,95 @@ const engine: GameEngine<State, Action, Config> = {
     };
   },
   applyPlayerAction: (
-    game: StartedGame<State>,
+    game: StartedGame<State, Config>,
     playerId: string,
     action: Action,
-  ) => {
-    if (action.type === "play") {
-      if (
-        game.state.stack.length !== 0 &&
-        game.state.stack[0].status !== "resolved"
-      ) {
-        throw new Error(
-          "Cannot play an action since the last action is not yet resolved.",
-        );
-      }
-      const move = action.action;
-      if (move.type === "income") {
-        game.state.stack.unshift({
-          id: `${game.state.stack.length}`,
-          action,
-          playerId,
-          status: "resolved",
-        });
-        game.state.players[playerId].money += 1;
-        game.state.currentPlayer =
-          (game.state.currentPlayer + 1) % game.state.playerOrder.length;
-      } else if (move.type === "foreign-aid") {
-        game.state.stack.unshift({
-          id: `${game.state.stack.length}`,
-          action,
-          playerId,
-          status: "played",
-        });
-      } else if (move.type === "coup") {
-        game.state.stack.unshift({
-          id: `${game.state.stack.length}`,
-          action,
-          playerId,
-          status: "committed",
-        });
-        game.state.stack
-    } else if (action.type === "react") {
-      if (game.state.stack.length === 0) {
-        throw new Error("Cannot react since no-one has played yet.");
-      } else if (game.state.stack[0].status !== "played") {
-        throw new Error(
-          "Cannot react to the last action, since it has been committed.",
-        );
-      }
-      const latestAction = game.state.stack[0];
-      if (latestAction.action.type !== "play") {
-        throw new Error("You can only block an action.");
-      }
-      if (latestAction.action.action.type === "foreign-aid") {
-        if (action.card !== "duke") {
-          throw new Error("You can only block foreign aid with a duke.");
-        }
-        game.state.stack.unshift({
-          id: `${game.state.stack.length}`,
-          action,
-          playerId,
-          status: "played",
-        });
-      } else if (latestAction.action.action.type === "assassinate") {
-        if (action.card !== "contessa") {
+  ) =>
+    produce(game.state, state => {
+      if (action.type === "play") {
+        if (state.stack.length !== 0 && state.stack[0].status !== "resolved") {
           throw new Error(
-            "You can only block an assassination with a contessa.",
+            "Cannot play an action since the last action is not yet resolved.",
           );
         }
-        game.state.stack.unshift({
-          id: `${game.state.stack.length}`,
-          action,
-          playerId,
-          status: "played",
-        });
-      } else if (latestAction.action.action.type === "steal") {
-        if (
-          action.card !== "captain" &&
-          action.card !== "ambassador" &&
-          action.card !== "inquisitor"
-        ) {
-          throw new Error("You cannot block stealing with this card.");
+        const move = action.action;
+        if (move.type === "income") {
+          state.stack.unshift({
+            id: `${state.stack.length}`,
+            action,
+            playerId,
+            status: "resolved",
+          });
+          state.players[playerId].money += 1;
+          state.currentPlayer =
+            (state.currentPlayer + 1) % state.playerOrder.length;
+        } else if (move.type === "foreign-aid") {
+          state.stack.unshift({
+            id: `${game.state.stack.length}`,
+            action,
+            playerId,
+            status: "played",
+          });
+        } else if (move.type === "coup") {
+          state.stack.unshift({
+            id: `${state.stack.length}`,
+            action,
+            playerId,
+            status: "committed",
+          });
         }
-        game.state.stack.unshift({
-          id: `${game.state.stack.length}`,
-          action,
-          playerId,
-          status: "played",
-        });
-      } else {
-        throw new Error("Can't block this action.");
+      } else if (action.type === "react") {
+        if (state.stack.length === 0) {
+          throw new Error("Cannot react since no-one has played yet.");
+        } else if (state.stack[0].status !== "played") {
+          throw new Error(
+            "Cannot react to the last action, since it has been committed.",
+          );
+        }
+        const latestAction = state.stack[0];
+        if (latestAction.action.type !== "play") {
+          throw new Error("You can only block an action.");
+        }
+        if (latestAction.action.action.type === "foreign-aid") {
+          if (action.card !== "duke") {
+            throw new Error("You can only block foreign aid with a duke.");
+          }
+          state.stack.unshift({
+            id: `${state.stack.length}`,
+            action,
+            playerId,
+            status: "played",
+          });
+        } else if (latestAction.action.action.type === "assassinate") {
+          if (action.card !== "contessa") {
+            throw new Error(
+              "You can only block an assassination with a contessa.",
+            );
+          }
+          state.stack.unshift({
+            id: `${state.stack.length}`,
+            action,
+            playerId,
+            status: "played",
+          });
+        } else if (latestAction.action.action.type === "steal") {
+          if (
+            action.card !== "captain" &&
+            action.card !== "ambassador" &&
+            action.card !== "inquisitor"
+          ) {
+            throw new Error("You cannot block stealing with this card.");
+          }
+          state.stack.unshift({
+            id: `${state.stack.length}`,
+            action,
+            playerId,
+            status: "played",
+          });
+        } else {
+          throw new Error("Can't block this action.");
+        }
       }
-    }
-  },
+    }),
 };
 export default engine;

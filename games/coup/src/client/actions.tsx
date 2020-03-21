@@ -2,7 +2,7 @@
 import * as React from "react";
 import { jsx, Button } from "theme-ui";
 import { BoardProps, StartedGame } from "@board-at-home/api/src";
-import { State, Action } from "../api";
+import { State, Action, Config } from "../api";
 import Modal from "react-modal";
 
 const ChooseTargetModal = ({
@@ -13,7 +13,7 @@ const ChooseTargetModal = ({
 }: {
   show?: boolean;
   onSelect: (target: string) => void;
-  game: StartedGame<State>;
+  game: StartedGame<State, Config>;
   playerId: string;
 }) => {
   const otherPlayers = Object.keys(game.players).filter(
@@ -37,7 +37,10 @@ const ChooseTargetModal = ({
   );
 };
 
-const CollectIncomeButton = ({ playerId, act }: BoardProps<State, Action>) => (
+const CollectIncomeButton = ({
+  playerId,
+  act,
+}: BoardProps<State, Action, Config>) => (
   <Button
     onClick={() =>
       act({
@@ -56,7 +59,7 @@ const CollectIncomeButton = ({ playerId, act }: BoardProps<State, Action>) => (
 const CollectForeignAidButton = ({
   playerId,
   act,
-}: BoardProps<State, Action>) => (
+}: BoardProps<State, Action, Config>) => (
   <Button
     onClick={() =>
       act({
@@ -72,7 +75,11 @@ const CollectForeignAidButton = ({
   </Button>
 );
 
-const CoupButton = ({ playerId, game, act }: BoardProps<State, Action>) => {
+const CoupButton = ({
+  playerId,
+  game,
+  act,
+}: BoardProps<State, Action, Config>) => {
   const [showModal, setShowModal] = React.useState(false);
   return (
     <React.Fragment>
@@ -93,7 +100,7 @@ const CoupButton = ({ playerId, game, act }: BoardProps<State, Action>) => {
 const BlockForeignAidButton = ({
   act,
   playerId,
-}: BoardProps<State, Action>) => (
+}: BoardProps<State, Action, Config>) => (
   <Button onClick={() => act({ type: "react", card: "duke", playerId })}>
     Block Foreign Aid
   </Button>
@@ -102,13 +109,16 @@ const BlockForeignAidButton = ({
 const BlockAssassinationButton = ({
   act,
   playerId,
-}: BoardProps<State, Action>) => (
+}: BoardProps<State, Action, Config>) => (
   <Button onClick={() => act({ type: "react", card: "contessa", playerId })}>
     Block Assassination
   </Button>
 );
 
-const BlockStealingButton = ({ act, playerId }: BoardProps<State, Action>) => {
+const BlockStealingButton = ({
+  act,
+  playerId,
+}: BoardProps<State, Action, Config>) => {
   const [showModal, setShowModal] = React.useState(false);
   return (
     <React.Fragment>
@@ -135,13 +145,16 @@ const BlockStealingButton = ({ act, playerId }: BoardProps<State, Action>) => {
   );
 };
 
-const ChallengeButton = ({ act, playerId }: BoardProps<State, Action>) => (
+const ChallengeButton = ({
+  act,
+  playerId,
+}: BoardProps<State, Action, Config>) => (
   <Button onClick={() => act({ type: "challenge", playerId })}>
     Challenge
   </Button>
 );
 
-export default (props: BoardProps<State, Action>) => {
+export default (props: BoardProps<State, Action, Config>) => {
   const { game, playerId } = props;
   if (game.state.finished) {
     return null;
