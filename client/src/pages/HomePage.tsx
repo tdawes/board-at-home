@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Select, Input, Button, Container } from "theme-ui";
+import { Select, Input, Button, Container, Flex, Divider } from "theme-ui";
 import axios from "axios";
 import { watch, local, dispatch } from "../model";
 import { push } from "@prodo/route";
@@ -19,56 +19,75 @@ const joinGame = (code: string) => {
   dispatch(push)({ path: `/game/${code}` });
 };
 
+const HomePageButton = ({
+  text,
+  disabled,
+  onClick,
+}: {
+  text: string;
+  disabled: boolean;
+  onClick: () => any;
+}) => (
+  <Button
+    disabled={disabled}
+    variant={disabled ? "disabled" : "primary"}
+    onClick={onClick}
+    sx={{ width: "120px" }}
+  >
+    {text}
+  </Button>
+);
+
 const CreateNewGame = () => {
   const [gameType, setGameType] = React.useState<string | undefined>(
     Object.keys(games)[0],
   );
   const userId = watch(local.userId)!;
   return (
-    <div>
-      <label>Select a game:</label>
+    <Flex sx={{ justifyContent: "space-between" }}>
       <Select
         value={gameType}
         onChange={e => setGameType(e.target.value)}
-        mb={1}
+        placeholder="Select a game"
+        sx={{ width: "200px" }}
       >
         {Object.keys(games).map(game => (
           <option key={game}>{game}</option>
         ))}
       </Select>
-      <Button
+      <HomePageButton
+        text="New game"
         disabled={gameType == null}
-        variant={gameType == null ? "disabled" : "primary"}
         onClick={() => dispatch(createNewGame)(gameType!, userId)}
-      >
-        New Game
-      </Button>
-    </div>
+      />
+    </Flex>
   );
 };
 
 const JoinGame = () => {
   const [code, setCode] = React.useState("");
   return (
-    <div>
-      <label>Enter code:</label>
-      <Input onChange={e => setCode(e.target.value)} value={code} mb={1} />
-      <Button
+    <Flex sx={{ justifyContent: "space-between" }}>
+      <Input
+        onChange={e => setCode(e.target.value)}
+        value={code}
+        placeholder="Enter code to join game"
+        sx={{ width: "200px" }}
+      />
+      <HomePageButton
+        text="Join game"
         disabled={code.length !== 4}
-        variant={code.length !== 4 ? "disabled" : "primary"}
         onClick={() => dispatch(joinGame)(code)}
-      >
-        Join
-      </Button>
-    </div>
+      />
+    </Flex>
   );
 };
 
 export default () => {
   return (
-    <Container p={3}>
+    <Container p={4} sx={{ width: "400px", textAlign: "center" }}>
       <CreateNewGame />
-      <p>or</p>
+      <Divider mt={4} mb={4} />
       <JoinGame />
     </Container>
   );
