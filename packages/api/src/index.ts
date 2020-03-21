@@ -8,12 +8,13 @@ export interface BaseGame {
 export type UnstartedGame = BaseGame & {
   started: false;
 };
-export type StartedGame<State> = BaseGame & {
+export type StartedGame<State, Config> = BaseGame & {
   started: true;
+  config: Config;
   state: State;
 };
 
-export type Game<State> = UnstartedGame | StartedGame<State>;
+export type Game<State, Config> = UnstartedGame | StartedGame<State, Config>;
 
 export interface Player {
   id: string;
@@ -22,9 +23,9 @@ export interface Player {
 
 export interface GameEngine<S, A, C> {
   isFull: (game: UnstartedGame) => boolean;
-  start: (game: UnstartedGame, config: C) => void;
+  start: (game: UnstartedGame, config: C) => S;
   applyPlayerAction: (
-    game: StartedGame<S>,
+    game: StartedGame<S, C>,
     playerId: string,
     action: A,
   ) => void;
@@ -35,8 +36,8 @@ export interface ConfigProps<Config> {
   setConfig: (config: Partial<Config>) => void;
 }
 
-export interface BoardProps<State, Action> {
-  game: StartedGame<State>;
+export interface BoardProps<State, Action, Config> {
+  game: StartedGame<State, Config>;
   playerId: string;
   act: (action: Action) => void;
 }
