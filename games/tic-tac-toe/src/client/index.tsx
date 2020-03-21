@@ -1,22 +1,25 @@
 import * as React from "react";
 import { State, Action, Config } from "../api";
 import { ConfigProps, BoardProps, StartedGame } from "@board-at-home/api";
+import { Input, Flex, Box } from "theme-ui";
 
 export const defaultConfig: Config = {
   size: 3,
 };
 
 export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
-  <div>
+  <Flex sx={{ alignItems: "baseline" }}>
     <label>Board size:</label>
-    <input
+    <Input
       type="number"
       min="3"
       max="5"
       value={config.size}
       onChange={e => setConfig({ size: parseInt(e.target.value) })}
+      sx={{ width: "80px" }}
+      ml={2}
     />
-  </div>
+  </Flex>
 );
 
 const Message = ({
@@ -27,23 +30,34 @@ const Message = ({
   playerId: string;
 }) => {
   if (game.state.finished) {
+    let text = "";
     if (game.state.winner == playerId) {
-      return <div>You win!</div>;
+      text = "You win!";
     } else if (game.state.winner != null) {
-      return <div>You lose!</div>;
+      text = "You lose!";
     } else {
-      return <div>It's a draw!</div>;
+      text = "It's a draw!";
     }
+
+    return (
+      <Box sx={{ textAlign: "center" }} mb={1}>
+        <b>{text}</b>
+      </Box>
+    );
   }
   if ((game.state.firstPlayer === playerId) === game.state.firstPlayersTurn) {
     return (
-      <div>
-        It's your turn. You are{" "}
-        {playerId === game.state.firstPlayer ? "X" : "O"}
-      </div>
+      <Box sx={{ textAlign: "center" }} mb={1}>
+        It's <b>your turn</b>! You are{" "}
+        {playerId === game.state.firstPlayer ? "X" : "O"}.
+      </Box>
     );
   }
-  return <div>Waiting for opponent.</div>;
+  return (
+    <Box sx={{ textAlign: "center" }} mb={1}>
+      <i>Waiting for opponent.</i>
+    </Box>
+  );
 };
 
 export const Board = ({ game, playerId, act }: BoardProps<State, Action>) => {
@@ -51,7 +65,7 @@ export const Board = ({ game, playerId, act }: BoardProps<State, Action>) => {
     (game.state.firstPlayer === playerId) === game.state.firstPlayersTurn;
 
   return (
-    <div className="board" style={{ display: "flex", flexDirection: "column" }}>
+    <Flex className="board" style={{ flexDirection: "column" }} mt={3}>
       <Message playerId={playerId} game={game} />
       {game.state.board.map((row, x) => (
         <div
@@ -69,6 +83,7 @@ export const Board = ({ game, playerId, act }: BoardProps<State, Action>) => {
                 verticalAlign: "middle",
                 textAlign: "center",
                 border: "1px solid black",
+                fontSize: "80px",
               }}
               key={y}
               onClick={() => {
@@ -82,6 +97,6 @@ export const Board = ({ game, playerId, act }: BoardProps<State, Action>) => {
           ))}
         </div>
       ))}
-    </div>
+    </Flex>
   );
 };
