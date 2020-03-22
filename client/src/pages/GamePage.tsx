@@ -98,7 +98,7 @@ export default ({ code }: Props) => {
           {Object.keys(game.players).map(playerId => (
             <li key={playerId}>
               {game.players[playerId].name || playerId}
-              {userId === game.owner && userId !== playerId && (
+              {!game.started && userId === game.owner && userId !== playerId && (
                 <IconButton
                   sx={{ p: 2 }}
                   onClick={() => dispatch(kickPlayer)(code, playerId)}
