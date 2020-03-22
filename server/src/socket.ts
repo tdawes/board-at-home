@@ -82,8 +82,25 @@ export default (io: socket.Server, gameController: GameController) => {
       }) => {
         logger.log("action", playerId, action);
 
+        const applyServerAction = (action: any, playerId: string) => {
+          logger.log("server action", playerId, action);
+          updateGame(code, () =>
+            gameController.applyPlayerAction(
+              code,
+              playerId,
+              action,
+              applyServerAction,
+            ),
+          );
+        };
+
         updateGame(code, () => {
-          gameController.applyPlayerAction(code, playerId, action);
+          gameController.applyPlayerAction(
+            code,
+            playerId,
+            action,
+            applyServerAction,
+          );
         });
       },
     );

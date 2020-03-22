@@ -1,7 +1,18 @@
 import { GameEngine, UnstartedGame, StartedGame } from "@board-at-home/api";
 import { State, Action, Config, Hand, Card } from "../api";
-import * as _ from "lodash";
+import _ from "lodash";
+import play from "./play";
+import react from "./react";
+import challenge from "./challenge";
+import discard from "./discard";
 import produce from "immer";
+import forceReplace from "./force-replace";
+import loseInfluence from "./lose-influence";
+import respondToChallenge from "./respond-to-challenge";
+import reveal from "./reveal";
+import forceReplaceCancel from "./force-replace-cancel";
+import commitCurrentAction from "./commit-current-action";
+import acceptMove from "./accept-move";
 
 const newDeck = (numberOfEachCard: number, useExpansion: boolean) =>
   _.flatten(
@@ -13,6 +24,16 @@ const newDeck = (numberOfEachCard: number, useExpansion: boolean) =>
       useExpansion ? "inquisitor" : "ambassador",
     ].map(card => _.range(numberOfEachCard).map(() => card)),
   ) as Card[];
+
+const checkForWinner = (state: State) => {
+  const activePlayers = state.playerOrder.filter(
+    player => state.players[player].liveCards.length >= 1,
+  );
+  if (activePlayers.length <= 1) {
+    state.finished = true;
+    state.winner = activePlayers[0];
+  }
+};
 
 const engine: GameEngine<State, Action, Config> = {
   isFull: () => false,
@@ -46,99 +67,48 @@ const engine: GameEngine<State, Action, Config> = {
       playerOrder,
       currentPlayer: 0,
       treasury: 0,
-      stack: [],
+      requiredUserInputs: _.mapValues(players, () => []),
+      history: [],
     };
   },
   applyPlayerAction: (
-    game: StartedGame<State, Config>,
+    getGame: () => StartedGame<State, Config>,
     playerId: string,
     action: Action,
+    triggerServerAction: (action: Action, playerId: string) => void,
   ) =>
-    produce(game.state, state => {
+    produce(getGame().state, state => {
+      state.history.push({ playerId, action });
       if (action.type === "play") {
-        if (state.stack.length !== 0 && state.stack[0].status !== "resolved") {
-          throw new Error(
-            "Cannot play an action since the last action is not yet resolved.",
-          );
-        }
-        const move = action.action;
-        if (move.type === "income") {
-          state.stack.unshift({
-            id: `${state.stack.length}`,
-            action,
-            playerId,
-            status: "resolved",
-          });
-          state.players[playerId].money += 1;
-          state.currentPlayer =
-            (state.currentPlayer + 1) % state.playerOrder.length;
-        } else if (move.type === "foreign-aid") {
-          state.stack.unshift({
-            id: `${game.state.stack.length}`,
-            action,
-            playerId,
-            status: "played",
-          });
-        } else if (move.type === "coup") {
-          state.stack.unshift({
-            id: `${state.stack.length}`,
-            action,
-            playerId,
-            status: "committed",
-          });
-        }
+        play(state, playerId, action, triggerServerAction, getGame);
       } else if (action.type === "react") {
-        if (state.stack.length === 0) {
-          throw new Error("Cannot react since no-one has played yet.");
-        } else if (state.stack[0].status !== "played") {
-          throw new Error(
-            "Cannot react to the last action, since it has been committed.",
-          );
-        }
-        const latestAction = state.stack[0];
-        if (latestAction.action.type !== "play") {
-          throw new Error("You can only block an action.");
-        }
-        if (latestAction.action.action.type === "foreign-aid") {
-          if (action.card !== "duke") {
-            throw new Error("You can only block foreign aid with a duke.");
-          }
-          state.stack.unshift({
-            id: `${state.stack.length}`,
-            action,
-            playerId,
-            status: "played",
-          });
-        } else if (latestAction.action.action.type === "assassinate") {
-          if (action.card !== "contessa") {
-            throw new Error(
-              "You can only block an assassination with a contessa.",
-            );
-          }
-          state.stack.unshift({
-            id: `${state.stack.length}`,
-            action,
-            playerId,
-            status: "played",
-          });
-        } else if (latestAction.action.action.type === "steal") {
-          if (
-            action.card !== "captain" &&
-            action.card !== "ambassador" &&
-            action.card !== "inquisitor"
-          ) {
-            throw new Error("You cannot block stealing with this card.");
-          }
-          state.stack.unshift({
-            id: `${state.stack.length}`,
-            action,
-            playerId,
-            status: "played",
-          });
-        } else {
-          throw new Error("Can't block this action.");
-        }
+        react(state, playerId, action, triggerServerAction, getGame);
+      } else if (action.type === "challenge") {
+        challenge(state, playerId, action.id);
+      } else if (action.type === "accept") {
+        acceptMove(state, playerId, action.id);
+      } else if (action.type === "discard") {
+        discard(state, playerId, action.cards);
+      } else if (action.type === "force-replace") {
+        forceReplace(state, playerId, action.target, action.card);
+      } else if (action.type === "force-replace-cancel") {
+        forceReplaceCancel(state, playerId, action.target, action.card);
+      } else if (action.type === "lose-influence") {
+        loseInfluence(state, playerId, action.card);
+      } else if (action.type === "respond-to-challenge") {
+        respondToChallenge(
+          state,
+          playerId,
+          action.challenger,
+          action.succeed,
+          action.condition,
+        );
+      } else if (action.type === "reveal") {
+        reveal(state, playerId, action.target, action.card);
+      } else if (action.type === "commit") {
+        commitCurrentAction(state);
       }
+      checkForWinner(state);
     }),
 };
 export default engine;

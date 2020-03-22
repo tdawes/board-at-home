@@ -1,20 +1,33 @@
 /** @jsx jsx */
+import _ from "lodash";
 import * as React from "react";
 import { jsx, Button } from "theme-ui";
 import { BoardProps, StartedGame } from "@board-at-home/api/src";
-import { State, Action, Config } from "../api";
+import {
+  State,
+  Action,
+  Config,
+  DecideDiscardUserInput,
+  DiscardCardUserInput,
+  RespondToChallengeUserInput,
+  RevealCardUserInput,
+} from "../api";
 import Modal from "react-modal";
+import { conditionFromAction, isCurrentPlayer } from "../utils";
+import { name } from "./utils";
 
 const ChooseTargetModal = ({
   show,
   onSelect,
   game,
   playerId,
+  ownTeam,
 }: {
   show?: boolean;
   onSelect: (target: string) => void;
   game: StartedGame<State, Config>;
   playerId: string;
+  ownTeam?: boolean;
 }) => {
   const otherPlayers = Object.keys(game.players).filter(
     other => other !== playerId,
@@ -23,7 +36,7 @@ const ChooseTargetModal = ({
     other =>
       game.state.players[other].team !== game.state.players[playerId].team,
   );
-  if (possibleTargets.length === 0) {
+  if (possibleTargets.length === 0 || ownTeam) {
     possibleTargets = otherPlayers;
   }
   return (
@@ -97,6 +110,154 @@ const CoupButton = ({
   );
 };
 
+const EmbezzleButton = ({
+  playerId,
+  act,
+}: BoardProps<State, Action, Config>) => (
+  <Button
+    onClick={() =>
+      act({ type: "play", playerId, action: { type: "embezzle" } })
+    }
+  >
+    Embezzle
+  </Button>
+);
+
+const ConvertSelfButton = ({
+  playerId,
+  act,
+}: BoardProps<State, Action, Config>) => (
+  <Button
+    onClick={() => act({ type: "play", playerId, action: { type: "convert" } })}
+  >
+    Convert Self
+  </Button>
+);
+
+const ConvertOtherButton = ({
+  playerId,
+  game,
+  act,
+}: BoardProps<State, Action, Config>) => {
+  const [showModal, setShowModal] = React.useState(false);
+  return (
+    <React.Fragment>
+      <ChooseTargetModal
+        show={showModal}
+        onSelect={target => {
+          act({ type: "play", action: { type: "convert", target }, playerId });
+          setShowModal(false);
+        }}
+        game={game}
+        playerId={playerId}
+        ownTeam
+      />
+      <Button onClick={() => setShowModal(true)}>Convert Other</Button>
+    </React.Fragment>
+  );
+};
+
+const CollectTaxButton = ({
+  playerId,
+  act,
+}: BoardProps<State, Action, Config>) => (
+  <Button
+    onClick={() => act({ type: "play", playerId, action: { type: "tax" } })}
+  >
+    Collect Tax
+  </Button>
+);
+
+const AssassinateButton = ({
+  playerId,
+  game,
+  act,
+}: BoardProps<State, Action, Config>) => {
+  const [showModal, setShowModal] = React.useState(false);
+  return (
+    <React.Fragment>
+      <ChooseTargetModal
+        show={showModal}
+        onSelect={target => {
+          act({
+            type: "play",
+            action: { type: "assassinate", target },
+            playerId,
+          });
+          setShowModal(false);
+        }}
+        game={game}
+        playerId={playerId}
+      />
+      <Button onClick={() => setShowModal(true)}>Assassinate</Button>
+    </React.Fragment>
+  );
+};
+
+const StealButton = ({
+  playerId,
+  game,
+  act,
+}: BoardProps<State, Action, Config>) => {
+  const [showModal, setShowModal] = React.useState(false);
+  return (
+    <React.Fragment>
+      <ChooseTargetModal
+        show={showModal}
+        onSelect={target => {
+          act({ type: "play", action: { type: "steal", target }, playerId });
+          setShowModal(false);
+        }}
+        game={game}
+        playerId={playerId}
+      />
+      <Button onClick={() => setShowModal(true)}>Steal</Button>
+    </React.Fragment>
+  );
+};
+
+const ExchangeButton = ({
+  playerId,
+  game,
+  act,
+}: BoardProps<State, Action, Config>) => (
+  <Button
+    onClick={() =>
+      act({
+        type: "play",
+        playerId,
+        action: {
+          type: game.config.useExpansion ? "exchange-1" : "exchange-2",
+        },
+      })
+    }
+  >
+    Exchange
+  </Button>
+);
+
+const ExamineButton = ({
+  playerId,
+  game,
+  act,
+}: BoardProps<State, Action, Config>) => {
+  const [showModal, setShowModal] = React.useState(false);
+  return (
+    <React.Fragment>
+      <ChooseTargetModal
+        show={showModal}
+        onSelect={target => {
+          act({ type: "play", action: { type: "examine", target }, playerId });
+          setShowModal(false);
+        }}
+        game={game}
+        playerId={playerId}
+      />
+      <Button onClick={() => setShowModal(true)}>Examine</Button>
+    </React.Fragment>
+  );
+};
+
 const BlockForeignAidButton = ({
   act,
   playerId,
@@ -117,6 +278,7 @@ const BlockAssassinationButton = ({
 
 const BlockStealingButton = ({
   act,
+  game,
   playerId,
 }: BoardProps<State, Action, Config>) => {
   const [showModal, setShowModal] = React.useState(false);
@@ -129,16 +291,19 @@ const BlockStealingButton = ({
         >
           Captain
         </Button>
-        <Button
-          onClick={() => act({ type: "react", card: "ambassador", playerId })}
-        >
-          Ambassador
-        </Button>
-        <Button
-          onClick={() => act({ type: "react", card: "inquisitor", playerId })}
-        >
-          Inquisitor
-        </Button>
+        {game.config.useExpansion ? (
+          <Button
+            onClick={() => act({ type: "react", card: "inquisitor", playerId })}
+          >
+            Inquisitor
+          </Button>
+        ) : (
+          <Button
+            onClick={() => act({ type: "react", card: "ambassador", playerId })}
+          >
+            Ambassador
+          </Button>
+        )}
       </Modal>
       <Button onClick={() => setShowModal(true)}>Block Stealing</Button>
     </React.Fragment>
@@ -146,12 +311,217 @@ const BlockStealingButton = ({
 };
 
 const ChallengeButton = ({
+  game,
   act,
   playerId,
 }: BoardProps<State, Action, Config>) => (
-  <Button onClick={() => act({ type: "challenge", playerId })}>
+  <Button
+    onClick={() =>
+      act({
+        type: "challenge",
+        playerId,
+        id: game.state.currentReaction?.id || game.state.currentAction!.id,
+        condition: conditionFromAction(
+          game.state.currentReaction?.action ||
+            game.state.currentAction!.action,
+        ),
+      })
+    }
+  >
     Challenge
   </Button>
+);
+
+const AcceptButton = ({
+  act,
+  game,
+  playerId,
+}: BoardProps<State, Action, Config>) => (
+  <Button
+    onClick={() =>
+      act({
+        type: "accept",
+        id: game.state.currentReaction?.id || game.state.currentAction!.id,
+        playerId,
+      })
+    }
+  >
+    Accept
+  </Button>
+);
+
+const DecideDiscardButton = ({
+  game,
+  playerId,
+  act,
+  event,
+}: BoardProps<State, Action, Config> & { event: DecideDiscardUserInput }) => (
+  <div>
+    <div>
+      Should {name(game, event.target)} replace their {_.capitalize(event.card)}
+      ?
+    </div>
+    <Button
+      onClick={() =>
+        act({
+          type: "force-replace",
+          playerId,
+          target: event.target,
+          card: event.card,
+        })
+      }
+    >
+      Replace
+    </Button>
+    <Button
+      onClick={() =>
+        act({
+          type: "force-replace-cancel",
+          playerId,
+          target: event.target,
+          card: event.card,
+        })
+      }
+    >
+      Keep
+    </Button>
+  </div>
+);
+
+const DiscardCardButton = ({
+  game,
+  playerId,
+  act,
+  event,
+}: BoardProps<State, Action, Config> & { event: DiscardCardUserInput }) => {
+  const [toDiscard, setToDiscard] = React.useState<number[]>([]);
+  return (
+    <div>
+      <div>Choose {event.amount - toDiscard.length} cards to discard:</div>
+      {game.state.players[playerId].liveCards.map((card, index) => {
+        if (!toDiscard.includes(index)) {
+          return (
+            <Button
+              onClick={() => {
+                setToDiscard(c => {
+                  const newList = [...c, index];
+                  if (newList.length === event.amount) {
+                    act({
+                      type: "discard",
+                      playerId,
+                      cards: game.state.players[
+                        playerId
+                      ].liveCards.filter((_card, index) =>
+                        newList.includes(index),
+                      ),
+                    });
+                  }
+                  return newList;
+                });
+              }}
+            >
+              {_.capitalize(card)}
+            </Button>
+          );
+        } else {
+          return null;
+        }
+      })}
+    </div>
+  );
+};
+
+export const LoseInfluenceButton = ({
+  game,
+  playerId,
+  act,
+}: BoardProps<State, Action, Config>) => {
+  React.useEffect(() => {
+    if (game.state.players[playerId].liveCards.length <= 1) {
+      act({
+        type: "lose-influence",
+        playerId,
+        card: game.state.players[playerId].liveCards[0],
+      });
+    }
+  }, []);
+  return (
+    <div>
+      <div>Choose a card to lose:</div>
+      {game.state.players[playerId].liveCards.map(card => (
+        <Button onClick={() => act({ type: "lose-influence", playerId, card })}>
+          {_.capitalize(card)}
+        </Button>
+      ))}
+    </div>
+  );
+};
+
+export const RespondToChallengeButton = ({
+  game,
+  playerId,
+  act,
+  event,
+}: BoardProps<State, Action, Config> & {
+  event: RespondToChallengeUserInput;
+}) => (
+  <div>
+    <div>Respond to the challenge:</div>
+    {(event.condition.type === "must-have") ===
+      game.state.players[playerId].liveCards.includes(event.condition.card) && (
+      <Button
+        onClick={() =>
+          act({
+            type: "respond-to-challenge",
+            condition: event.condition,
+            challenger: game.state.currentChallenge!.playerId,
+            playerId,
+            succeed: true,
+          })
+        }
+      >
+        Reveal{" "}
+        {event.condition.type === "must-have"
+          ? `a ${_.capitalize(event.condition.card)}`
+          : `no ${_.capitalize(event.condition.card)}`}
+      </Button>
+    )}
+    <Button
+      onClick={() =>
+        act({
+          type: "respond-to-challenge",
+          condition: event.condition,
+          challenger: game.state.currentChallenge!.playerId,
+          playerId,
+          succeed: false,
+        })
+      }
+    >
+      Concede
+    </Button>
+  </div>
+);
+
+const RevealCardButton = ({
+  game,
+  playerId,
+  act,
+  event,
+}: BoardProps<State, Action, Config> & {
+  event: RevealCardUserInput;
+}) => (
+  <div>
+    <div>Choose a card to reveal to {name(game, event.target)}:</div>
+    {game.state.players[playerId].liveCards.map(card => (
+      <Button
+        onClick={() =>
+          act({ type: "reveal", playerId, target: event.target, card })
+        }
+      >
+        {_.capitalize(card)}
+      </Button>
+    ))}
+  </div>
 );
 
 export default (props: BoardProps<State, Action, Config>) => {
@@ -160,62 +530,142 @@ export default (props: BoardProps<State, Action, Config>) => {
     return null;
   }
 
-  const canPlay =
-    game.state.playerOrder[game.state.currentPlayer] === playerId &&
-    (game.state.stack.length === 0 ||
-      game.state.stack[0].status === "resolved");
-  const canReact =
-    game.state.stack.length > 0 &&
-    game.state.stack[0].action.type === "play" &&
-    game.state.stack[0].playerId !== playerId &&
-    game.state.stack[0].status === "played";
-  const canChallenge =
-    game.state.stack.length > 0 &&
-    game.state.stack[0].action.playerId !== playerId &&
-    game.state.stack[0].status === "played";
+  if (game.state.players[playerId].liveCards.length === 0) {
+    return <div>You are out.</div>;
+  }
 
-  if (canPlay) {
-    const { money } = game.state.players[playerId];
-
-    if (money >= 10) {
+  if (
+    Object.keys(game.state.requiredUserInputs).some(
+      key => game.state.requiredUserInputs[key].length > 0,
+    )
+  ) {
+    if (game.state.requiredUserInputs[playerId].length > 0) {
       return (
         <div>
-          <CoupButton {...props} />
+          {game.state.requiredUserInputs[playerId].map(userEvent => {
+            console.log(userEvent);
+            if (userEvent.type === "decide-discard") {
+              return <DecideDiscardButton event={userEvent} {...props} />;
+            } else if (userEvent.type === "discard-card") {
+              return <DiscardCardButton event={userEvent} {...props} />;
+            } else if (userEvent.type === "lose-influence") {
+              return <LoseInfluenceButton {...props} />;
+            } else if (userEvent.type === "respond-to-challenge") {
+              return <RespondToChallengeButton event={userEvent} {...props} />;
+            } else if (userEvent.type === "reveal-card") {
+              return <RevealCardButton event={userEvent} {...props} />;
+            }
+          })}
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          {Object.keys(game.state.requiredUserInputs)
+            .filter(other => game.state.requiredUserInputs[other].length > 0)
+            .map(other => (
+              <div>
+                Waiting for {name(game, other)} to{" "}
+                {game.state.requiredUserInputs[other]
+                  .map(userEvent => {
+                    if (userEvent.type === "decide-discard") {
+                      return `decide whether ${
+                        userEvent.target === playerId
+                          ? "you"
+                          : name(game, userEvent.target)
+                      } should discard ${
+                        userEvent.target === playerId ? "your" : "their"
+                      } card`;
+                    } else if (userEvent.type === "discard-card") {
+                      return "discard their card";
+                    } else if (userEvent.type === "lose-influence") {
+                      return "choose a card to discard";
+                    } else if (userEvent.type === "respond-to-challenge") {
+                      return "respond to the challenge";
+                    } else if (userEvent.type === "reveal-card") {
+                      return `reveal a card to ${
+                        userEvent.target === playerId
+                          ? "you"
+                          : name(game, userEvent.target)
+                      }`;
+                    }
+                  })
+                  .join(" and to ")}
+                .
+              </div>
+            ))}
         </div>
       );
     }
-
-    return (
-      <div>
-        <CollectIncomeButton {...props} />
-        <CollectForeignAidButton {...props} />
-        {money >= 1 && <CoupButton {...props} />}
-      </div>
-    );
-  } else if (canReact) {
-    return (
-      <div>
-        {game.state.stack[0].action.type === "play" &&
-          game.state.stack[0].action.action.type === "foreign-aid" && (
-            <BlockForeignAidButton {...props} />
-          )}
-        {game.state.stack[0].action.type === "play" &&
-          game.state.stack[0].action.action.type === "assassinate" && (
-            <BlockAssassinationButton {...props} />
-          )}
-        {game.state.stack[0].action.type === "play" &&
-          game.state.stack[0].action.action.type === "steal" && (
-            <BlockStealingButton {...props} />
-          )}
-      </div>
-    );
-  } else if (canChallenge) {
-    return (
-      <div>
-        <ChallengeButton {...props} />
-      </div>
-    );
   }
 
-  return <div>{game.players[playerId].name || playerId} has no actions.</div>;
+  const canPlay =
+    isCurrentPlayer(game.state, playerId) && game.state.currentAction == null;
+  const canReact =
+    !isCurrentPlayer(game.state, playerId) &&
+    game.state.currentAction != null &&
+    game.state.currentReaction == null &&
+    game.state.currentChallenge == null;
+  const canChallenge =
+    game.state.currentChallenge == null &&
+    (game.state.currentAction != null || game.state.currentReaction != null) &&
+    !(game.state.currentReaction || game.state.currentAction)?.accepted[
+      playerId
+    ];
+
+  return (
+    <div>
+      {canPlay && (
+        <React.Fragment>
+          {game.state.players[playerId].money >= 10 ? (
+            <CoupButton {...props} />
+          ) : (
+            <React.Fragment>
+              <CollectIncomeButton {...props} />
+              <CollectForeignAidButton {...props} />
+              {game.state.players[playerId].money >= 7 && (
+                <CoupButton {...props} />
+              )}
+              {game.config.useExpansion && <EmbezzleButton {...props} />}
+              {game.config.useExpansion &&
+                game.state.players[playerId].money >= 1 && (
+                  <ConvertSelfButton {...props} />
+                )}
+              {game.config.useExpansion &&
+                game.state.players[playerId].money >= 2 && (
+                  <ConvertOtherButton {...props} />
+                )}
+              <CollectTaxButton {...props} />
+              {game.state.players[playerId].money >= 3 && (
+                <AssassinateButton {...props} />
+              )}
+              <StealButton {...props} />
+              <ExchangeButton {...props} />
+              {game.config.useExpansion && <ExamineButton {...props} />}
+            </React.Fragment>
+          )}
+        </React.Fragment>
+      )}
+      {canReact && (
+        <React.Fragment>
+          {game.state.currentAction!.action.action.type === "foreign-aid" && (
+            <BlockForeignAidButton {...props} />
+          )}
+          {game.state.currentAction!.action.action.type === "assassinate" && (
+            <BlockAssassinationButton {...props} />
+          )}
+          {game.state.currentAction!.action.action.type === "steal" && (
+            <BlockStealingButton {...props} />
+          )}
+        </React.Fragment>
+      )}
+      {canChallenge && (
+        <React.Fragment>
+          <AcceptButton {...props} />
+          <ChallengeButton {...props} />
+        </React.Fragment>
+      )}
+      {!canPlay && !canReact && !canChallenge && "No available actions."}
+    </div>
+  );
 };

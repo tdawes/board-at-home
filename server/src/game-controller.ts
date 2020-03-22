@@ -20,7 +20,12 @@ export interface GameController {
   startGame: (code: string, config: any) => void;
   listGames: () => Game<any, any>[];
   getGame: <S, C>(code: string) => Game<S, C>;
-  applyPlayerAction: (code: string, playerId: string, action: any) => void;
+  applyPlayerAction: (
+    code: string,
+    playerId: string,
+    action: any,
+    applyServerAction: (action: any, playerId: string) => void,
+  ) => void;
 }
 
 const GAME_LIFESPAN = 1000 * 60 * 60; // 1 hour
@@ -178,7 +183,12 @@ export default (): GameController => {
     });
   };
 
-  const applyPlayerAction = (code: string, playerId: string, action: any) => {
+  const applyPlayerAction = (
+    code: string,
+    playerId: string,
+    action: any,
+    applyServerAction: (action: any, playerId: string) => void,
+  ) => {
     const game = getGame(code);
 
     assertHasPlayer(game, playerId);
@@ -186,9 +196,15 @@ export default (): GameController => {
 
     updateGame(game, (game: StartedGame<any, any>) => {
       game.state = getEngine(game.type).applyPlayerAction(
-        game,
+        () => {
+          const game = getGame(code);
+          assertHasPlayer(game, playerId);
+          assertGameStarted(game);
+          return game as StartedGame<any, any>;
+        },
         playerId,
         action,
+        applyServerAction,
       );
     });
   };

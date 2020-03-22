@@ -73,11 +73,11 @@ const engine: GameEngine<State, Action, Config> = {
     };
   },
   applyPlayerAction: (
-    game: StartedGame<State, Config>,
+    getGame: () => StartedGame<State, Config>,
     playerId: string,
     action: Action,
   ) =>
-    produce(game.state, state => {
+    produce(getGame().state, state => {
       if (action.type === "play") {
         if (state.board[action.x][action.y] !== null) {
           throw new Error("Invalid move.");

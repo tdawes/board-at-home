@@ -54,6 +54,7 @@ export default {
       "&:hover": {
         bg: "primary__hover",
       },
+      m: 1,
     },
     disabled: {
       color: "white",
