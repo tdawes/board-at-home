@@ -130,7 +130,7 @@ const ConvertSelfButton = ({
   <Button
     onClick={() => act({ type: "play", playerId, action: { type: "convert" } })}
   >
-    Convert Self
+    Defect
   </Button>
 );
 
@@ -152,7 +152,7 @@ const ConvertOtherButton = ({
         playerId={playerId}
         ownTeam
       />
-      <Button onClick={() => setShowModal(true)}>Convert Other</Button>
+      <Button onClick={() => setShowModal(true)}>Recruit</Button>
     </React.Fragment>
   );
 };

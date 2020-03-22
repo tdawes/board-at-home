@@ -141,12 +141,12 @@ const logMessage = (game: StartedGame<State, Config>, event: HistoryEvent) => {
       )}.`;
     } else if (move.type === "convert") {
       if ("target" in move) {
-        return `${name(game, event.playerId)} converted ${name(
+        return `${name(game, event.playerId)} recruited ${name(
           game,
           move.target,
         )}.`;
       } else {
-        return `${name(game, event.playerId)} converted themselves.`;
+        return `${name(game, event.playerId)} defected.`;
       }
     } else if (move.type === "coup") {
       return `${name(game, event.playerId)} successfully couped ${name(
