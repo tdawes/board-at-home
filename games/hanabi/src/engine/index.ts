@@ -1,5 +1,13 @@
 import { GameEngine, UnstartedGame, StartedGame } from "@board-at-home/api";
-import { State, Action, Config, Board, Card } from "../api";
+import {
+  State,
+  Action,
+  Config,
+  Board,
+  Card,
+  MAX_INFO_TOKENS,
+  MAX_FUSE_TOKENS,
+} from "../api";
 import { createDeck, deal } from "./deck";
 import * as _ from "lodash";
 import produce from "immer";
@@ -13,11 +21,8 @@ const checkForFinish = (board: Board) => {
   );
 };
 
-const MAX_INFO_TOKENS = 8;
-const MAX_FUSE_TOKENS = 3;
-
 const engine: GameEngine<State, Action, Config> = {
-  isFull: (game: UnstartedGame) => Object.keys(game.players).length >= 2, // 2-5
+  isFull: (game: UnstartedGame) => Object.keys(game.players).length > 5, // 2-5
   start: (game: UnstartedGame, config: Config) => {
     console.log(
       game.players,

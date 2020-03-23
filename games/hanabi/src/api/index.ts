@@ -43,3 +43,6 @@ export interface InfoAction {
 }
 
 export type Action = PlayAction | DiscardAction | InfoAction;
+
+export const MAX_INFO_TOKENS = 8;
+export const MAX_FUSE_TOKENS = 3;

@@ -1,7 +1,21 @@
 import * as React from "react";
-import { State, Action, Config, Card, Color } from "../api";
+import {
+  State,
+  Action,
+  Config,
+  Card,
+  Color,
+  MAX_INFO_TOKENS,
+  MAX_FUSE_TOKENS,
+} from "../api";
 import { ConfigProps, BoardProps, StartedGame } from "@board-at-home/api";
-import { Button, Flex } from "theme-ui";
+import { Button, Flex, Box } from "theme-ui";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faInfoCircle,
+  faBomb,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import * as _ from "lodash";
 
 export const defaultConfig: Config = {
@@ -10,8 +24,7 @@ export const defaultConfig: Config = {
 
 export const ConfigPanel = (_props: ConfigProps<Config>) => (
   <div>
-    <label>Game type:</label>
-    Basic (Sorry, 🌈rainbow🌈 is not supported yet)
+    <label>Game type:</label> Basic (Sorry, 🌈rainbow🌈 is not supported yet)
   </div>
 );
 
@@ -36,17 +49,22 @@ const Message = ({
 
 // TODO: make these styles fit into the theme components
 const CardDisplay = ({ card }: { card: Card }) => (
-  <span
+  <div
     style={{
       color: card.color,
       backgroundColor: "lightgrey",
       fontSize: "30px",
       margin: "5px",
-      padding: "5px",
+      padding: "12px 10px 10px",
+      borderRadius: "4px",
+      width: "35px",
+      height: "50px",
+      display: "inline",
+      lineHeight: 1,
     }}
   >
     {card.num}
-  </span>
+  </div>
 );
 
 const ActionableCard = ({
@@ -58,77 +76,157 @@ const ActionableCard = ({
   onPlay: () => any;
   onDiscard: () => any;
 }) => (
-  <Flex sx={{ flexDirection: "column" }} m={1}>
+  <Flex sx={{ flexDirection: "column" }} m={2}>
     <div
       style={{
         color: "darkgrey",
         backgroundColor: "lightgrey",
         fontSize: "30px",
-        textAlign: "center",
+        margin: "5px",
+        padding: "15px 15px 10px",
+        borderRadius: "4px",
+        width: "45px",
+        height: "55px",
+        display: "table",
+        alignSelf: "center",
       }}
     >
       ?
     </div>
-    {canAct && <Button onClick={onPlay}>Play</Button>}
-    {canAct && <Button onClick={onDiscard}>Discard</Button>}
+    {canAct && (
+      <Button onClick={onPlay} sx={{ fontSize: "14px" }} mb={1}>
+        Play
+      </Button>
+    )}
+    {canAct && (
+      <Button onClick={onDiscard} sx={{ fontSize: "14px" }}>
+        Discard
+      </Button>
+    )}
   </Flex>
 );
+
+const Tokens = ({
+  num,
+  total,
+  icon,
+}: {
+  num: number;
+  total: number;
+  icon: any;
+}) => (
+  <Box m={1}>
+    {_.range(num).map(_ => (
+      <FontAwesomeIcon icon={icon} style={{ margin: "5px" }} />
+    ))}
+    {_.range(total - num).map(_ => (
+      <FontAwesomeIcon
+        icon={icon}
+        style={{ margin: "5px" }}
+        color="lightgrey"
+      />
+    ))}
+  </Box>
+);
+
+const CARD_HEIGHT = "60px";
 
 // TODO: pretty display with something resembling cards and tokens
 export const Board = ({
   game,
   playerId,
   act,
-}: BoardProps<State, Action, Config>) => (
-  <div className="board" style={{ display: "flex", flexDirection: "column" }}>
-    <Message playerId={playerId} game={game} />
-    <div>Information tokens left: {game.state.board.infoTokens}</div>
-    <div>Fuse tokens left: {game.state.board.fuseTokens}</div>
-    <div>
-      {Object.keys(game.players).map((id, idx) =>
-        id != playerId ? (
-          <div>
-            {game.players[id].name || game.players[id].id}'s hand:{" "}
-            {game.state.board.hands[idx].map(card => (
-              <CardDisplay card={card} />
-            ))}
-          </div>
-        ) : (
-          <div>
-            Your hand:
-            <Flex>
-              {game.state.board.hands[idx].map((_card, cardIdx) => (
-                <ActionableCard
-                  canAct={
-                    !game.state.finished && game.state.currentPlayer == idx
-                  }
-                  onPlay={() => act({ type: "play", playerId, cardIdx })}
-                  onDiscard={() => act({ type: "discard", playerId, cardIdx })}
-                />
+}: BoardProps<State, Action, Config>) => {
+  const playerIdx = Object.keys(game.players).indexOf(playerId);
+
+  return (
+    <Flex className="board">
+      <Flex
+        sx={{
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Message playerId={playerId} game={game} />
+        <Flex mb={3}>
+          {game.state.board.hands[playerIdx].map((_card, cardIdx) => (
+            <ActionableCard
+              canAct={
+                !game.state.finished && game.state.currentPlayer == playerIdx
+              }
+              onPlay={() => act({ type: "play", playerId, cardIdx })}
+              onDiscard={() => act({ type: "discard", playerId, cardIdx })}
+            />
+          ))}
+        </Flex>
+        {!game.state.finished &&
+          game.state.currentPlayer === playerIdx &&
+          game.state.board.infoTokens >= 0 && (
+            <Button onClick={() => act({ type: "info", playerId })} mb={4}>
+              Give information
+            </Button>
+          )}
+        {Object.keys(game.players).map((id, idx) =>
+          id != playerId ? (
+            <Flex sx={{ alignItems: "center" }}>
+              {game.players[id].name || game.players[id].id}'s hand:{" "}
+              {game.state.board.hands[idx].map(card => (
+                <CardDisplay card={card} />
               ))}
             </Flex>
-            {!game.state.finished &&
-              game.state.currentPlayer === idx &&
-              game.state.board.infoTokens >= 0 && (
-                <Button onClick={() => act({ type: "info", playerId })}>
-                  Give information
-                </Button>
-              )}
-          </div>
-        ),
-      )}
-    </div>
-    <div>
-      Discard pile:{" "}
-      {game.state.board.discardPile.map(card => (
-        <CardDisplay card={card} />
-      ))}
-    </div>
-    <div>
-      Piles on the table:{" "}
-      {(Object.keys(game.state.board.piles) as Color[]).map((color: Color) => (
-        <CardDisplay card={{ color, num: game.state.board.piles[color] }} />
-      ))}
-    </div>
-  </div>
-);
+          ) : (
+            <div />
+          ),
+        )}
+      </Flex>
+      <Flex
+        sx={{
+          flexDirection: "column",
+          backgroundColor: "cornsilk",
+          alignItems: "center",
+          borderRadius: "4px",
+          width: "300px",
+        }}
+      >
+        <Flex sx={{ height: CARD_HEIGHT }}>
+          {(Object.keys(
+            game.state.board.piles,
+          ) as Color[]).map((color: Color) =>
+            game.state.board.piles[color] > 0 ? (
+              <CardDisplay
+                card={{ color, num: game.state.board.piles[color] }}
+              />
+            ) : (
+              <div style={{ height: CARD_HEIGHT }} />
+            ),
+          )}
+        </Flex>
+        <Tokens
+          num={game.state.board.infoTokens}
+          total={MAX_INFO_TOKENS}
+          icon={faInfoCircle}
+        />
+        <Tokens
+          num={game.state.board.fuseTokens}
+          total={MAX_FUSE_TOKENS}
+          icon={faBomb}
+        />
+        <Flex
+          sx={{
+            minHeight: CARD_HEIGHT,
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+          m={2}
+        >
+          {game.state.board.discardPile.length > 0 && (
+            <FontAwesomeIcon icon={faTrash} />
+          )}
+          {game.state.board.discardPile.map(card => (
+            <CardDisplay card={card} />
+          ))}
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+};
