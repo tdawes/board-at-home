@@ -1675,6 +1675,21 @@
   dependencies:
     "@types/koa" "*"
 
+"@types/koa-send@*":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@types/koa-send/-/koa-send-4.1.2.tgz#978f8267ad116d12ac6a18fecd8f34c5657e09ad"
+  integrity sha512-rfqKIv9bFds39Jxvsp8o3YJLnEQVPVriYA14AuO2OY65IHh/4UX4U/iMs5L0wATpcRmm1bbe0BNk23TRwx3VQQ==
+  dependencies:
+    "@types/koa" "*"
+
+"@types/koa-static@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@types/koa-static/-/koa-static-4.0.1.tgz#b740d80a549b0a0a7a3b38918daecde88a7a50ec"
+  integrity sha512-SSpct5fEcAeRkBHa3RiwCIRfDHcD1cZRhwRF///ZfvRt8KhoqRrhK6wpDlYPk/vWHVFE9hPGqh68bhzsHkir4w==
+  dependencies:
+    "@types/koa" "*"
+    "@types/koa-send" "*"
+
 "@types/koa@*", "@types/koa@^2.11.2":
   version "2.11.2"
   resolved "https://registry.yarnpkg.com/@types/koa/-/koa-2.11.2.tgz#0595656a59ff13ca97edf6dde7da1e5319651f9b"
@@ -2166,7 +2181,7 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0:
     "@types/color-name" "^1.1.1"
     color-convert "^2.0.1"
 
-any-promise@^1.1.0:
+any-promise@^1.0.0, any-promise@^1.1.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/any-promise/-/any-promise-1.3.0.tgz#abc6afeedcea52e809cdc0376aed3ce39635d17f"
   integrity sha1-q8av7tzqUugJzcA3au0845Y10X8=
@@ -3757,7 +3772,7 @@ debug@=3.1.0, debug@~3.1.0:
   dependencies:
     ms "2.0.0"
 
-debug@^3.0.0, debug@^3.1.1, debug@^3.2.5, debug@^3.2.6:
+debug@^3.0.0, debug@^3.1.0, debug@^3.1.1, debug@^3.2.5, debug@^3.2.6:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
   integrity sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==
@@ -6423,6 +6438,24 @@ koa-router@^8.0.8:
     path-to-regexp "1.x"
     urijs "^1.19.2"
 
+koa-send@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/koa-send/-/koa-send-5.0.0.tgz#5e8441e07ef55737734d7ced25b842e50646e7eb"
+  integrity sha512-90ZotV7t0p3uN9sRwW2D484rAaKIsD8tAVtypw/aBU+ryfV+fR2xrcAwhI8Wl6WRkojLUs/cB9SBSCuIb+IanQ==
+  dependencies:
+    debug "^3.1.0"
+    http-errors "^1.6.3"
+    mz "^2.7.0"
+    resolve-path "^1.4.0"
+
+koa-static@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/koa-static/-/koa-static-5.0.0.tgz#5e92fc96b537ad5219f425319c95b64772776943"
+  integrity sha512-UqyYyH5YEXaJrf9S8E23GoJFQZXkBVJ9zYYMPGz919MSX1KuvAcycIuS0ci150HCoPf4XQVhQ84Qf8xRPWxFaQ==
+  dependencies:
+    debug "^3.1.0"
+    koa-send "^5.0.0"
+
 koa@^2.11.0:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/koa/-/koa-2.11.0.tgz#fe5a51c46f566d27632dd5dc8fd5d7dd44f935a4"
@@ -6971,6 +7004,15 @@ multicast-dns@^6.0.1:
   dependencies:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
+
+mz@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/mz/-/mz-2.7.0.tgz#95008057a56cafadc2bc63dde7f9ff6955948e32"
+  integrity sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==
+  dependencies:
+    any-promise "^1.0.0"
+    object-assign "^4.0.1"
+    thenify-all "^1.0.0"
 
 nan@^2.12.1:
   version "2.14.0"
@@ -7563,7 +7605,7 @@ path-exists@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-exists/-/path-exists-4.0.0.tgz#513bdbe2d3b95d7762e8c1137efa195c6c61b5b3"
   integrity sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==
 
-path-is-absolute@^1.0.0:
+path-is-absolute@1.0.1, path-is-absolute@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/path-is-absolute/-/path-is-absolute-1.0.1.tgz#174b9268735534ffbc7ace6bf53a5a9e1b5c5f5f"
   integrity sha1-F0uSaHNVNP+8es5r9TpanhtcX18=
@@ -8885,6 +8927,14 @@ resolve-from@^5.0.0:
   resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-5.0.0.tgz#c35225843df8f776df21c57557bc087e9dfdfc69"
   integrity sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==
 
+resolve-path@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/resolve-path/-/resolve-path-1.4.0.tgz#c4bda9f5efb2fce65247873ab36bb4d834fe16f7"
+  integrity sha1-xL2p9e+y/OZSR4c6s2u02DT+Fvc=
+  dependencies:
+    http-errors "~1.6.2"
+    path-is-absolute "1.0.1"
+
 resolve-pathname@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/resolve-pathname/-/resolve-pathname-3.0.0.tgz#99d02224d3cf263689becbb393bc560313025dcd"
@@ -9836,6 +9886,20 @@ theme-ui@^0.3.1:
     "@theme-ui/css" "^0.3.1"
     "@theme-ui/mdx" "^0.3.0"
     "@theme-ui/theme-provider" "^0.3.1"
+
+thenify-all@^1.0.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/thenify-all/-/thenify-all-1.6.0.tgz#1a1918d402d8fc3f98fbf234db0bcc8cc10e9726"
+  integrity sha1-GhkY1ALY/D+Y+/I02wvMjMEOlyY=
+  dependencies:
+    thenify ">= 3.1.0 < 4"
+
+"thenify@>= 3.1.0 < 4":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/thenify/-/thenify-3.3.0.tgz#e69e38a1babe969b0108207978b9f62b88604839"
+  integrity sha1-5p44obq+lpsBCCB5eLn2K4hgSDk=
+  dependencies:
+    any-promise "^1.0.0"
 
 throat@^4.0.0, throat@^4.1.0:
   version "4.1.0"
