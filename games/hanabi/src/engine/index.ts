@@ -55,56 +55,70 @@ const engine: GameEngine<State, Action, Config> = {
     action: Action,
   ) =>
     produce(getGame().state, state => {
-      const prevDeckSize = state.board.deck.length;
-      if (action.type === "play") {
-        const card = state.board.hands[state.currentPlayer].splice(
-          action.cardIdx,
-          1,
-        )[0];
-        if (state.board.piles[card.color] === card.num - 1) {
-          state.board.piles[card.color] = card.num;
-          if (
-            card.num == 5 &&
-            state.board.infoTokens < getGame().config.infoTokens
-          ) {
+      // Reordering cards does not finish your turn
+      if (action.type === "move") {
+        const playerIdx = Object.keys(getGame().players).indexOf(
+          action.playerId,
+        );
+        const card = state.board.hands[playerIdx][action.cardIdx];
+        state.board.hands[playerIdx].splice(action.cardIdx, 1);
+        const newPos =
+          action.direction == "right" ? action.cardIdx + 1 : action.cardIdx - 1;
+        state.board.hands[playerIdx].splice(newPos, 0, card);
+      } else {
+        const prevDeckSize = state.board.deck.length;
+        if (action.type === "play") {
+          const card = state.board.hands[state.currentPlayer].splice(
+            action.cardIdx,
+            1,
+          )[0];
+          if (state.board.piles[card.color] === card.num - 1) {
+            state.board.piles[card.color] = card.num;
+            if (
+              card.num == 5 &&
+              state.board.infoTokens < getGame().config.infoTokens
+            ) {
+              state.board.infoTokens += 1;
+            }
+          } else {
+            state.board.discardPile.push(card);
+            state.board.fuseTokens -= 1;
+          }
+          const drawnCard = state.board.deck.shift();
+          if (drawnCard) {
+            // The newly drawn card will always be the rightmost one
+            state.board.hands[state.currentPlayer].push(drawnCard);
+          }
+        } else if (action.type === "discard") {
+          const card = state.board.hands[state.currentPlayer].splice(
+            action.cardIdx,
+            1,
+          )[0];
+          state.board.discardPile.push(card);
+          if (state.board.infoTokens < getGame().config.infoTokens) {
             state.board.infoTokens += 1;
           }
-        } else {
-          state.board.discardPile.push(card);
-          state.board.fuseTokens -= 1;
+          const drawnCard = state.board.deck.shift();
+          if (drawnCard) {
+            state.board.hands[state.currentPlayer].push(drawnCard);
+          }
+        } else if (action.type === "info") {
+          if (state.board.infoTokens <= 0) {
+            throw new Error("No information tokens left.");
+          }
+          state.board.infoTokens -= 1;
         }
-        const drawnCard = state.board.deck.shift();
-        if (drawnCard) {
-          // The newly drawn card will always be the rightmost one
-          state.board.hands[state.currentPlayer].push(drawnCard);
+        if (
+          checkForFinish(state.board, state.currentPlayer, state.finalPlayer)
+        ) {
+          state.finished = true;
         }
-      } else if (action.type === "discard") {
-        const card = state.board.hands[state.currentPlayer].splice(
-          action.cardIdx,
-          1,
-        )[0];
-        state.board.discardPile.push(card);
-        if (state.board.infoTokens < getGame().config.infoTokens) {
-          state.board.infoTokens += 1;
+        if (prevDeckSize == 1 && state.board.deck.length === 0) {
+          state.finalPlayer = state.currentPlayer;
         }
-        const drawnCard = state.board.deck.shift();
-        if (drawnCard) {
-          state.board.hands[state.currentPlayer].push(drawnCard);
-        }
-      } else if (action.type === "info") {
-        if (state.board.infoTokens <= 0) {
-          throw new Error("No information tokens left.");
-        }
-        state.board.infoTokens -= 1;
+        state.currentPlayer =
+          (state.currentPlayer + 1) % Object.keys(getGame().players).length;
       }
-      if (checkForFinish(state.board, state.currentPlayer, state.finalPlayer)) {
-        state.finished = true;
-      }
-      if (prevDeckSize == 1 && state.board.deck.length === 0) {
-        state.finalPlayer = state.currentPlayer;
-      }
-      state.currentPlayer =
-        (state.currentPlayer + 1) % Object.keys(getGame().players).length;
     }),
 };
 export default engine;

@@ -46,4 +46,11 @@ export interface InfoAction {
   playerId: string;
 }
 
-export type Action = PlayAction | DiscardAction | InfoAction;
+export interface MoveAction {
+  type: "move";
+  playerId: string;
+  cardIdx: number;
+  direction: "left" | "right";
+}
+
+export type Action = PlayAction | DiscardAction | InfoAction | MoveAction;

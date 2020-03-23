@@ -1,12 +1,14 @@
 import * as React from "react";
 import { State, Action, Config, Card, Color } from "../api";
 import { ConfigProps, BoardProps, StartedGame } from "@board-at-home/api";
-import { Button, Flex, Box, Label, Input } from "theme-ui";
+import { Button, Flex, Box, Label, Input, IconButton } from "theme-ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInfoCircle,
   faBomb,
   faTrash,
+  faArrowRight,
+  faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import * as _ from "lodash";
 
@@ -96,10 +98,14 @@ const ActionableCard = ({
   canAct,
   onPlay,
   onDiscard,
+  onMoveLeft,
+  onMoveRight,
 }: {
   canAct: boolean;
   onPlay: () => any;
   onDiscard: () => any;
+  onMoveLeft?: () => any;
+  onMoveRight?: () => any;
 }) => (
   <Flex sx={{ flexDirection: "column" }} m={2}>
     <div
@@ -118,6 +124,20 @@ const ActionableCard = ({
     >
       ?
     </div>
+    <Flex sx={{ justifyContent: "space-between" }}>
+      {onMoveLeft ? (
+        <IconButton onClick={onMoveLeft}>
+          <FontAwesomeIcon icon={faArrowLeft} style={{ margin: "5px" }} />
+        </IconButton>
+      ) : (
+        <div />
+      )}
+      {onMoveRight && (
+        <IconButton onClick={onMoveRight}>
+          <FontAwesomeIcon icon={faArrowRight} style={{ margin: "5px" }} />
+        </IconButton>
+      )}
+    </Flex>
     {canAct && (
       <Button onClick={onPlay} sx={{ fontSize: "14px" }} mb={1}>
         Play
@@ -141,12 +161,17 @@ const Tokens = ({
   icon: any;
 }) => (
   <Box m={1}>
-    {_.range(num).map(_ => (
-      <FontAwesomeIcon icon={icon} style={{ margin: "5px" }} />
+    {_.range(num).map(idx => (
+      <FontAwesomeIcon
+        key={`have_${idx}`}
+        icon={icon}
+        style={{ margin: "5px" }}
+      />
     ))}
-    {_.range(total - num).map(_ => (
+    {_.range(total - num).map(idx => (
       <FontAwesomeIcon
         icon={icon}
+        key={`used_${idx}`}
         style={{ margin: "5px" }}
         color="lightgrey"
       />
@@ -175,11 +200,34 @@ export const Board = ({
         <Flex mb={3}>
           {game.state.board.hands[playerIdx].map((_card, cardIdx) => (
             <ActionableCard
+              key={cardIdx}
               canAct={
                 !game.state.finished && game.state.currentPlayer == playerIdx
               }
               onPlay={() => act({ type: "play", playerId, cardIdx })}
               onDiscard={() => act({ type: "discard", playerId, cardIdx })}
+              onMoveLeft={
+                cardIdx > 0
+                  ? () =>
+                      act({
+                        type: "move",
+                        playerId,
+                        cardIdx,
+                        direction: "left",
+                      })
+                  : undefined
+              }
+              onMoveRight={
+                cardIdx < game.state.board.hands[playerIdx].length - 1
+                  ? () =>
+                      act({
+                        type: "move",
+                        playerId,
+                        cardIdx,
+                        direction: "right",
+                      })
+                  : undefined
+              }
             />
           ))}
         </Flex>
@@ -192,14 +240,14 @@ export const Board = ({
           )}
         {Object.keys(game.players).map((id, idx) =>
           id != playerId ? (
-            <Flex sx={{ alignItems: "center" }}>
+            <Flex sx={{ alignItems: "center" }} key={id}>
               {game.players[id].name || game.players[id].id}'s hand:{" "}
-              {game.state.board.hands[idx].map(card => (
-                <CardDisplay card={card} />
+              {game.state.board.hands[idx].map((card, cardIdx) => (
+                <CardDisplay card={card} key={cardIdx} />
               ))}
             </Flex>
           ) : (
-            <div />
+            <div key={id} />
           ),
         )}
       </Flex>
@@ -219,9 +267,10 @@ export const Board = ({
             game.state.board.piles[color] > 0 ? (
               <CardDisplay
                 card={{ color, num: game.state.board.piles[color] }}
+                key={color}
               />
             ) : (
-              <div style={{ height: CARD_HEIGHT }} />
+              <div style={{ height: CARD_HEIGHT }} key={color} />
             ),
           )}
         </Flex>
@@ -246,8 +295,8 @@ export const Board = ({
           {game.state.board.discardPile.length > 0 && (
             <FontAwesomeIcon icon={faTrash} />
           )}
-          {game.state.board.discardPile.map(card => (
-            <CardDisplay card={card} />
+          {game.state.board.discardPile.map((card, idx) => (
+            <CardDisplay card={card} key={idx} />
           ))}
         </Flex>
       </Flex>
