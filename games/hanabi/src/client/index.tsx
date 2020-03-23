@@ -1,15 +1,7 @@
 import * as React from "react";
-import {
-  State,
-  Action,
-  Config,
-  Card,
-  Color,
-  MAX_INFO_TOKENS,
-  MAX_FUSE_TOKENS,
-} from "../api";
+import { State, Action, Config, Card, Color } from "../api";
 import { ConfigProps, BoardProps, StartedGame } from "@board-at-home/api";
-import { Button, Flex, Box } from "theme-ui";
+import { Button, Flex, Box, Label, Input } from "theme-ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInfoCircle,
@@ -20,14 +12,43 @@ import * as _ from "lodash";
 
 export const defaultConfig: Config = {
   gameType: "basic",
+  infoTokens: 8,
+  fuseTokens: 3,
 };
 
-export const ConfigPanel = (_props: ConfigProps<Config>) => (
-  <div>
-    <label>Game type:</label> Basic (Sorry, 🌈rainbow🌈 is not supported yet)
-  </div>
+export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
+  <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
+    <Label mb={1}>
+      Game type: Basic (Sorry, 🌈rainbow🌈 is not supported yet)
+    </Label>
+    <Label sx={{ alignItems: "center", width: "180px" }}>
+      <Input
+        type="number"
+        min="1"
+        max="20"
+        value={config.infoTokens}
+        onChange={e => setConfig({ infoTokens: parseInt(e.target.value, 10) })}
+        mb={1}
+        mr={1}
+        sx={{ width: "50px" }}
+      />
+      information tokens
+    </Label>
+    <Label sx={{ alignItems: "center", width: "180px" }}>
+      <Input
+        type="number"
+        min="1"
+        max="10"
+        value={config.fuseTokens}
+        onChange={e => setConfig({ fuseTokens: parseInt(e.target.value, 10) })}
+        mb={1}
+        mr={1}
+        sx={{ width: "50px" }}
+      />
+      fuse tokens
+    </Label>
+  </Flex>
 );
-
 const Message = ({
   game,
   playerId,
@@ -206,12 +227,12 @@ export const Board = ({
         </Flex>
         <Tokens
           num={game.state.board.infoTokens}
-          total={MAX_INFO_TOKENS}
+          total={game.config.infoTokens}
           icon={faInfoCircle}
         />
         <Tokens
           num={game.state.board.fuseTokens}
-          total={MAX_FUSE_TOKENS}
+          total={game.config.fuseTokens}
           icon={faBomb}
         />
         <Flex

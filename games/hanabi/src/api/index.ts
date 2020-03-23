@@ -1,5 +1,7 @@
 export interface Config {
   gameType: "basic" | "rainbowIsItsOwnColor" | "rainbowIsAnyColor";
+  infoTokens: number;
+  fuseTokens: number;
 }
 // TODO: The Royal Favor variant doesn't use scoring and players keep on playing even after the deck is gone, having potentially fewer cards in hands. Completing all fireworks till 5 is a win, anything else is a loss for all players. The game ends immediately when a player would start a turn with no cards in hand.
 
@@ -45,7 +47,3 @@ export interface InfoAction {
 }
 
 export type Action = PlayAction | DiscardAction | InfoAction;
-
-// TODO: make these configurable
-export const MAX_INFO_TOKENS = 8;
-export const MAX_FUSE_TOKENS = 3;

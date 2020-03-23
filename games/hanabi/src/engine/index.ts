@@ -1,13 +1,5 @@
 import { GameEngine, UnstartedGame, StartedGame } from "@board-at-home/api";
-import {
-  State,
-  Action,
-  Config,
-  Board,
-  Card,
-  MAX_INFO_TOKENS,
-  MAX_FUSE_TOKENS,
-} from "../api";
+import { State, Action, Config, Board, Card } from "../api";
 import { createDeck, deal } from "./deck";
 import * as _ from "lodash";
 import produce from "immer";
@@ -50,8 +42,8 @@ const engine: GameEngine<State, Action, Config> = {
         discardPile: [],
         deck,
         hands,
-        infoTokens: MAX_INFO_TOKENS,
-        fuseTokens: MAX_FUSE_TOKENS,
+        infoTokens: config.infoTokens,
+        fuseTokens: config.fuseTokens,
       },
       finished: false,
       currentPlayer: 0,
@@ -71,7 +63,10 @@ const engine: GameEngine<State, Action, Config> = {
         )[0];
         if (state.board.piles[card.color] === card.num - 1) {
           state.board.piles[card.color] = card.num;
-          if (card.num == 5 && state.board.infoTokens < MAX_INFO_TOKENS) {
+          if (
+            card.num == 5 &&
+            state.board.infoTokens < getGame().config.infoTokens
+          ) {
             state.board.infoTokens += 1;
           }
         } else {
@@ -89,7 +84,7 @@ const engine: GameEngine<State, Action, Config> = {
           1,
         )[0];
         state.board.discardPile.push(card);
-        if (state.board.infoTokens < MAX_INFO_TOKENS) {
+        if (state.board.infoTokens < getGame().config.infoTokens) {
           state.board.infoTokens += 1;
         }
         const drawnCard = state.board.deck.shift();
