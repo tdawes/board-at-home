@@ -25,9 +25,10 @@ export interface GameEngine<State, Action, Config> {
   isFull: (game: UnstartedGame) => boolean;
   start: (game: UnstartedGame, config: Config) => State;
   applyPlayerAction: (
-    game: StartedGame<State, Config>,
+    getGame: () => StartedGame<State, Config>,
     playerId: string,
     action: Action,
+    triggerServerAction: (action: Action, playerId: string) => void,
   ) => State;
 }
 
