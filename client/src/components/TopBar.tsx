@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTimes, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 export interface Props {
-  game: Game<any>;
+  game: Game<any, any>;
   player: Player;
 }
 

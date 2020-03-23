@@ -129,7 +129,9 @@ export default ({ code }: Props) => {
         ) : (
           <Board
             playerId={userId}
-            act={action => dispatch(applyPlayerAction)(code, userId, action)}
+            act={(action: any) =>
+              dispatch(applyPlayerAction)(code, userId, action)
+            }
             game={game}
           />
         )}

@@ -1,6 +1,7 @@
 import { GameEngine, UnstartedGame, StartedGame } from "@board-at-home/api";
 import { State, Action, Config, Board } from "../api";
-import * as _ from "lodash";
+import produce from "immer";
+import _ from "lodash";
 
 const checkForWin = (board: Board) => {
   // Rows
@@ -60,8 +61,7 @@ const engine: GameEngine<State, Action, Config> = {
     if (Object.keys(game.players).length < 2) {
       throw new Error("Game is not full.");
     }
-    ((game as any) as StartedGame<State>).started = true;
-    ((game as any) as StartedGame<State>).state = {
+    return {
       board: _.range(config.size).map(() =>
         _.range(config.size).map(() => null),
       ),
@@ -73,25 +73,25 @@ const engine: GameEngine<State, Action, Config> = {
     };
   },
   applyPlayerAction: (
-    game: StartedGame<State>,
+    game: StartedGame<State, Config>,
     playerId: string,
     action: Action,
-  ) => {
-    if (action.type === "play") {
-      if (game.state.board[action.x][action.y] !== null) {
-        throw new Error("Invalid move.");
+  ) =>
+    produce(game.state, state => {
+      if (action.type === "play") {
+        if (state.board[action.x][action.y] !== null) {
+          throw new Error("Invalid move.");
+        }
+        state.board[action.x][action.y] = playerId === state.firstPlayer;
       }
-      game.state.board[action.x][action.y] =
-        playerId === game.state.firstPlayer;
-    }
-    if (checkForWin(game.state.board)) {
-      game.state.finished = true;
-      game.state.winner = playerId;
-    } else if (checkForDraw(game.state.board)) {
-      game.state.finished = true;
-    } else {
-      game.state.firstPlayersTurn = !game.state.firstPlayersTurn;
-    }
-  },
+      if (checkForWin(state.board)) {
+        state.finished = true;
+        state.winner = playerId;
+      } else if (checkForDraw(state.board)) {
+        state.finished = true;
+      } else {
+        state.firstPlayersTurn = !state.firstPlayersTurn;
+      }
+    }),
 };
 export default engine;
