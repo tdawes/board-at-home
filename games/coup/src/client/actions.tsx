@@ -437,7 +437,12 @@ export const LoseInfluenceButton = ({
   act,
 }: BoardProps<State, Action, Config>) => {
   React.useEffect(() => {
-    if (game.state.players[playerId].liveCards.length <= 1) {
+    if (
+      game.state.players[playerId].liveCards.length <=
+      game.state.requiredUserInputs[playerId].filter(
+        userInput => userInput.type === "lose-influence",
+      ).length
+    ) {
       act({
         type: "lose-influence",
         playerId,
@@ -543,7 +548,6 @@ export default (props: BoardProps<State, Action, Config>) => {
       return (
         <div>
           {game.state.requiredUserInputs[playerId].map(userEvent => {
-            console.log(userEvent);
             if (userEvent.type === "decide-discard") {
               return <DecideDiscardButton event={userEvent} {...props} />;
             } else if (userEvent.type === "discard-card") {
@@ -626,12 +630,20 @@ export default (props: BoardProps<State, Action, Config>) => {
               {game.state.players[playerId].money >= 7 && (
                 <CoupButton {...props} />
               )}
-              {game.config.useExpansion && <EmbezzleButton {...props} />}
+              {game.config.useExpansion && game.state.treasury > 0 && (
+                <EmbezzleButton {...props} />
+              )}
               {game.config.useExpansion &&
+                Object.keys(game.state.players).filter(
+                  other => game.state.players[other].liveCards.length > 0,
+                ).length > 2 &&
                 game.state.players[playerId].money >= 1 && (
                   <ConvertSelfButton {...props} />
                 )}
               {game.config.useExpansion &&
+                Object.keys(game.state.players).filter(
+                  other => game.state.players[other].liveCards.length > 0,
+                ).length > 2 &&
                 game.state.players[playerId].money >= 2 && (
                   <ConvertOtherButton {...props} />
                 )}

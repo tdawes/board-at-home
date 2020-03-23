@@ -107,7 +107,9 @@ const OtherPlayers = ({
             Money: {game.state.players[other].money}{" "}
             {pluralize("coin", game.state.players[other].money)}
           </Flex>
-          <Flex>Team: {game.state.players[other].team}</Flex>
+          {game.config.useExpansion && (
+            <Flex>Team: {game.state.players[other].team}</Flex>
+          )}
         </Flex>
       ))}
   </Flex>
