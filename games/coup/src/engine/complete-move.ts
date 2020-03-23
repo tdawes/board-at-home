@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { State, Move } from "../api";
-import { nextPlayer } from "./utils";
+import { nextPlayer, killPlayer } from "./utils";
 
 const collectIncome = (state: State, playerId: string) => {
   state.players[playerId].money += 1;
@@ -13,9 +13,7 @@ const collectForeignAid = (state: State, playerId: string) => {
 const killCard = (state: State, target: string) => {
   const targetHand = state.players[target];
   if (targetHand.liveCards.length <= 1) {
-    targetHand.deadCards.push(...targetHand.liveCards);
-    targetHand.liveCards = [];
-    targetHand.money = 0;
+    killPlayer(state, target);
   } else {
     state.requiredUserInputs[target].push({ type: "lose-influence" });
   }

@@ -13,4 +13,13 @@ export const nextPlayer = (state: State) => {
   }
 };
 
+export const killPlayer = (state: State, playerId: string) => {
+  const playerHand = state.players[playerId];
+  playerHand.deadCards.push(...playerHand.liveCards);
+
+  playerHand.liveCards = [];
+  playerHand.money = 0;
+  state.requiredUserInputs[playerId] = [];
+};
+
 export const REACT_TIME = 15 * 1000;

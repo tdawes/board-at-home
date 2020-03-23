@@ -559,7 +559,9 @@ export default (props: BoardProps<State, Action, Config>) => {
 
   if (
     Object.keys(game.state.requiredUserInputs).some(
-      key => game.state.requiredUserInputs[key].length > 0,
+      other =>
+        game.state.players[other].liveCards.length > 0 &&
+        game.state.requiredUserInputs[other].length > 0,
     )
   ) {
     if (game.state.requiredUserInputs[playerId].length > 0) {

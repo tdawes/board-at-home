@@ -1,4 +1,5 @@
 import { State, Card } from "../api";
+import { killPlayer } from "./utils";
 
 export default (state: State, playerId: string, card: Card) => {
   const playerHand = state.players[playerId];
@@ -21,4 +22,8 @@ export default (state: State, playerId: string, card: Card) => {
     ),
     1,
   );
+
+  if (playerHand.liveCards.length <= 0) {
+    killPlayer(state, playerId);
+  }
 };
