@@ -8,8 +8,8 @@
     "games/*"
   ],
   "scripts": {
-    "build": "set -ex; tsc --build",
-    "build:watch": "yarn build --watch",
+    "build": "set -ex; tsc --build && yarn workspace @board-at-home/client build && yarn workspace @board-at-home/server build",
+    "build:watch": "set -ex; tsc --build --watch",
     "build:client": "yarn workspace @board-at-home/client build",
     "start:client": "yarn workspace @board-at-home/client start",
     "build:server": "yarn workspace @board-at-home/server build",
