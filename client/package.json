@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "NODE_ENV=development webpack-dev-server --config webpack.config.js --mode=development --history-api-fallback --hot",
-    "build": "yarpm run clean && NODE_ENV=production webpack -p",
+    "build": "yarn run clean && NODE_ENV=production webpack -p",
     "lint": "tslint -p .",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "test": "echo 'No tests implemented.'"
@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@board-at-home/api": "*",
+    "@board-at-home/coup": "*",
     "@board-at-home/tic-tac-toe": "*",
     "@board-at-home/hanabi": "*",
     "@emotion/core": "^10.0.28",

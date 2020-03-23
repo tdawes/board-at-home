@@ -58,11 +58,11 @@ const engine: GameEngine<State, Action, Config> = {
     };
   },
   applyPlayerAction: (
-    game: StartedGame<State, Config>,
+    getGame: () => StartedGame<State, Config>,
     _playerId: string,
     action: Action,
   ) =>
-    produce(game.state, state => {
+    produce(getGame().state, state => {
       const prevDeckSize = state.board.deck.length;
       if (action.type === "play") {
         const card = state.board.hands[state.currentPlayer].splice(
@@ -109,7 +109,7 @@ const engine: GameEngine<State, Action, Config> = {
         state.finalPlayer = state.currentPlayer;
       }
       state.currentPlayer =
-        (state.currentPlayer + 1) % Object.keys(game.players).length;
+        (state.currentPlayer + 1) % Object.keys(getGame().players).length;
     }),
 };
 export default engine;

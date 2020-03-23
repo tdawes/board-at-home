@@ -5,6 +5,7 @@
     { "path": "server" },
     { "path": "packages/api" },
     { "path": "games/tic-tac-toe" },
+    { "path": "games/coup" },
     { "path": "games/hanabi" }
   ]
 }
