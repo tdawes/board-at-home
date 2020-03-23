@@ -253,7 +253,7 @@ export const Board = ({
       <Actions game={game} playerId={playerId} act={act} />
     </Flex>
     <Flex sx={{ flexDirection: "column" }}>
-      {game.state.history.map(event => (
+      {game.state.history.slice(-10).map(event => (
         <Log game={game} event={event} />
       ))}
     </Flex>
