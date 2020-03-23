@@ -6,7 +6,7 @@ import { Game } from "@board-at-home/api";
 
 export interface State {
   socket?: SocketIOClient.Socket;
-  game?: Game<any>;
+  game?: Game<any, any>;
   serverMessage?: string;
 }
 

@@ -19,7 +19,7 @@ const Message = ({
   game,
   playerId,
 }: {
-  game: StartedGame<State>;
+  game: StartedGame<State, Config>;
   playerId: string;
 }) => {
   if (game.state.finished) {
@@ -75,7 +75,11 @@ const ActionableCard = ({
 );
 
 // TODO: pretty display with something resembling cards and tokens
-export const Board = ({ game, playerId, act }: BoardProps<State, Action>) => (
+export const Board = ({
+  game,
+  playerId,
+  act,
+}: BoardProps<State, Action, Config>) => (
   <div className="board" style={{ display: "flex", flexDirection: "column" }}>
     <Message playerId={playerId} game={game} />
     <div>Information tokens left: {game.state.board.infoTokens}</div>

@@ -1,14 +1,14 @@
 /** @jsx jsx */
 import * as React from "react";
 import { Game, Player } from "@board-at-home/api/src";
-import { jsx, Button, Input, Flex } from "theme-ui";
+import { jsx, Input, Flex, Heading, Divider, IconButton } from "theme-ui";
 import { dispatch } from "../model";
 import { setPlayerName } from "../actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTimes, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 export interface Props {
-  game: Game<any>;
+  game: Game<any, any>;
   player: Player;
 }
 
@@ -46,44 +46,56 @@ const PlayerName = ({ code, player }: { code: string; player: Player }) => {
             }
           }}
         />
-        <Button onClick={submit} ml={1} mr={1}>
+        <IconButton onClick={submit} ml={1}>
           <FontAwesomeIcon icon={faCheck} />
-        </Button>
-        <Button
+        </IconButton>
+        <IconButton
           onClick={() => {
             setEditing(false);
             setTempValue(player.name || "");
           }}
+          ml={1}
         >
           <FontAwesomeIcon icon={faTimes} />
-        </Button>
+        </IconButton>
       </Flex>
     );
   }
 
   return (
-    <Flex sx={{ alignItems: "center" }}>
-      <div sx={{ m: 2 }}>{player.name}</div>
-      <Button sx={{ p: 2 }} onClick={() => setEditing(true)}>
+    <Flex sx={{ alignItems: "baseline" }}>
+      <div>
+        Player name: <b>{player.name || player.id}</b>
+      </div>
+      <IconButton onClick={() => setEditing(true)} ml={1}>
         <FontAwesomeIcon icon={faEdit} />
-      </Button>
+      </IconButton>
     </Flex>
   );
 };
 
 export default ({ game, player }: Props) => (
-  <Flex
-    sx={{
-      width: "100%",
-      height: "100px",
-      justifyContent: "space-around",
-      alignItems: "center",
-    }}
-  >
-    <div>{game.type}</div>
-    <div>Game Code: {game.code}</div>
-    <Flex sx={{ m: 2, alignItems: "center" }}>
-      Enter a name: <PlayerName code={game.code} player={player} />
+  <div>
+    <Flex
+      sx={{
+        width: "100%",
+        height: "50px",
+        justifyContent: "space-between",
+        alignItems: "flex-end",
+      }}
+    >
+      <Flex
+        sx={{
+          alignItems: "baseline",
+        }}
+      >
+        <Heading as="h1" mr={2}>
+          {game.type}
+        </Heading>
+        code: {game.code}
+      </Flex>
+      <PlayerName code={game.code} player={player} />
     </Flex>
-  </Flex>
+    <Divider mb={3} />
+  </div>
 );

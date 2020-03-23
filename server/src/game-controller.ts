@@ -9,6 +9,7 @@ import {
 import ticTacToe from "@board-at-home/tic-tac-toe/dist/engine";
 import hanabi from "@board-at-home/hanabi/dist/engine";
 import { randomCode } from "./utils";
+import produce from "immer";
 
 export interface GameController {
   newGame: (type: string, owner: string) => string;
@@ -16,8 +17,8 @@ export interface GameController {
   kickPlayer: (code: string, id: string) => void;
   setPlayerName: (code: string, playerId: string, name: string) => void;
   startGame: (code: string, config: any) => void;
-  listGames: () => Game<any>[];
-  getGame: <S>(code: string) => Game<S>;
+  listGames: () => Game<any, any>[];
+  getGame: <S, C>(code: string) => Game<S, C>;
   applyPlayerAction: (code: string, playerId: string, action: any) => void;
 }
 
@@ -36,7 +37,7 @@ const getEngine = (type: string) => {
 };
 
 export default (): GameController => {
-  const store = new MemoryCache.Cache<string, Game<any>>();
+  const store = new MemoryCache.Cache<string, Game<any, any>>();
 
   const newCode = () => {
     while (true) {
@@ -54,7 +55,7 @@ export default (): GameController => {
     }
   };
 
-  const assertHasPlayer = (game: Game<any>, playerId: string) => {
+  const assertHasPlayer = (game: Game<any, any>, playerId: string) => {
     const player = game.players[playerId];
     if (player == null) {
       throw new Error("Player is not in the game.");
@@ -62,47 +63,63 @@ export default (): GameController => {
   };
 
   const assertGameNotStarted: (
-    game: Game<any>,
-  ) => asserts game is UnstartedGame = (game: Game<any>) => {
+    game: Game<any, any>,
+  ) => asserts game is UnstartedGame = (game: Game<any, any>) => {
     if (game.started) {
       throw new Error("Game has already started.");
     }
   };
 
   const assertGameStarted: (
-    game: Game<any>,
-  ) => asserts game is StartedGame<any> = (game: Game<any>) => {
+    game: Game<any, any>,
+  ) => asserts game is StartedGame<any, any> = (game: Game<any, any>) => {
     if (!game.started) {
       throw new Error("Game has not started yet.");
     }
   };
 
-  const getGame = <S>(code: string): Game<S> => {
+  const getGame = <S, C>(code: string): Game<S, C> => {
     assertHasGame(code);
-    return store.get(code) as Game<S>;
+    return store.get(code) as Game<S, C>;
   };
 
-  const getPlayer = (game: Game<any>, playerId: string): Player => {
+  const getPlayer = (game: Game<any, any>, playerId: string): Player => {
     assertHasPlayer(game, playerId);
     return game.players[playerId];
   };
 
-  const refresh = (game: Game<any>) =>
-    store.put(game.code, game, GAME_LIFESPAN);
+  const updateGame: {
+    <S, C>(
+      game: UnstartedGame,
+      updateFunction?: (game: UnstartedGame) => Game<S, C> | void,
+    ): void;
+    <S, C>(
+      game: StartedGame<S, C>,
+      updateFunction?: (game: StartedGame<S, C>) => Game<S, C> | void,
+    ): void;
+    <S, C>(
+      game: Game<S, C>,
+      updateFunction?: (game: Game<S, C>) => Game<S, C> | void,
+    ): void;
+  } = (<S, C>(
+    game: Game<S, C>,
+    updateFunction?: (game: Game<S, C>) => Game<S, C> | void,
+  ) =>
+    store.put(
+      game.code,
+      updateFunction ? produce(game, updateFunction) : game,
+      GAME_LIFESPAN,
+    )) as any;
 
   const newGame = (type: string, owner: string) => {
     const code = newCode();
-    store.put(
+    updateGame({
+      type,
       code,
-      {
-        type,
-        code,
-        owner: owner,
-        players: { [owner]: { id: owner } },
-        started: false,
-      },
-      GAME_LIFESPAN,
-    );
+      owner: owner,
+      players: { [owner]: { id: owner } },
+      started: false,
+    });
     return code;
   };
 
@@ -115,7 +132,9 @@ export default (): GameController => {
       if (getEngine(game.type).isFull(game)) {
         throw new Error("Game is full.");
       }
-      players[player] = { id: player };
+      updateGame(game, g => {
+        g.players[player] = { id: player };
+      });
     }
   };
 
@@ -124,7 +143,9 @@ export default (): GameController => {
 
     assertGameNotStarted(game);
 
-    delete game.players[player];
+    updateGame(game, g => {
+      delete g.players[player];
+    });
   };
 
   const setPlayerName = (code: string, playerId: string, name: string) => {
@@ -132,12 +153,14 @@ export default (): GameController => {
 
     assertGameNotStarted(game);
 
-    const player = getPlayer(game, playerId);
-    player.name = name;
+    updateGame(game, game => {
+      const player = getPlayer(game, playerId);
+      player.name = name;
+    });
   };
 
   const listGames = () =>
-    store.keys().map(key => store.get(key)) as Game<any>[];
+    store.keys().map(key => store.get(key)) as Game<any, any>[];
 
   const startGame = (code: string, config: any) => {
     const game = getGame(code);
@@ -146,9 +169,14 @@ export default (): GameController => {
       throw new Error("Game has already started.");
     }
 
-    getEngine(game.type).start(game, config);
-
-    refresh(game);
+    updateGame(game, game => {
+      return {
+        ...game,
+        started: true,
+        config,
+        state: getEngine(game.type).start(game as UnstartedGame, config),
+      };
+    });
   };
 
   const applyPlayerAction = (code: string, playerId: string, action: any) => {
@@ -157,9 +185,13 @@ export default (): GameController => {
     assertHasPlayer(game, playerId);
     assertGameStarted(game);
 
-    getEngine(game.type).applyPlayerAction(game, playerId, action);
-
-    refresh(game);
+    updateGame(game, (game: StartedGame<any, any>) => {
+      game.state = getEngine(game.type).applyPlayerAction(
+        game,
+        playerId,
+        action,
+      );
+    });
   };
 
   return {

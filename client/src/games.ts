@@ -12,7 +12,7 @@ import { BoardProps, ConfigProps } from "@board-at-home/api";
 
 export interface GameFrontend<State, Action, Config> {
   ConfigPanel: React.ComponentType<ConfigProps<Config>>;
-  Board: React.ComponentType<BoardProps<State, Action>>;
+  Board: React.ComponentType<BoardProps<State, Action, Config>>;
   defaultConfig: Config;
 }
 

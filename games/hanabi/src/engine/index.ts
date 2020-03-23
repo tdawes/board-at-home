@@ -2,6 +2,7 @@ import { GameEngine, UnstartedGame, StartedGame } from "@board-at-home/api";
 import { State, Action, Config, Board, Card } from "../api";
 import { createDeck, deal } from "./deck";
 import * as _ from "lodash";
+import produce from "immer";
 
 const checkForFinish = (board: Board) => {
   // TODO Check if game is impossible to win? (Have this as config option?)
@@ -17,11 +18,12 @@ const MAX_FUSE_TOKENS = 3;
 
 const engine: GameEngine<State, Action, Config> = {
   isFull: (game: UnstartedGame) => Object.keys(game.players).length >= 2, // 2-5
-  start: (game: UnstartedGame, _config: Config) => {
+  start: (game: UnstartedGame, config: Config) => {
     console.log(
       game.players,
       Object.keys(game.players),
       Object.keys(game.players).length,
+      config,
     );
     if (Object.keys(game.players).length > 5) {
       throw new Error("Game is too full.");
@@ -29,10 +31,9 @@ const engine: GameEngine<State, Action, Config> = {
     if (Object.keys(game.players).length < 2) {
       throw new Error("Game is not full.");
     }
-    ((game as any) as StartedGame<State>).started = true;
     const deck: Card[] = createDeck();
     const hands: Card[][] = deal(deck, Object.keys(game.players).length);
-    ((game as any) as StartedGame<State>).state = {
+    return {
       board: {
         piles: { red: 0, green: 0, blue: 0, white: 0, yellow: 0 },
         discardPile: [],
@@ -46,56 +47,57 @@ const engine: GameEngine<State, Action, Config> = {
     };
   },
   applyPlayerAction: (
-    game: StartedGame<State>,
+    game: StartedGame<State, Config>,
     _playerId: string,
     action: Action,
-  ) => {
-    if (action.type === "play") {
-      const card = game.state.board.hands[game.state.currentPlayer].splice(
-        action.cardIdx,
-        1,
-      )[0];
-      if (game.state.board.piles[card.color] === card.num - 1) {
-        game.state.board.piles[card.color] = card.num;
-        if (card.num == 5 && game.state.board.infoTokens < MAX_INFO_TOKENS) {
-          game.state.board.infoTokens += 1;
+  ) =>
+    produce(game.state, state => {
+      if (action.type === "play") {
+        const card = state.board.hands[state.currentPlayer].splice(
+          action.cardIdx,
+          1,
+        )[0];
+        if (state.board.piles[card.color] === card.num - 1) {
+          state.board.piles[card.color] = card.num;
+          if (card.num == 5 && state.board.infoTokens < MAX_INFO_TOKENS) {
+            state.board.infoTokens += 1;
+          }
+        } else {
+          state.board.discardPile.push(card);
+          state.board.fuseTokens -= 1;
         }
-      } else {
-        game.state.board.discardPile.push(card);
-        game.state.board.fuseTokens -= 1;
+        // TODO maintain order, or allow user to reorder and make notes?
+        // At least clarify which card is newly drawn?
+        const drawnCard = state.board.deck.shift();
+        if (drawnCard) {
+          state.board.hands[state.currentPlayer].push(drawnCard);
+        }
+      } else if (action.type === "discard") {
+        const card = state.board.hands[state.currentPlayer].splice(
+          action.cardIdx,
+          1,
+        )[0];
+        state.board.discardPile.push(card);
+        if (state.board.infoTokens < MAX_INFO_TOKENS) {
+          state.board.infoTokens += 1;
+        }
+        // TODO maintain order, or allow user to reorder and make notes?
+        // At least clarify which card is newly drawn?
+        const drawnCard = state.board.deck.shift();
+        if (drawnCard) {
+          state.board.hands[state.currentPlayer].push(drawnCard);
+        }
+      } else if (action.type === "info") {
+        if (state.board.infoTokens <= 0) {
+          throw new Error("No information tokens left.");
+        }
+        state.board.infoTokens -= 1;
       }
-      // TODO maintain order, or allow user to reorder and make notes?
-      // At least clarify which card is newly drawn?
-      const drawnCard = game.state.board.deck.shift();
-      if (drawnCard) {
-        game.state.board.hands[game.state.currentPlayer].push(drawnCard);
+      if (checkForFinish(state.board)) {
+        state.finished = true;
       }
-    } else if (action.type === "discard") {
-      const card = game.state.board.hands[game.state.currentPlayer].splice(
-        action.cardIdx,
-        1,
-      )[0];
-      game.state.board.discardPile.push(card);
-      if (game.state.board.infoTokens < MAX_INFO_TOKENS) {
-        game.state.board.infoTokens += 1;
-      }
-      // TODO maintain order, or allow user to reorder and make notes?
-      // At least clarify which card is newly drawn?
-      const drawnCard = game.state.board.deck.shift();
-      if (drawnCard) {
-        game.state.board.hands[game.state.currentPlayer].push(drawnCard);
-      }
-    } else if (action.type === "info") {
-      if (game.state.board.infoTokens <= 0) {
-        throw new Error("No information tokens left.");
-      }
-      game.state.board.infoTokens -= 1;
-    }
-    if (checkForFinish(game.state.board)) {
-      game.state.finished = true;
-    }
-    game.state.currentPlayer =
-      (game.state.currentPlayer + 1) % Object.keys(game.players).length;
-  },
+      state.currentPlayer =
+        (state.currentPlayer + 1) % Object.keys(game.players).length;
+    }),
 };
 export default engine;
