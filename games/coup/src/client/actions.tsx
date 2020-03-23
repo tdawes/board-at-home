@@ -627,7 +627,8 @@ export default (props: BoardProps<State, Action, Config>) => {
     !isCurrentPlayer(game.state, playerId) &&
     game.state.currentAction != null &&
     game.state.currentReaction == null &&
-    game.state.currentChallenge == null;
+    game.state.currentChallenge == null &&
+    !game.state.currentAction.accepted[playerId];
   const canChallenge =
     game.state.currentChallenge == null &&
     (game.state.currentAction != null || game.state.currentReaction != null) &&
