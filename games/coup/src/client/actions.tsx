@@ -22,12 +22,14 @@ const ChooseTargetModal = ({
   game,
   playerId,
   ownTeam,
+  onClose,
 }: {
   show?: boolean;
   onSelect: (target: string) => void;
   game: StartedGame<State, Config>;
   playerId: string;
   ownTeam?: boolean;
+  onClose: () => void;
 }) => {
   const otherPlayers = Object.keys(game.players).filter(
     other => other !== playerId,
@@ -46,6 +48,7 @@ const ChooseTargetModal = ({
           {game.players[other].name || other}
         </Button>
       ))}
+      <Button onClick={onClose}>Cancel</Button>
     </Modal>
   );
 };
@@ -104,6 +107,7 @@ const CoupButton = ({
         }}
         game={game}
         playerId={playerId}
+        onClose={() => setShowModal(false)}
       />
       <Button onClick={() => setShowModal(true)}>Coup</Button>
     </React.Fragment>
@@ -151,6 +155,7 @@ const ConvertOtherButton = ({
         game={game}
         playerId={playerId}
         ownTeam
+        onClose={() => setShowModal(false)}
       />
       <Button onClick={() => setShowModal(true)}>Recruit</Button>
     </React.Fragment>
@@ -188,6 +193,7 @@ const AssassinateButton = ({
         }}
         game={game}
         playerId={playerId}
+        onClose={() => setShowModal(false)}
       />
       <Button onClick={() => setShowModal(true)}>Assassinate</Button>
     </React.Fragment>
@@ -210,6 +216,7 @@ const StealButton = ({
         }}
         game={game}
         playerId={playerId}
+        onClose={() => setShowModal(false)}
       />
       <Button onClick={() => setShowModal(true)}>Steal</Button>
     </React.Fragment>
@@ -252,6 +259,7 @@ const ExamineButton = ({
         }}
         game={game}
         playerId={playerId}
+        onClose={() => setShowModal(false)}
       />
       <Button onClick={() => setShowModal(true)}>Examine</Button>
     </React.Fragment>
@@ -304,6 +312,7 @@ const BlockStealingButton = ({
             Ambassador
           </Button>
         )}
+        <Button onClick={() => setShowModal(false)}>Cancel</Button>
       </Modal>
       <Button onClick={() => setShowModal(true)}>Block Stealing</Button>
     </React.Fragment>
@@ -436,6 +445,7 @@ export const LoseInfluenceButton = ({
   playerId,
   act,
 }: BoardProps<State, Action, Config>) => {
+  const [ready, setReady] = React.useState(false);
   React.useEffect(() => {
     if (
       game.state.players[playerId].liveCards.length <=
@@ -448,8 +458,15 @@ export const LoseInfluenceButton = ({
         playerId,
         card: game.state.players[playerId].liveCards[0],
       });
+    } else {
+      setReady(true);
     }
   }, []);
+
+  if (!ready) {
+    return null;
+  }
+
   return (
     <div>
       <div>Choose a card to lose:</div>
