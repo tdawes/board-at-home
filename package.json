@@ -21,6 +21,7 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
+    "heroku": "^7.39.1",
     "prettier": "^1.19.1",
     "tslint": "^6.1.0",
     "tslint-config-prettier": "^1.18.0",
