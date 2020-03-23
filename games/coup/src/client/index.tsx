@@ -6,6 +6,7 @@ import pluralize from "pluralize";
 import Actions from "./actions";
 import { name } from "./utils";
 import _ from "lodash";
+import indefinite from "indefinite";
 
 export const defaultConfig: Config = {
   useExpansion: false,
@@ -185,9 +186,9 @@ const logMessage = (game: StartedGame<State, Config>, event: HistoryEvent) => {
       return `${name(game, event.playerId)} received tax with a Duke.`;
     }
   } else if (event.action.type === "react") {
-    return `${name(game, event.action.playerId)} blocked with a ${_.capitalize(
+    return `${name(game, event.action.playerId)} blocked with ${indefinite(
       event.action.card,
-    )}`;
+    )} ${_.capitalize(event.action.card)}`;
   } else if (event.action.type === "challenge") {
     return `${name(game, event.action.playerId)} challenged.`;
   } else if (event.action.type === "discard") {
@@ -208,13 +209,15 @@ const logMessage = (game: StartedGame<State, Config>, event: HistoryEvent) => {
     return `${name(
       game,
       event.action.playerId,
-    )} lost influence, and revealed a ${event.action.card}.`;
+    )} lost influence, and revealed ${indefinite(event.action.card)} ${
+      event.action.card
+    }.`;
   } else if (event.action.type === "respond-to-challenge") {
     if (event.action.succeed) {
       if (event.action.condition.type === "must-have") {
-        return `${name(game, event.action.playerId)} revealed a ${
-          event.action.condition.card
-        } and drew a new card.`;
+        return `${name(game, event.action.playerId)} revealed ${indefinite(
+          event.action.condition.card,
+        )} ${event.action.condition.card} and drew a new card.`;
       } else {
         return `${name(game, event.action.playerId)} revealed no ${
           event.action.condition.card
