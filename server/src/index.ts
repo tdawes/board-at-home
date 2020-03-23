@@ -7,6 +7,7 @@ import createSocketConnection from "./socket";
 import * as http from "http";
 import * as socket from "socket.io";
 import newGameController from "./game-controller";
+import * as path from "path";
 
 const PORT = process.env.PORT || 3000;
 
