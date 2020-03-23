@@ -23,7 +23,7 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 if (process.env.PUBLIC_DIR != null) {
-  const publicDir = path.resolve(__dirname, process.env.PUBLIC_DIR);
+  const publicDir = path.resolve(__dirname, "..", "..", process.env.PUBLIC_DIR);
   console.log(`Serving app from ${publicDir}.`)
 
   const www = serve(publicDir);
