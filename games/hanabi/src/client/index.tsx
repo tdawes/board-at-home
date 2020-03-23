@@ -36,10 +36,14 @@ const Message = ({
   playerId: string;
 }) => {
   if (game.state.finished) {
-    // TODO Calculate and display score
     if (_.every(Object.values(game.state.board.piles), num => num == 5)) {
       return <div>You won!</div>;
-    } else if (game.state.board.fuseTokens <= 0) return <div>You lost...</div>;
+    } else if (game.state.board.fuseTokens <= 0)
+      return (
+        <div>
+          You lost... Score: {_.sum(Object.values(game.state.board.piles))}
+        </div>
+      );
   }
   if (Object.keys(game.players)[game.state.currentPlayer] === playerId) {
     return <div>It's your turn.</div>;
@@ -131,7 +135,6 @@ const Tokens = ({
 
 const CARD_HEIGHT = "60px";
 
-// TODO: pretty display with something resembling cards and tokens
 export const Board = ({
   game,
   playerId,
