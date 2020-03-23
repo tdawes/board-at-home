@@ -7,6 +7,7 @@ import createSocketConnection from "./socket";
 import * as http from "http";
 import * as socket from "socket.io";
 import newGameController from "./game-controller";
+import * as path from "path";
 
 const PORT = process.env.PORT || 3000;
 
@@ -22,11 +23,15 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 if (process.env.PUBLIC_DIR != null) {
+  const publicDir = path.resolve(__dirname, "..", "..", process.env.PUBLIC_DIR);
+  console.log(`Serving app from ${publicDir}.`)
+
+  const www = serve(publicDir);
   // Serve built files
-  app.use(serve(process.env.PUBLIC_DIR));
+  app.use(www);
   // Serve index.html on other requests
   app.use(async (ctx, next) => {
-    await serve(process.env.PUBLIC_DIR!)({ ...ctx, path: "index.html" }, next);
+    await www({ ...ctx, path: "index.html" }, next);
   });
 }
 
