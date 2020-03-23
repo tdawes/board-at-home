@@ -32,7 +32,8 @@ const ChooseTargetModal = ({
   onClose: () => void;
 }) => {
   const otherPlayers = Object.keys(game.players).filter(
-    other => other !== playerId,
+    other =>
+      other !== playerId && game.state.players[other].liveCards.length > 0,
   );
   let possibleTargets = otherPlayers.filter(
     other =>
