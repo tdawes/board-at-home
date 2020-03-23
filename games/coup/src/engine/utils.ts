@@ -12,3 +12,5 @@ export const nextPlayer = (state: State) => {
     counter--;
   }
 };
+
+export const REACT_TIME = 15 * 1000;

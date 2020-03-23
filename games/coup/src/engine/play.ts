@@ -3,6 +3,7 @@ import _ from "lodash";
 import { completeMove } from "./complete-move";
 import { StartedGame } from "@board-at-home/api/src";
 import { v4 as uuid } from "uuid";
+import { REACT_TIME } from "./utils";
 
 const UNBLOCKABLE_ACTIONS: Move["type"][] = ["income", "coup", "convert"];
 
@@ -66,6 +67,6 @@ export default (
           playerId,
         );
       }
-    }, 5 * 1000);
+    }, REACT_TIME);
   }
 };

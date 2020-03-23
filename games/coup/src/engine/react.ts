@@ -1,6 +1,7 @@
 import { State, ReactAction, Config, Action } from "../api";
 import { StartedGame } from "@board-at-home/api";
 import { v4 as uuid } from "uuid";
+import { REACT_TIME } from "./utils";
 
 export default (
   state: State,
@@ -56,5 +57,5 @@ export default (
     ) {
       triggerServerAction({ type: "commit" }, playerId);
     }
-  }, 5 * 1000);
+  }, REACT_TIME);
 };
