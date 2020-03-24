@@ -32,24 +32,20 @@ export interface State {
 
 export interface PlayAction {
   type: "play";
-  playerId: string;
   cardIdx: number;
 }
 
 export interface DiscardAction {
   type: "discard";
-  playerId: string;
   cardIdx: number;
 }
 
 export interface InfoAction {
   type: "info";
-  playerId: string;
 }
 
 export interface MoveAction {
   type: "move";
-  playerId: string;
   cardIdx: number;
   direction: "left" | "right";
 }

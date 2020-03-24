@@ -5,6 +5,7 @@ import { Button, Flex, Box, Label, Input, IconButton } from "theme-ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInfoCircle,
+  faPlay,
   faBomb,
   faTrash,
   faArrowRight,
@@ -61,17 +62,18 @@ const Message = ({
   if (game.state.finished) {
     if (_.every(Object.values(game.state.board.piles), num => num == 5)) {
       return <div>You won!</div>;
-    } else if (game.state.board.fuseTokens <= 0)
-      return (
-        <div>
-          You lost... Score: {_.sum(Object.values(game.state.board.piles))}
-        </div>
-      );
+    }
+    return (
+      <div>
+        You lost... Score: {_.sum(Object.values(game.state.board.piles))}
+      </div>
+    );
   }
-  if (Object.keys(game.players)[game.state.currentPlayer] === playerId) {
+  const currentPlayer = Object.values(game.players)[game.state.currentPlayer];
+  if (currentPlayer.id === playerId) {
     return <div>It's your turn.</div>;
   }
-  return <div>Waiting for other players.</div>;
+  return <div>Waiting for {currentPlayer.name || currentPlayer.id}.</div>;
 };
 
 // TODO: make these styles fit into the theme components
@@ -155,13 +157,13 @@ const ActionableCard = ({
       )}
     </Flex>
     {canAct && (
-      <Button onClick={onPlay} sx={{ fontSize: "14px" }} mb={1}>
-        Play
+      <Button onClick={onPlay} sx={{ fontSize: "13px" }} mb={1}>
+        <FontAwesomeIcon icon={faPlay} /> Play
       </Button>
     )}
     {canAct && (
-      <Button onClick={onDiscard} sx={{ fontSize: "14px" }}>
-        Discard
+      <Button onClick={onDiscard} sx={{ fontSize: "13px" }}>
+        <FontAwesomeIcon icon={faTrash} /> Discard
       </Button>
     )}
   </Flex>
@@ -220,8 +222,8 @@ export const Board = ({
               key={cardIdx}
               canAct={canAct}
               selected={game.state.selectedCards[playerIdx].includes(cardIdx)}
-              onPlay={() => act({ type: "play", playerId, cardIdx })}
-              onDiscard={() => act({ type: "discard", playerId, cardIdx })}
+              onPlay={() => act({ type: "play", cardIdx })}
+              onDiscard={() => act({ type: "discard", cardIdx })}
               onSelect={
                 canAct
                   ? () => act({ type: "select", handIdx: playerIdx, cardIdx })
@@ -232,7 +234,6 @@ export const Board = ({
                   ? () =>
                       act({
                         type: "move",
-                        playerId,
                         cardIdx,
                         direction: "left",
                       })
@@ -243,7 +244,6 @@ export const Board = ({
                   ? () =>
                       act({
                         type: "move",
-                        playerId,
                         cardIdx,
                         direction: "right",
                       })
@@ -254,9 +254,13 @@ export const Board = ({
         </Flex>
         {!game.state.finished &&
           game.state.currentPlayer === playerIdx &&
-          game.state.board.infoTokens >= 0 && (
-            <Button onClick={() => act({ type: "info", playerId })} mb={4}>
-              Give information
+          game.state.board.infoTokens > 0 && (
+            <Button
+              onClick={() => act({ type: "info" })}
+              mb={4}
+              sx={{ fontSize: "14px" }}
+            >
+              <FontAwesomeIcon icon={faInfoCircle} /> Give information
             </Button>
           )}
         {Object.keys(game.players).map((id, idx) =>
@@ -305,6 +309,7 @@ export const Board = ({
             ),
           )}
         </Flex>
+        {game.state.board.deck.length} cards left in the deck.
         <Tokens
           num={game.state.board.infoTokens}
           total={game.config.infoTokens}

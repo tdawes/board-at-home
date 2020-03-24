@@ -52,23 +52,21 @@ const engine: GameEngine<State, Action, Config> = {
   },
   applyPlayerAction: (
     getGame: () => StartedGame<State, Config>,
-    _playerId: string,
+    playerId: string,
     action: Action,
   ) =>
     produce(getGame().state, state => {
       // Reordering or selecting cards does not finish your turn, everything else does
       if (action.type === "move") {
-        const playerIdx = Object.keys(getGame().players).indexOf(
-          action.playerId,
-        );
+        const playerIdx = Object.keys(getGame().players).indexOf(playerId);
         const card = state.board.hands[playerIdx][action.cardIdx];
         state.board.hands[playerIdx].splice(action.cardIdx, 1);
         const newPos =
           action.direction == "right" ? action.cardIdx + 1 : action.cardIdx - 1;
         state.board.hands[playerIdx].splice(newPos, 0, card);
         if (
-          state.currentPlayer == playerIdx &&
-          state.selectedCards[playerIdx].includes(action.cardIdx)
+          state.selectedCards[playerIdx].includes(action.cardIdx) &&
+          !state.selectedCards[playerIdx].includes(newPos)
         ) {
           state.selectedCards[playerIdx] = state.selectedCards[
             playerIdx
