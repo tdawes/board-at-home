@@ -93,10 +93,10 @@ export default ({ code }: Props) => {
       )}
       <TopBar game={game} player={game.players[userId]} />
       <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
-        Players:
-        <ul>
-          {Object.keys(game.players).map(playerId => (
-            <li key={playerId}>
+        <div>
+          Players:{" "}
+          {Object.keys(game.players).map((playerId, idx) => (
+            <span key={playerId}>
               {game.players[playerId].name || playerId}
               {!game.started && userId === game.owner && userId !== playerId && (
                 <IconButton
@@ -106,9 +106,10 @@ export default ({ code }: Props) => {
                   <FontAwesomeIcon icon={faTimes} />
                 </IconButton>
               )}
-            </li>
+              {idx < Object.keys(game.players).length - 1 && ", "}
+            </span>
           ))}
-        </ul>
+        </div>
         {!game.started ? (
           userId === game.owner && (
             <Flex sx={{ flexDirection: "column", alignItems: "center" }}>

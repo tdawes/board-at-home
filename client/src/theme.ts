@@ -61,6 +61,16 @@ export default {
       bg: "muted",
       cursor: "not-allowed",
     },
+    icon: {
+      cursor: "pointer",
+      transition: "color 100ms ease-in-out",
+      "&:hover": {
+        color: "primary",
+      },
+      "&:active": {
+        transform: "translateY(1px)",
+      },
+    },
   },
   forms: {
     input: {
