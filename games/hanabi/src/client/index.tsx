@@ -75,7 +75,15 @@ const Message = ({
 };
 
 // TODO: make these styles fit into the theme components
-const CardDisplay = ({ card }: { card: Card }) => (
+const CardDisplay = ({
+  card,
+  selected,
+  onSelect,
+}: {
+  card: Card;
+  selected: boolean;
+  onSelect?: () => any;
+}) => (
   <div
     style={{
       color: card.color,
@@ -88,22 +96,28 @@ const CardDisplay = ({ card }: { card: Card }) => (
       height: "50px",
       display: "inline",
       lineHeight: 1,
+      border: selected ? "1px solid blue" : "1px solid white",
     }}
+    onClick={onSelect}
   >
     {card.num}
   </div>
 );
 
 const ActionableCard = ({
+  selected,
   canAct,
   onPlay,
   onDiscard,
+  onSelect,
   onMoveLeft,
   onMoveRight,
 }: {
+  selected: boolean;
   canAct: boolean;
   onPlay: () => any;
   onDiscard: () => any;
+  onSelect?: () => any;
   onMoveLeft?: () => any;
   onMoveRight?: () => any;
 }) => (
@@ -120,7 +134,9 @@ const ActionableCard = ({
         height: "55px",
         display: "table",
         alignSelf: "center",
+        border: selected ? "1px solid blue" : "1px solid white",
       }}
+      onClick={onSelect}
     >
       ?
     </div>
@@ -187,6 +203,7 @@ export const Board = ({
   act,
 }: BoardProps<State, Action, Config>) => {
   const playerIdx = Object.keys(game.players).indexOf(playerId);
+  const canAct = !game.state.finished && game.state.currentPlayer == playerIdx;
 
   return (
     <Flex className="board">
@@ -201,11 +218,15 @@ export const Board = ({
           {game.state.board.hands[playerIdx].map((_card, cardIdx) => (
             <ActionableCard
               key={cardIdx}
-              canAct={
-                !game.state.finished && game.state.currentPlayer == playerIdx
-              }
+              canAct={canAct}
+              selected={game.state.selectedCards[playerIdx].includes(cardIdx)}
               onPlay={() => act({ type: "play", playerId, cardIdx })}
               onDiscard={() => act({ type: "discard", playerId, cardIdx })}
+              onSelect={
+                canAct
+                  ? () => act({ type: "select", handIdx: playerIdx, cardIdx })
+                  : undefined
+              }
               onMoveLeft={
                 cardIdx > 0
                   ? () =>
@@ -243,7 +264,16 @@ export const Board = ({
             <Flex sx={{ alignItems: "center" }} key={id}>
               {game.players[id].name || game.players[id].id}'s hand:{" "}
               {game.state.board.hands[idx].map((card, cardIdx) => (
-                <CardDisplay card={card} key={cardIdx} />
+                <CardDisplay
+                  card={card}
+                  key={cardIdx}
+                  selected={game.state.selectedCards[idx].includes(cardIdx)}
+                  onSelect={
+                    canAct
+                      ? () => act({ type: "select", handIdx: idx, cardIdx })
+                      : undefined
+                  }
+                />
               ))}
             </Flex>
           ) : (
@@ -268,6 +298,7 @@ export const Board = ({
               <CardDisplay
                 card={{ color, num: game.state.board.piles[color] }}
                 key={color}
+                selected={false}
               />
             ) : (
               <div style={{ height: CARD_HEIGHT }} key={color} />
@@ -296,7 +327,7 @@ export const Board = ({
             <FontAwesomeIcon icon={faTrash} />
           )}
           {game.state.board.discardPile.map((card, idx) => (
-            <CardDisplay card={card} key={idx} />
+            <CardDisplay card={card} key={idx} selected={false} />
           ))}
         </Flex>
       </Flex>

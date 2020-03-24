@@ -47,6 +47,7 @@ const engine: GameEngine<State, Action, Config> = {
       },
       finished: false,
       currentPlayer: 0,
+      selectedCards: [[], [], [], [], []],
     };
   },
   applyPlayerAction: (
@@ -55,7 +56,7 @@ const engine: GameEngine<State, Action, Config> = {
     action: Action,
   ) =>
     produce(getGame().state, state => {
-      // Reordering cards does not finish your turn
+      // Reordering or selecting cards does not finish your turn, everything else does
       if (action.type === "move") {
         const playerIdx = Object.keys(getGame().players).indexOf(
           action.playerId,
@@ -65,6 +66,23 @@ const engine: GameEngine<State, Action, Config> = {
         const newPos =
           action.direction == "right" ? action.cardIdx + 1 : action.cardIdx - 1;
         state.board.hands[playerIdx].splice(newPos, 0, card);
+        if (
+          state.currentPlayer == playerIdx &&
+          state.selectedCards[playerIdx].includes(action.cardIdx)
+        ) {
+          state.selectedCards[playerIdx] = state.selectedCards[
+            playerIdx
+          ].filter(c => c != action.cardIdx);
+          state.selectedCards[playerIdx].push(newPos);
+        }
+      } else if (action.type === "select") {
+        if (state.selectedCards[action.handIdx].includes(action.cardIdx)) {
+          state.selectedCards[action.handIdx] = state.selectedCards[
+            action.handIdx
+          ].filter(c => c != action.cardIdx);
+        } else {
+          state.selectedCards[action.handIdx].push(action.cardIdx);
+        }
       } else {
         const prevDeckSize = state.board.deck.length;
         if (action.type === "play") {
@@ -118,6 +136,7 @@ const engine: GameEngine<State, Action, Config> = {
         }
         state.currentPlayer =
           (state.currentPlayer + 1) % Object.keys(getGame().players).length;
+        state.selectedCards = [[], [], [], [], []];
       }
     }),
 };

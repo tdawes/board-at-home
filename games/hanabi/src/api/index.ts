@@ -27,6 +27,7 @@ export interface State {
   currentPlayer: number;
   finalPlayer?: number;
   finished: boolean;
+  selectedCards: number[][];
 }
 
 export interface PlayAction {
@@ -53,4 +54,15 @@ export interface MoveAction {
   direction: "left" | "right";
 }
 
-export type Action = PlayAction | DiscardAction | InfoAction | MoveAction;
+export interface SelectAction {
+  type: "select";
+  cardIdx: number;
+  handIdx: number;
+}
+
+export type Action =
+  | PlayAction
+  | DiscardAction
+  | InfoAction
+  | MoveAction
+  | SelectAction;
