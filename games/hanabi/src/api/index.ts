@@ -17,7 +17,7 @@ export interface Board {
   deck: Card[];
   hands: Card[][];
   piles: { [key in Color]: number };
-  discardPile: Card[];
+  discardPile: { [key in Color]: Card[] };
   fuseTokens: number;
   infoTokens: number;
 }

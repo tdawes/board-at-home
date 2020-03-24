@@ -39,7 +39,7 @@ const engine: GameEngine<State, Action, Config> = {
     return {
       board: {
         piles: { red: 0, green: 0, blue: 0, white: 0, yellow: 0 },
-        discardPile: [],
+        discardPile: { red: [], green: [], blue: [], white: [], yellow: [] },
         deck,
         hands,
         infoTokens: config.infoTokens,
@@ -97,7 +97,7 @@ const engine: GameEngine<State, Action, Config> = {
               state.board.infoTokens += 1;
             }
           } else {
-            state.board.discardPile.push(card);
+            state.board.discardPile[card.color].push(card);
             state.board.fuseTokens -= 1;
           }
           const drawnCard = state.board.deck.shift();
@@ -110,7 +110,7 @@ const engine: GameEngine<State, Action, Config> = {
             action.cardIdx,
             1,
           )[0];
-          state.board.discardPile.push(card);
+          state.board.discardPile[card.color].push(card);
           if (state.board.infoTokens < getGame().config.infoTokens) {
             state.board.infoTokens += 1;
           }

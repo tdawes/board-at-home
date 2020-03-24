@@ -206,6 +206,13 @@ export const Board = ({
 }: BoardProps<State, Action, Config>) => {
   const playerIdx = Object.keys(game.players).indexOf(playerId);
   const canAct = !game.state.finished && game.state.currentPlayer == playerIdx;
+  // Currently displaying as a somewhat organized list, may reconsider
+  // (in which case rethink data structure/org)
+  const discarded = _.flatten(
+    Object.values(game.state.board.discardPile).map(color =>
+      _.sortBy(color).reverse(),
+    ),
+  );
 
   return (
     <Flex className="board">
@@ -328,10 +335,8 @@ export const Board = ({
           }}
           m={2}
         >
-          {game.state.board.discardPile.length > 0 && (
-            <FontAwesomeIcon icon={faTrash} />
-          )}
-          {game.state.board.discardPile.map((card, idx) => (
+          {discarded.length > 0 && <FontAwesomeIcon icon={faTrash} />}
+          {discarded.map((card, idx) => (
             <CardDisplay card={card} key={idx} selected={false} />
           ))}
         </Flex>
