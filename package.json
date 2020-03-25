@@ -14,9 +14,9 @@
     "start:client": "yarn workspace @board-at-home/client start",
     "build:server": "yarn workspace @board-at-home/server build",
     "start:server": "yarn workspace @board-at-home/server start",
-    "clean": "wsrun clean",
-    "test": "wsrun test",
-    "lint": "wsrun lint"
+    "clean": "wsrun --serial --exclude-missing clean",
+    "test": "wsrun --serial --exclude-missing test",
+    "lint": "wsrun --serial --exclude-missing lint"
   },
   "license": "MIT",
   "private": true,

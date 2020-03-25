@@ -80,7 +80,7 @@ export const maxPlayers = 5;
 export const noSelectedCards = new Array(maxPlayers).fill([]);
 export const getHandSize = (numPlayers: number) => (numPlayers >= 4 ? 4 : 5);
 
-const mapToColours = <T>(defaultValue: T): { [key in Colour]: T } => {
+export const mapToColours = <T>(defaultValue: T): { [key in Colour]: T } => {
   const piles: { [key: string]: T } = {};
   colours.map(colour => {
     piles[colour] = defaultValue;

@@ -2,7 +2,9 @@
   "name": "@board-at-home/hanabi",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "test": "jest"
   },
   "license": "MIT",
   "dependencies": {
@@ -20,5 +22,10 @@
     "tslint-plugin-prettier": "^2.2.0",
     "tslint-react": "^4.2.0",
     "typescript": "^3.8.3"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
   }
 }

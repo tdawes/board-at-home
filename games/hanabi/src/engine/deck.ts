@@ -24,7 +24,7 @@ export const cannotCompleteEverySet = (
     ),
   );
 
-const cannotCompleteSet = (discardedNumbers: number[]) =>
+export const cannotCompleteSet = (discardedNumbers: number[]) =>
   _.some(
     numbers.map(
       numOnCard =>
