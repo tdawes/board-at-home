@@ -1,7 +1,15 @@
 import * as React from "react";
 import { State, Action, Config, Card, Color } from "../api";
 import { ConfigProps, BoardProps, StartedGame } from "@board-at-home/api";
-import { Button, Flex, Box, Label, Input, IconButton } from "theme-ui";
+import {
+  Button,
+  Flex,
+  Box,
+  Label,
+  Input,
+  IconButton,
+  Checkbox,
+} from "theme-ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInfoCircle,
@@ -17,12 +25,20 @@ export const defaultConfig: Config = {
   gameType: "basic",
   infoTokens: 8,
   fuseTokens: 3,
+  royalFavor: false,
 };
 
 export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
   <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
     <Label mb={1}>
       Game type: Basic (Sorry, 🌈rainbow🌈 is not supported yet)
+    </Label>
+    <Label mb={1}>
+      <Checkbox
+        checked={config.royalFavor}
+        onChange={() => setConfig({ royalFavor: !config.royalFavor })}
+      />
+      Use Royal Favor variant (must complete all sets to win)
     </Label>
     <Label sx={{ alignItems: "center", width: "180px" }}>
       <Input
@@ -65,7 +81,9 @@ const Message = ({
     }
     return (
       <div>
-        You lost... Score: {_.sum(Object.values(game.state.board.piles))}
+        You lost...
+        {!game.config.royalFavor &&
+          ` Score: ${_.sum(Object.values(game.state.board.piles))}`}
       </div>
     );
   }

@@ -1,20 +1,38 @@
 import { Color, Card } from "../api";
 import * as _ from "lodash";
 
-const cardsForColor = (color: Color): Card[] => {
-  return [
-    { color, num: 5 },
-    { color, num: 4 },
-    { color, num: 4 },
-    { color, num: 3 },
-    { color, num: 3 },
-    { color, num: 2 },
-    { color, num: 2 },
-    { color, num: 1 },
-    { color, num: 1 },
-    { color, num: 1 },
-  ];
+const cardsPerNumber: { [key: string]: number } = {
+  1: 3,
+  2: 2,
+  3: 2,
+  4: 2,
+  5: 1,
 };
+
+const cardsForColor = (color: Color): Card[] =>
+  _.flatten(
+    Object.keys(cardsPerNumber).map(numOnCard =>
+      new Array(cardsPerNumber[numOnCard]).fill({ color, num: numOnCard }),
+    ),
+  );
+
+export const cannotCompleteEverySet = (
+  discardPile: { [key in Color]: Card[] },
+) =>
+  _.some(
+    Object.values(discardPile).map(color =>
+      cannotCompleteSet(color.map(card => card.num)),
+    ),
+  );
+
+const cannotCompleteSet = (discardedNumbers: number[]) =>
+  _.some(
+    Object.keys(cardsPerNumber).map(
+      numOnCard =>
+        discardedNumbers.filter(num => num === parseInt(numOnCard)).length >=
+        cardsPerNumber[numOnCard],
+    ),
+  );
 
 /**
  * Shuffles array in place. ES6 version

@@ -1,53 +1,58 @@
 import { GameEngine, UnstartedGame, StartedGame } from "@board-at-home/api";
 import { State, Action, Config, Board, Card } from "../api";
-import { createDeck, deal } from "./deck";
+import { createDeck, deal, cannotCompleteEverySet } from "./deck";
 import * as _ from "lodash";
 import produce from "immer";
+
+// Completing all sets to 5 immediately wins the game.
+// You always lose if you run out of fuse tokens.
+// Otherwise play continues until the deck becomes empty, and for one full round after that.
+// The Royal Favor variant doesn't use scoring and players keep on playing even after the deck is gone, having potentially fewer cards in hands.
+// Completing all fireworks till 5 is a win, anything else is a loss for all players.
+// The game ends immediately when a player would start a turn with no cards in hand.
 
 const checkForFinish = (
   board: Board,
   currentPlayer: number,
+  royalFavor: boolean,
   finalPlayer?: number,
 ) => {
-  // TODO Check if game is impossible to win? (Have this as config option?)
-  // e.g. if you discard both blue 3; or allow to continue for score?
-  // Otherwise play continues until the deck becomes empty, and for one full round after that.
-  return (
-    _.every(Object.values(board.piles), num => num === 5) ||
-    board.fuseTokens <= 0 ||
-    (board.deck.length === 0 && currentPlayer === finalPlayer)
-  );
+  const won = _.every(Object.values(board.piles), num => num === 5);
+  const lost =
+    board.fuseTokens <= 0 || royalFavor
+      ? board.hands[currentPlayer].length === 0 ||
+        cannotCompleteEverySet(board.discardPile)
+      : board.deck.length === 0 && currentPlayer === finalPlayer;
+  return won || lost;
 };
 
+const noSelectedCards = [[], [], [], [], []];
+const maxPlayers = 5;
+const minPlayers = 2;
 const engine: GameEngine<State, Action, Config> = {
-  isFull: (game: UnstartedGame) => Object.keys(game.players).length > 5, // 2-5
+  isFull: (game: UnstartedGame) =>
+    Object.keys(game.players).length > maxPlayers,
   start: (game: UnstartedGame, config: Config) => {
-    console.log(
-      game.players,
-      Object.keys(game.players),
-      Object.keys(game.players).length,
-      config,
-    );
-    if (Object.keys(game.players).length > 5) {
+    const numPlayers = Object.keys(game.players).length;
+    if (numPlayers > maxPlayers) {
       throw new Error("Game is too full.");
     }
-    if (Object.keys(game.players).length < 2) {
+    if (numPlayers < minPlayers) {
       throw new Error("Game is not full.");
     }
     const deck: Card[] = createDeck();
-    const hands: Card[][] = deal(deck, Object.keys(game.players).length);
     return {
       board: {
         piles: { red: 0, green: 0, blue: 0, white: 0, yellow: 0 },
         discardPile: { red: [], green: [], blue: [], white: [], yellow: [] },
         deck,
-        hands,
+        hands: deal(deck, numPlayers),
         infoTokens: config.infoTokens,
         fuseTokens: config.fuseTokens,
       },
       finished: false,
       currentPlayer: 0,
-      selectedCards: [[], [], [], [], []],
+      selectedCards: noSelectedCards,
     };
   },
   applyPlayerAction: (
@@ -124,17 +129,23 @@ const engine: GameEngine<State, Action, Config> = {
           }
           state.board.infoTokens -= 1;
         }
+        const royalFavor = getGame().config.royalFavor;
         if (
-          checkForFinish(state.board, state.currentPlayer, state.finalPlayer)
+          checkForFinish(
+            state.board,
+            state.currentPlayer,
+            royalFavor,
+            state.finalPlayer,
+          )
         ) {
           state.finished = true;
         }
-        if (prevDeckSize == 1 && state.board.deck.length === 0) {
+        if (!royalFavor && prevDeckSize == 1 && state.board.deck.length === 0) {
           state.finalPlayer = state.currentPlayer;
         }
         state.currentPlayer =
           (state.currentPlayer + 1) % Object.keys(getGame().players).length;
-        state.selectedCards = [[], [], [], [], []];
+        state.selectedCards = noSelectedCards;
       }
     }),
 };
