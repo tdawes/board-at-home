@@ -1,23 +1,22 @@
-import { Color, Card } from "../api";
+import {
+  Colour,
+  Card,
+  numbers,
+  cardsPerNumber,
+  colours,
+  getHandSize,
+} from "../api";
 import * as _ from "lodash";
 
-const cardsPerNumber: { [key: string]: number } = {
-  1: 3,
-  2: 2,
-  3: 2,
-  4: 2,
-  5: 1,
-};
-
-const cardsForColor = (color: Color): Card[] =>
+const cardsForColor = (color: Colour): Card[] =>
   _.flatten(
-    Object.keys(cardsPerNumber).map(numOnCard =>
+    numbers.map(numOnCard =>
       new Array(cardsPerNumber[numOnCard]).fill({ color, num: numOnCard }),
     ),
   );
 
 export const cannotCompleteEverySet = (
-  discardPile: { [key in Color]: Card[] },
+  discardPile: { [key in Colour]: Card[] },
 ) =>
   _.some(
     Object.values(discardPile).map(color =>
@@ -27,9 +26,9 @@ export const cannotCompleteEverySet = (
 
 const cannotCompleteSet = (discardedNumbers: number[]) =>
   _.some(
-    Object.keys(cardsPerNumber).map(
+    numbers.map(
       numOnCard =>
-        discardedNumbers.filter(num => num === parseInt(numOnCard)).length >=
+        discardedNumbers.filter(num => num === numOnCard).length >=
         cardsPerNumber[numOnCard],
     ),
   );
@@ -46,13 +45,11 @@ function shuffle(a: any[]) {
   return a;
 }
 
-export const createDeck = (): Card[] => {
-  const colors: Color[] = ["red", "blue", "green", "yellow", "white"];
-  return shuffle(_.flatten(colors.map(color => cardsForColor(color))));
-};
+export const createDeck = (): Card[] =>
+  shuffle(_.flatten(colours.map(colour => cardsForColor(colour))));
 
 export const deal = (deck: Card[], numPlayers: number): Card[][] => {
-  const handSize = numPlayers == 4 || numPlayers == 5 ? 4 : 5;
+  const handSize = getHandSize(numPlayers);
   const hands = [];
   for (let playerIdx = 0; playerIdx < numPlayers; playerIdx++) {
     const hand: Card[] = [];
