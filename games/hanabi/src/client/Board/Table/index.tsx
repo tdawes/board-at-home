@@ -12,7 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import * as _ from "lodash";
 
-const CARD_HEIGHT = "60px";
+const CARD_HEIGHT = "72px";
 
 export default ({ game }: { game: StartedGame<State, Config> }) => {
   // Currently displaying as a somewhat organized list, may reconsider

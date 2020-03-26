@@ -9,7 +9,16 @@ import {
   faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
-// TODO: make these styles fit into the theme components
+const commonCardStyles = (selected: boolean): React.CSSProperties => ({
+  backgroundColor: "lightgrey",
+  lineHeight: 1,
+  textAlign: "center",
+  margin: "5px",
+  padding: "15px 10px",
+  borderRadius: "4px",
+  border: selected ? "1px solid blue" : "1px solid white",
+});
+
 export const CardDisplay = ({
   card,
   selected,
@@ -22,16 +31,8 @@ export const CardDisplay = ({
   <div
     style={{
       color: card.color,
-      backgroundColor: "lightgrey",
       fontSize: "30px",
-      margin: "5px",
-      padding: "12px 10px 10px",
-      borderRadius: "4px",
-      width: "35px",
-      height: "50px",
-      display: "inline",
-      lineHeight: 1,
-      border: selected ? "1px solid blue" : "1px solid white",
+      ...commonCardStyles(selected),
     }}
     onClick={onSelect}
   >
@@ -60,16 +61,9 @@ export const ActionableCard = ({
     <div
       style={{
         color: "darkgrey",
-        backgroundColor: "lightgrey",
-        fontSize: "30px",
-        margin: "5px",
-        padding: "15px 15px 10px",
-        borderRadius: "4px",
-        width: "45px",
-        height: "55px",
-        display: "table",
         alignSelf: "center",
-        border: selected ? "1px solid blue" : "1px solid white",
+        fontSize: "50px",
+        ...commonCardStyles(selected),
       }}
       onClick={onSelect}
     >

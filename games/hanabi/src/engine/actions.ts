@@ -53,6 +53,9 @@ export const moveCard = (
   direction: "left" | "right",
 ) => {
   const newPos = direction == "right" ? oldPos + 1 : oldPos - 1;
+  if (newPos < 0 || newPos >= state.board.hands[playerIdx].length) {
+    throw new Error("Moving card out of bounds");
+  }
   const card = state.board.hands[playerIdx][oldPos];
   state.board.hands[playerIdx].splice(oldPos, 1);
   state.board.hands[playerIdx].splice(newPos, 0, card);

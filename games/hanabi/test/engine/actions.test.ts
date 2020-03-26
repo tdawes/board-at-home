@@ -134,7 +134,6 @@ describe("toggleCardSelection", () => {
   });
 });
 
-// TODO: edges? Currently prevented by UI...
 describe("moveCard", () => {
   const testState = getStartStateCopy();
   const move = { hand: 1, card: 1 };
@@ -155,6 +154,13 @@ describe("moveCard", () => {
     expect(testState.board.hands[move.hand][move.card + 1]).toEqual(card);
     expect(testState.board.hands[move.hand][move.card]).toEqual(rightCard);
     expect(testState.board.hands[move.hand][move.card - 1]).toEqual(leftCard);
+  });
+  it("Doesn't allow moving leftmost card further left", () => {
+    expect(() => moveCard(testState, move.hand, 0, "left")).toThrow();
+  });
+  it("Doesn't allow moving rightmost card further right", () => {
+    const rightmost = testState.board.hands[move.hand].length - 1;
+    expect(() => moveCard(testState, move.hand, rightmost, "right")).toThrow();
   });
   it("Moves selection too", () => {
     selectCard(testState, move.hand, move.card);

@@ -6,7 +6,6 @@ import * as _ from "lodash";
 import { ActionableCard, CardDisplay } from "./Card";
 import { Card, Action } from "../../api";
 
-// TODO: can these be merged at least partially?
 export const OtherPlayerHand = ({
   hand,
   selected,
