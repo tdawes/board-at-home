@@ -9,7 +9,7 @@ import {
 import { cannotCompleteEverySet, createDeck, deal } from "./deck";
 import * as _ from "lodash";
 
-export const getInitialBoard = (numPlayers: number, config: Config) => {
+export const getInitialBoard = (numPlayers: number, config: Config): Board => {
   const deck: Card[] = createDeck();
   return {
     piles: emptyPiles,

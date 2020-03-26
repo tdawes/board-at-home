@@ -77,7 +77,10 @@ export const cardsPerNumber: { [key in Number]: number } = {
 
 export const minPlayers = 2;
 export const maxPlayers = 5;
-export const noSelectedCards = new Array(maxPlayers).fill([]);
+export const noSelectedCards: number[][] = Array.from(
+  { length: maxPlayers },
+  _ => [],
+);
 export const getHandSize = (numPlayers: number) => (numPlayers >= 4 ? 4 : 5);
 
 export const mapToColours = <T>(defaultValue: T): { [key in Colour]: T } => {

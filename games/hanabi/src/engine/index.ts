@@ -10,12 +10,19 @@ import {
   Config,
   maxPlayers,
   minPlayers,
-  maxCardNum,
   noSelectedCards,
 } from "../api";
 import * as _ from "lodash";
 import produce from "immer";
 import { isFinished, getInitialBoard } from "./board";
+import {
+  moveCard,
+  toggleCardSelection,
+  playCard,
+  discardCard,
+  removeInfoToken,
+  advancePlayer,
+} from "./actions";
 
 const getNumPlayers = (game: BaseGame) => Object.keys(game.players).length;
 
@@ -42,110 +49,33 @@ const engine: GameEngine<State, Action, Config> = {
     action: Action,
   ) =>
     produce(getGame().state, state => {
-      const prevDeckSize = state.board.deck.length;
       // Reordering or selecting cards does not finish your turn, everything else does
       if (action.type === "move") {
         const playerIdx = Object.keys(getGame().players).indexOf(playerId);
-        const playerHand = state.board.hands[playerIdx];
-        const card = playerHand[action.cardIdx];
-
-        playerHand.splice(action.cardIdx, 1);
-        const newPos =
-          action.direction == "right" ? action.cardIdx + 1 : action.cardIdx - 1;
-        playerHand.splice(newPos, 0, card);
-
-        const selectedInHand = state.selectedCards[playerIdx];
-        if (
-          selectedInHand.includes(action.cardIdx) &&
-          !selectedInHand.includes(newPos)
-        ) {
-          state.selectedCards[playerIdx] = selectedInHand.filter(
-            idx => idx != action.cardIdx,
-          );
-          state.selectedCards[playerIdx].push(newPos);
-        } else if (
-          selectedInHand.includes(newPos) &&
-          !selectedInHand.includes(action.cardIdx)
-        ) {
-          state.selectedCards[playerIdx] = selectedInHand.filter(
-            idx => idx != newPos,
-          );
-          state.selectedCards[playerIdx].push(action.cardIdx);
-        }
+        moveCard(state, playerIdx, action.cardIdx, action.direction);
       } else if (action.type === "select") {
-        const selectedInHand = state.selectedCards[action.handIdx];
-        if (selectedInHand.includes(action.cardIdx)) {
-          state.selectedCards[action.handIdx] = selectedInHand.filter(
-            c => c != action.cardIdx,
-          );
-        } else {
-          state.selectedCards[action.handIdx].push(action.cardIdx);
-        }
+        toggleCardSelection(state, action.handIdx, action.cardIdx);
       } else {
-        const currentHand = state.board.hands[state.currentPlayer];
+        const prevDeckSize = state.board.deck.length;
         const maxInfoTokens = getGame().config.infoTokens;
-
         if (action.type === "play") {
-          const card = currentHand.splice(action.cardIdx, 1)[0];
-          if (state.board.piles[card.color] === card.num - 1) {
-            state.board.piles[card.color] = card.num;
-            if (
-              card.num == maxCardNum &&
-              state.board.infoTokens < maxInfoTokens
-            ) {
-              state.board.infoTokens += 1;
-            }
-          } else {
-            state.board.discardPile[card.color].push(card);
-            state.board.fuseTokens -= 1;
-          }
-
-          const drawnCard = state.board.deck.shift();
-          if (drawnCard) {
-            currentHand.push(drawnCard);
-          }
+          playCard(state, action.cardIdx, maxInfoTokens);
         } else if (action.type === "discard") {
-          const card = currentHand.splice(action.cardIdx, 1)[0];
-          state.board.discardPile[card.color].push(card);
-          if (state.board.infoTokens < maxInfoTokens) {
-            state.board.infoTokens += 1;
-          }
-
-          const drawnCard = state.board.deck.shift();
-          if (drawnCard) {
-            currentHand.push(drawnCard);
-          }
+          discardCard(state, action.cardIdx, maxInfoTokens);
         } else if (action.type === "info") {
-          if (state.board.infoTokens <= 0) {
-            throw new Error("No information tokens left.");
-          }
-          state.board.infoTokens -= 1;
+          removeInfoToken(state);
         }
 
-        const royalFavor = getGame().config.royalFavor;
+        const isRf = getGame().config.royalFavor;
         if (
-          isFinished(
-            state.board,
-            state.currentPlayer,
-            royalFavor,
-            state.finalPlayer,
-          )
+          isFinished(state.board, state.currentPlayer, isRf, state.finalPlayer)
         ) {
           state.finished = true;
         } else {
-          if (
-            !royalFavor &&
-            prevDeckSize === 1 &&
-            state.board.deck.length === 0
-          ) {
-            state.finalPlayer = state.currentPlayer;
-          }
-
-          state.currentPlayer =
-            (state.currentPlayer + 1) % getNumPlayers(getGame());
-          state.selectedCards = noSelectedCards;
+          advancePlayer(state, isRf, prevDeckSize);
         }
       }
     }),
 };
+
 export default engine;
