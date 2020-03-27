@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle, faBomb } from "@fortawesome/free-solid-svg-icons";
 
 export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
-  <Flex sx={{ flexDirection: "column" }} mt={3}>
+  <Flex sx={{ flexDirection: "column", alignItems: "center" }} mt={3}>
     <Label mb={2}>
       <Select
         defaultValue="basic"
@@ -15,9 +15,10 @@ export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
             setConfig({ gameType: e.target.value });
           }
         }}
+        sx={{ width: "240px" }}
       >
-        <option value="basic">Basic game</option>
-        <option value="rainbow">Play with 🌈 rainbow 🌈 suit</option>
+        <option value="basic">Play basic game</option>
+        <option value="rainbow">Play with 🌈 rainbow 🌈 set</option>
       </Select>
     </Label>
     <Label mb={2}>
@@ -25,9 +26,9 @@ export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
         checked={config.royalFavour}
         onChange={() => setConfig({ royalFavour: !config.royalFavour })}
       />
-      Royal Favour (finish all sets)
+      Royal Favour (complete all sets)
     </Label>
-    <Label sx={{ alignItems: "center" }}>
+    <Label sx={{ alignItems: "center", width: "auto" }}>
       <Input
         type="number"
         min="1"
@@ -39,9 +40,9 @@ export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
         sx={{ width: "50px" }}
       />
       <FontAwesomeIcon icon={faInfoCircle} style={{ margin: "5px" }} />
-      information tokens
+      info tokens
     </Label>
-    <Label sx={{ alignItems: "center" }}>
+    <Label sx={{ alignItems: "center", width: "auto" }}>
       <Input
         type="number"
         min="1"

@@ -92,9 +92,10 @@ export const ThisPlayerHand = ({
     </Flex>
     {canGiveInfo && (
       <Button
+        variant="hanabi"
         onClick={() => act({ type: "info" })}
         mb={4}
-        sx={{ fontSize: "14px" }}
+        sx={{ fontSize: "13px" }}
       >
         <FontAwesomeIcon icon={faInfoCircle} /> Give information
       </Button>

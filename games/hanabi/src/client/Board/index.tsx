@@ -21,7 +21,7 @@ export const Board = ({
     game.state.board.infoTokens > 0;
 
   return (
-    <Flex className="board">
+    <Flex className="board" sx={{ width: "100%", justifyContent: "center" }}>
       <Flex
         sx={{
           flexDirection: "column",

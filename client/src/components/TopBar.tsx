@@ -96,6 +96,6 @@ export default ({ game, player }: Props) => (
       </Flex>
       <PlayerName code={game.code} player={player} />
     </Flex>
-    <Divider mb={3} />
+    <Divider mb={3} sx={{ color: "black" }} />
   </div>
 );

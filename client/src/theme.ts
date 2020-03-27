@@ -65,11 +65,22 @@ export default {
       cursor: "pointer",
       transition: "color 100ms ease-in-out",
       "&:hover": {
-        color: "primary",
+        color: "border",
       },
       "&:active": {
         transform: "translateY(1px)",
       },
+    },
+    hanabi: {
+      color: "white",
+      bg: "#00897B",
+      cursor: "pointer",
+      transition: "background-color 100ms ease-in-out",
+      "&:hover": {
+        bg: "#00695C",
+      },
+      m: 1,
+      fontSize: "12px",
     },
   },
   forms: {

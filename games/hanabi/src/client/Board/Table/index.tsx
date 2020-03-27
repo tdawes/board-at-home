@@ -27,11 +27,13 @@ export default ({ game }: { game: StartedGame<State, Config> }) => {
     <Flex
       sx={{
         flexDirection: "column",
-        backgroundColor: "cornsilk",
+        backgroundColor: "#E1E1E1",
         alignItems: "center",
         borderRadius: "4px",
-        width: "300px",
+        width: "320px",
       }}
+      ml={3}
+      p={3}
     >
       <Flex sx={{ height: CARD_HEIGHT }}>
         {(Object.keys(
@@ -59,6 +61,9 @@ export default ({ game }: { game: StartedGame<State, Config> }) => {
         total={game.config.fuseTokens}
         icon={faBomb}
       />
+      {discarded.length > 0 && (
+        <FontAwesomeIcon icon={faTrash} style={{ marginTop: "8px" }} />
+      )}
       <Flex
         sx={{
           minHeight: CARD_HEIGHT,
@@ -67,7 +72,6 @@ export default ({ game }: { game: StartedGame<State, Config> }) => {
         }}
         m={2}
       >
-        {discarded.length > 0 && <FontAwesomeIcon icon={faTrash} />}
         {discarded.map((card, idx) => (
           <CardDisplay card={card} key={idx} selected={false} />
         ))}
