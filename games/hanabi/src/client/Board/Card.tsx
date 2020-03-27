@@ -45,6 +45,7 @@ export const CardDisplay = ({
   <div
     style={{
       ...commonCardStyles(selected),
+      color: card.colour,
     }}
   >
     <div

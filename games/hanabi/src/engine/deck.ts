@@ -3,8 +3,9 @@ import {
   Card,
   numbers,
   cardsPerNumber,
-  colours,
   getHandSize,
+  GameType,
+  getColours,
 } from "../api";
 import * as _ from "lodash";
 
@@ -45,8 +46,8 @@ function shuffle(a: any[]) {
   return a;
 }
 
-export const createDeck = (): Card[] =>
-  shuffle(_.flatten(colours.map(colour => cardsForColor(colour))));
+export const createDeck = (gameType: GameType): Card[] =>
+  shuffle(_.flatten(getColours(gameType).map(colour => cardsForColor(colour))));
 
 export const deal = (deck: Card[], numPlayers: number): Card[][] => {
   const handSize = getHandSize(numPlayers);

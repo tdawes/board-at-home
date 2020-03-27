@@ -1,5 +1,7 @@
+export type GameType = "basic" | "rainbow";
+
 export interface Config {
-  gameType: "basic" | "rainbow";
+  gameType: GameType;
   infoTokens: number;
   fuseTokens: number;
   royalFavour: boolean;
@@ -17,6 +19,10 @@ export type Colour = typeof colours[number];
 export const numbers = [1, 2, 3, 4, 5] as const;
 export type Number = typeof numbers[number];
 export const maxCardNum = numbers[numbers.length - 1];
+export const getColours = (gameType: GameType): Colour[] =>
+  gameType === "rainbow"
+    ? colours.slice()
+    : colours.filter(c => c != "rainbow");
 
 export interface Card {
   colour: Colour;

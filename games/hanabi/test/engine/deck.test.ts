@@ -6,17 +6,25 @@ import {
 } from "../../src/engine/deck";
 import {
   cardsPerNumber,
-  colours,
+  getColours,
   emptyDiscardPile,
   getHandSize,
 } from "../../src/api";
 import * as _ from "lodash";
 
 describe("createDeck", () => {
-  it("Creates a full deck", () => {
-    const deck = createDeck();
+  it("Creates a full basic deck", () => {
+    const gameType = "basic";
+    const deck = createDeck(gameType);
     const expectedDeckSize =
-      _.sum(Object.values(cardsPerNumber)) * colours.length;
+      _.sum(Object.values(cardsPerNumber)) * getColours(gameType).length;
+    expect(deck.length).toBe(expectedDeckSize);
+  });
+  it("Creates a full deck with rainbow if specified", () => {
+    const gameType = "rainbow";
+    const deck = createDeck(gameType);
+    const expectedDeckSize =
+      _.sum(Object.values(cardsPerNumber)) * getColours(gameType).length;
     expect(deck.length).toBe(expectedDeckSize);
   });
 });
@@ -48,7 +56,7 @@ describe("cannotCompleteEverySet", () => {
 describe("deal", () => {
   it("Deals out cards to players from the deck", () => {
     const numPlayers = 2;
-    const deck = createDeck();
+    const deck = createDeck("basic");
     const startingDeckSize = deck.length;
     const handSize = getHandSize(numPlayers);
     const hands = deal(deck, numPlayers);
