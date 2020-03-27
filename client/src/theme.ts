@@ -82,6 +82,13 @@ export default {
       m: 1,
       fontSize: "12px",
     },
+    hanabiDisabled: {
+      color: "white",
+      bg: "#BDBDBD",
+      cursor: "not-allowed",
+      fontSize: "12px",
+      m: 1,
+    },
   },
   forms: {
     input: {

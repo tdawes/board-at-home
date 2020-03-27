@@ -28,12 +28,6 @@ export const Board = ({
           alignItems: "center",
         }}
       >
-        <PlayerMessage
-          playerId={playerId}
-          currentPlayer={Object.values(game.players)[game.state.currentPlayer]}
-          finished={game.state.finished}
-          piles={game.state.board.piles}
-        />
         <ThisPlayerHand
           hand={game.state.board.hands[playerIdx]}
           selected={game.state.selectedCards[playerIdx]}
@@ -41,6 +35,12 @@ export const Board = ({
           canGiveInfo={canGiveInfo}
           act={act}
           handIdx={playerIdx}
+        />
+        <PlayerMessage
+          playerId={playerId}
+          currentPlayer={Object.values(game.players)[game.state.currentPlayer]}
+          finished={game.state.finished}
+          piles={game.state.board.piles}
         />
         {Object.keys(game.players).map((id, idx) =>
           id != playerId ? (
@@ -51,6 +51,7 @@ export const Board = ({
               act={act}
               name={game.players[id].name || game.players[id].id}
               handIdx={idx}
+              isCurrentPlayer={game.state.currentPlayer === idx}
             />
           ) : (
             <div key={id} />

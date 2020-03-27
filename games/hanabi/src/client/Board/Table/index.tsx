@@ -19,7 +19,7 @@ export default ({ game }: { game: StartedGame<State, Config> }) => {
   // (in which case rethink data structure/org)
   const discarded = _.flatten(
     Object.values(game.state.board.discardPile).map(colour =>
-      _.sortBy(colour).reverse(),
+      _.sortBy(colour, c => c.num).reverse(),
     ),
   );
 

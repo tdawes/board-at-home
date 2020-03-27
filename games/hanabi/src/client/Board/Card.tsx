@@ -118,15 +118,18 @@ export const ActionableCard = ({
         </IconButton>
       )}
     </Flex>
-    {canAct && (
-      <Button variant="hanabi" onClick={onPlay} mb={1}>
-        <FontAwesomeIcon icon={faPlay} /> Play
-      </Button>
-    )}
-    {canAct && (
-      <Button variant="hanabi" onClick={onDiscard}>
-        <FontAwesomeIcon icon={faTrash} /> Discard
-      </Button>
-    )}
+    <Button
+      variant={canAct ? "hanabi" : "hanabiDisabled"}
+      onClick={canAct ? onPlay : undefined}
+      mb={1}
+    >
+      <FontAwesomeIcon icon={faPlay} /> Play
+    </Button>
+    <Button
+      variant={canAct ? "hanabi" : "hanabiDisabled"}
+      onClick={canAct ? onDiscard : undefined}
+    >
+      <FontAwesomeIcon icon={faTrash} /> Discard
+    </Button>
   </Flex>
 );
