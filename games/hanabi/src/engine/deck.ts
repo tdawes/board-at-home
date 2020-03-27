@@ -8,10 +8,10 @@ import {
 } from "../api";
 import * as _ from "lodash";
 
-const cardsForColor = (color: Colour): Card[] =>
+const cardsForColor = (colour: Colour): Card[] =>
   _.flatten(
     numbers.map(numOnCard =>
-      new Array(cardsPerNumber[numOnCard]).fill({ color, num: numOnCard }),
+      new Array(cardsPerNumber[numOnCard]).fill({ colour, num: numOnCard }),
     ),
   );
 
@@ -19,8 +19,8 @@ export const cannotCompleteEverySet = (
   discardPile: { [key in Colour]: Card[] },
 ) =>
   _.some(
-    Object.values(discardPile).map(color =>
-      cannotCompleteSet(color.map(card => card.num)),
+    Object.values(discardPile).map(colour =>
+      cannotCompleteSet(colour.map(card => card.num)),
     ),
   );
 

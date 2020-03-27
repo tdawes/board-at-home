@@ -25,7 +25,7 @@ describe("cannotCompleteSet", () => {
   it("Returns false if nothing has been discarded", () => {
     expect(cannotCompleteSet([])).toBeFalsy();
   });
-  it("Returns true if all cards of a color have been discarded", () => {
+  it("Returns true if all cards of a colour have been discarded", () => {
     expect(cannotCompleteSet([5])).toBeTruthy();
     expect(cannotCompleteSet([2, 2])).toBeTruthy();
     expect(cannotCompleteSet([1, 3, 3, 2])).toBeTruthy();
@@ -40,7 +40,7 @@ describe("cannotCompleteEverySet", () => {
   });
   it("Returns true if a set can not be completed anymore", () => {
     const pile = emptyDiscardPile;
-    pile["red"] = [{ color: "red", num: 5 }];
+    pile["red"] = [{ colour: "red", num: 5 }];
     expect(cannotCompleteEverySet(pile)).toBeTruthy;
   });
 });

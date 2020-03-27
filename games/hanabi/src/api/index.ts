@@ -1,19 +1,25 @@
 export interface Config {
-  gameType: "basic" | "rainbowIsItsOwnColor" | "rainbowIsAnyColor";
+  gameType: "basic" | "rainbow";
   infoTokens: number;
   fuseTokens: number;
-  royalFavor: boolean;
+  royalFavour: boolean;
 }
 
-// TODO: rainbow
-export const colours = ["red", "blue", "green", "yellow", "white"] as const;
+export const colours = [
+  "red",
+  "blue",
+  "green",
+  "yellow",
+  "white",
+  "rainbow",
+] as const;
 export type Colour = typeof colours[number];
 export const numbers = [1, 2, 3, 4, 5] as const;
 export type Number = typeof numbers[number];
 export const maxCardNum = numbers[numbers.length - 1];
 
 export interface Card {
-  color: Colour;
+  colour: Colour;
   num: number;
 }
 

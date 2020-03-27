@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card } from "../../api";
+import { Card, Colour } from "../../api";
 import { Flex, IconButton, Button } from "theme-ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,6 +19,20 @@ const commonCardStyles = (selected: boolean): React.CSSProperties => ({
   border: selected ? "1px solid blue" : "1px solid white",
 });
 
+const cardColorStyles = (colour: Colour): React.CSSProperties => {
+  if (colour === "rainbow") {
+    return {
+      backgroundImage:
+        "linear-gradient(to bottom, blue, blue, green, green, yellow, yellow, orange, red, red, red)",
+      WebkitBackgroundClip: "text",
+      color: "transparent",
+    };
+  }
+  return {
+    color: colour,
+  };
+};
+
 export const CardDisplay = ({
   card,
   selected,
@@ -30,13 +44,18 @@ export const CardDisplay = ({
 }) => (
   <div
     style={{
-      color: card.color,
-      fontSize: "30px",
       ...commonCardStyles(selected),
     }}
-    onClick={onSelect}
   >
-    {card.num}
+    <div
+      style={{
+        ...cardColorStyles(card.colour),
+        fontSize: "30px",
+      }}
+      onClick={onSelect}
+    >
+      {card.num}
+    </div>
   </div>
 );
 
@@ -60,10 +79,10 @@ export const ActionableCard = ({
   <Flex sx={{ flexDirection: "column" }} m={2}>
     <div
       style={{
+        ...commonCardStyles(selected),
         color: "darkgrey",
         alignSelf: "center",
         fontSize: "50px",
-        ...commonCardStyles(selected),
       }}
       onClick={onSelect}
     >

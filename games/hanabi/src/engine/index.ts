@@ -66,7 +66,7 @@ const engine: GameEngine<State, Action, Config> = {
           removeInfoToken(state);
         }
 
-        const isRf = getGame().config.royalFavor;
+        const isRf = getGame().config.royalFavour;
         if (
           isFinished(state.board, state.currentPlayer, isRf, state.finalPlayer)
         ) {

@@ -36,15 +36,15 @@ export default ({ game }: { game: StartedGame<State, Config> }) => {
       <Flex sx={{ height: CARD_HEIGHT }}>
         {(Object.keys(
           game.state.board.piles,
-        ) as Colour[]).map((color: Colour) =>
-          game.state.board.piles[color] > 0 ? (
+        ) as Colour[]).map((colour: Colour) =>
+          game.state.board.piles[colour] > 0 ? (
             <CardDisplay
-              card={{ color, num: game.state.board.piles[color] }}
-              key={color}
+              card={{ colour, num: game.state.board.piles[colour] }}
+              key={colour}
               selected={false}
             />
           ) : (
-            <div style={{ height: CARD_HEIGHT }} key={color} />
+            <div style={{ height: CARD_HEIGHT }} key={colour} />
           ),
         )}
       </Flex>

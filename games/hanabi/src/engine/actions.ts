@@ -73,13 +73,13 @@ export const playCard = (
   maxInfoTokens: number,
 ) => {
   const card = state.board.hands[state.currentPlayer].splice(cardIdx, 1)[0];
-  if (state.board.piles[card.color] === card.num - 1) {
-    state.board.piles[card.color] = card.num;
+  if (state.board.piles[card.colour] === card.num - 1) {
+    state.board.piles[card.colour] = card.num;
     if (card.num == maxCardNum) {
       addInfoToken(state, maxInfoTokens);
     }
   } else {
-    state.board.discardPile[card.color].push(card);
+    state.board.discardPile[card.colour].push(card);
     state.board.fuseTokens -= 1;
   }
   drawCard(state);
@@ -91,18 +91,18 @@ export const discardCard = (
   maxInfoTokens: number,
 ) => {
   const card = state.board.hands[state.currentPlayer].splice(cardIdx, 1)[0];
-  state.board.discardPile[card.color].push(card);
+  state.board.discardPile[card.colour].push(card);
   addInfoToken(state, maxInfoTokens);
   drawCard(state);
 };
 
 export const advancePlayer = (
   state: State,
-  royalFavor: boolean,
+  royalFavour: boolean,
   prevDeckSize: number,
 ) => {
   const drewLastCard = prevDeckSize === 1 && state.board.deck.length === 0;
-  if (!royalFavor && drewLastCard) {
+  if (!royalFavour && drewLastCard) {
     state.finalPlayer = state.currentPlayer;
   }
   state.currentPlayer = (state.currentPlayer + 1) % state.board.hands.length;

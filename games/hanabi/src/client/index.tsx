@@ -6,5 +6,5 @@ export const defaultConfig: Config = {
   gameType: "basic",
   infoTokens: 8,
   fuseTokens: 3,
-  royalFavor: false,
+  royalFavour: false,
 };
