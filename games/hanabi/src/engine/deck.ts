@@ -1,20 +1,38 @@
-import { Color, Card } from "../api";
+import {
+  Colour,
+  Card,
+  numbers,
+  cardsPerNumber,
+  getHandSize,
+  GameType,
+  getColours,
+} from "../api";
 import * as _ from "lodash";
 
-const cardsForColor = (color: Color): Card[] => {
-  return [
-    { color, num: 5 },
-    { color, num: 4 },
-    { color, num: 4 },
-    { color, num: 3 },
-    { color, num: 3 },
-    { color, num: 2 },
-    { color, num: 2 },
-    { color, num: 1 },
-    { color, num: 1 },
-    { color, num: 1 },
-  ];
-};
+const cardsForColor = (colour: Colour): Card[] =>
+  _.flatten(
+    numbers.map(numOnCard =>
+      new Array(cardsPerNumber[numOnCard]).fill({ colour, num: numOnCard }),
+    ),
+  );
+
+export const cannotCompleteEverySet = (
+  discardPile: { [key in Colour]: Card[] },
+) =>
+  _.some(
+    Object.values(discardPile).map(colour =>
+      cannotCompleteSet(colour.map(card => card.num)),
+    ),
+  );
+
+export const cannotCompleteSet = (discardedNumbers: number[]) =>
+  _.some(
+    numbers.map(
+      numOnCard =>
+        discardedNumbers.filter(num => num === numOnCard).length >=
+        cardsPerNumber[numOnCard],
+    ),
+  );
 
 /**
  * Shuffles array in place. ES6 version
@@ -28,13 +46,11 @@ function shuffle(a: any[]) {
   return a;
 }
 
-export const createDeck = (): Card[] => {
-  const colors: Color[] = ["red", "blue", "green", "yellow", "white"];
-  return shuffle(_.flatten(colors.map(color => cardsForColor(color))));
-};
+export const createDeck = (gameType: GameType): Card[] =>
+  shuffle(_.flatten(getColours(gameType).map(colour => cardsForColor(colour))));
 
 export const deal = (deck: Card[], numPlayers: number): Card[][] => {
-  const handSize = numPlayers == 4 || numPlayers == 5 ? 4 : 5;
+  const handSize = getHandSize(numPlayers);
   const hands = [];
   for (let playerIdx = 0; playerIdx < numPlayers; playerIdx++) {
     const hand: Card[] = [];

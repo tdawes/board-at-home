@@ -1,23 +1,39 @@
+export type GameType = "basic" | "rainbow";
+
 export interface Config {
-  gameType: "basic" | "rainbowIsItsOwnColor" | "rainbowIsAnyColor";
+  gameType: GameType;
   infoTokens: number;
   fuseTokens: number;
+  royalFavour: boolean;
 }
-// TODO: The Royal Favor variant doesn't use scoring and players keep on playing even after the deck is gone, having potentially fewer cards in hands. Completing all fireworks till 5 is a win, anything else is a loss for all players. The game ends immediately when a player would start a turn with no cards in hand.
 
-// TODO: rainbow
-export type Color = "red" | "blue" | "green" | "yellow" | "white";
+export const colours = [
+  "red",
+  "blue",
+  "green",
+  "yellow",
+  "white",
+  "rainbow",
+] as const;
+export type Colour = typeof colours[number];
+export const numbers = [1, 2, 3, 4, 5] as const;
+export type Number = typeof numbers[number];
+export const maxCardNum = numbers[numbers.length - 1];
+export const getColours = (gameType: GameType): Colour[] =>
+  gameType === "rainbow"
+    ? colours.slice()
+    : colours.filter(c => c != "rainbow");
 
 export interface Card {
-  color: Color;
+  colour: Colour;
   num: number;
 }
 
 export interface Board {
   deck: Card[];
   hands: Card[][];
-  piles: { [key in Color]: number };
-  discardPile: Card[];
+  piles: { [key in Colour]: number };
+  discardPile: { [key in Colour]: Card[] };
   fuseTokens: number;
   infoTokens: number;
 }
@@ -32,24 +48,20 @@ export interface State {
 
 export interface PlayAction {
   type: "play";
-  playerId: string;
   cardIdx: number;
 }
 
 export interface DiscardAction {
   type: "discard";
-  playerId: string;
   cardIdx: number;
 }
 
 export interface InfoAction {
   type: "info";
-  playerId: string;
 }
 
 export interface MoveAction {
   type: "move";
-  playerId: string;
   cardIdx: number;
   direction: "left" | "right";
 }
@@ -66,3 +78,30 @@ export type Action =
   | InfoAction
   | MoveAction
   | SelectAction;
+
+export const cardsPerNumber: { [key in Number]: number } = {
+  1: 3,
+  2: 2,
+  3: 2,
+  4: 2,
+  5: 1,
+};
+
+export const minPlayers = 2;
+export const maxPlayers = 5;
+export const noSelectedCards: number[][] = Array.from(
+  { length: maxPlayers },
+  _ => [],
+);
+export const getHandSize = (numPlayers: number) => (numPlayers >= 4 ? 4 : 5);
+
+export const mapToColours = <T>(defaultValue: T): { [key in Colour]: T } => {
+  const piles: { [key: string]: T } = {};
+  colours.map(colour => {
+    piles[colour] = defaultValue;
+  });
+  return piles as { [key in Colour]: T };
+};
+
+export const emptyPiles: { [key in Colour]: number } = mapToColours(0);
+export const emptyDiscardPile: { [key in Colour]: Card[] } = mapToColours([]);
