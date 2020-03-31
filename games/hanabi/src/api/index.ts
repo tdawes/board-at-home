@@ -7,22 +7,22 @@ export interface Config {
   royalFavour: boolean;
 }
 
-export const colours = [
-  "red",
-  "blue",
-  "green",
-  "yellow",
-  "white",
-  "rainbow",
-] as const;
+const colourValues = {
+  red: "red",
+  blue: "blue",
+  green: "green",
+  yellow: "yellow",
+  white: "white",
+  rainbow: "rainbow",
+} as const;
+const colours = Object.values(colourValues);
 export type Colour = typeof colours[number];
+export const getColours = (gameType: GameType): Colour[] =>
+  gameType === "rainbow" ? colours : colours.filter(c => c !== "rainbow");
+
 export const numbers = [1, 2, 3, 4, 5] as const;
 export type Number = typeof numbers[number];
 export const maxCardNum = numbers[numbers.length - 1];
-export const getColours = (gameType: GameType): Colour[] =>
-  gameType === "rainbow"
-    ? colours.slice()
-    : colours.filter(c => c != "rainbow");
 
 export interface Card {
   colour: Colour;
