@@ -93,7 +93,11 @@ export const discardCard = (
 ) => {
   const card = state.board.hands[state.currentPlayer].splice(cardIdx, 1)[0];
   state.board.discardPile[card.colour].splice(
-    _.sortedIndexBy(state.board.discardPile[card.colour], card, "num"),
+    _.sortedIndexBy(
+      state.board.discardPile[card.colour],
+      card,
+      card => -card.num,
+    ),
     0,
     card,
   );

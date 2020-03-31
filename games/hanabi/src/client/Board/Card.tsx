@@ -17,11 +17,10 @@ const commonCardStyles = (selected: boolean): React.CSSProperties => ({
   padding: "15px 10px",
   borderRadius: "4px",
   border: selected ? "1px solid darkgrey" : "1px solid white",
+  transition: "borderColor 100ms ease-in-out",
   minWidth: "41px",
 });
 
-//"linear-gradient(to bottom, blue, blue, green, green, yellow, yellow, orange, red, red, red)",
-//"linear-gradient(to bottom, #039BE5, #039BE5, #66BB6A, #66BB6A, #FDD835, #FDD835, orange, #E53935, #E53935, #E53935)",
 const cardColorStyles = (colour: Colour): React.CSSProperties => {
   if (colour === "rainbow") {
     return {

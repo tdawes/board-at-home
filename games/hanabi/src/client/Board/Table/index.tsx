@@ -15,7 +15,6 @@ import * as _ from "lodash";
 const CARD_HEIGHT = "72px";
 
 export default ({ game }: { game: StartedGame<State, Config> }) => {
-  // TODO: try discard in columns? or reorg so it doesn't move unexpectedly?
   const discarded = _.flatten(Object.values(game.state.board.discardPile));
 
   return (
@@ -57,19 +56,19 @@ export default ({ game }: { game: StartedGame<State, Config> }) => {
         icon={faBomb}
       />
       {discarded.length > 0 && (
-        <FontAwesomeIcon icon={faTrash} style={{ marginTop: "8px" }} />
+        <FontAwesomeIcon icon={faTrash} style={{ marginTop: "16px" }} />
       )}
       <Flex
         sx={{
           minHeight: CARD_HEIGHT,
-          flexDirection: "column",
-          alignItems: "center",
+          alignItems: "start",
         }}
         m={2}
       >
         {Object.values(game.state.board.discardPile).map((pile, pileIdx) => (
           <Flex
             sx={{
+              flexDirection: "column",
               flexWrap: "wrap",
             }}
             key={pileIdx}

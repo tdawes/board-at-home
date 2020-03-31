@@ -8,11 +8,11 @@ export interface Config {
 }
 
 const colourValues = {
-  red: "red",
+  white: "white",
   blue: "blue",
   green: "green",
   yellow: "yellow",
-  white: "white",
+  red: "red",
   rainbow: "rainbow",
 } as const;
 const colours = Object.values(colourValues);

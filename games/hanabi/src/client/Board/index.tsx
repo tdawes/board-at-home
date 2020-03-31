@@ -7,7 +7,7 @@ import Table from "./Table";
 import { ThisPlayerHand, OtherPlayerHand } from "./Hands";
 import PlayerMessage from "./PlayerMessage";
 
-// TODO: animations, highlight token and card changes
+// TODO: animations, highlight card changes
 export const Board = ({
   game,
   playerId,
