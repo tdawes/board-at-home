@@ -15,6 +15,7 @@ import * as _ from "lodash";
 const CARD_HEIGHT = "72px";
 
 export default ({ game }: { game: StartedGame<State, Config> }) => {
+  // TODO: try discard in columns? or reorg so it doesn't move unexpectedly?
   const discarded = _.flatten(Object.values(game.state.board.discardPile));
 
   return (

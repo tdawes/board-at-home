@@ -55,18 +55,19 @@ describe("removeInfoToken", () => {
 });
 
 describe("drawCard", () => {
-  it("Removes card from deck and adds it to current player's hand", () => {
+  it("Removes card from deck and adds it to current player's hand in specified position", () => {
     const testState = { ...startState };
     const prevDeckSize = testState.board.deck.length;
     const prevHandSize = testState.board.hands[testState.currentPlayer].length;
     const topCard = testState.board.deck[0];
-    drawCard(testState);
+    const pos = 2;
+    drawCard(testState, pos);
     expect(testState.board.deck).toHaveLength(prevDeckSize - 1);
     const newHandSize = testState.board.hands[testState.currentPlayer].length;
     expect(newHandSize).toEqual(prevHandSize + 1);
-    expect(
-      testState.board.hands[testState.currentPlayer][newHandSize - 1],
-    ).toEqual(topCard);
+    expect(testState.board.hands[testState.currentPlayer][pos]).toEqual(
+      topCard,
+    );
   });
   it("Adds nothing when drawing from empty deck", () => {
     const testState = {
@@ -74,7 +75,7 @@ describe("drawCard", () => {
       board: { ...startState.board, deck: [] },
     };
     const prevHandSize = testState.board.hands[testState.currentPlayer].length;
-    drawCard(testState);
+    drawCard(testState, 0);
     expect(testState.board.deck.length).toEqual(0);
     const newHandSize = testState.board.hands[testState.currentPlayer].length;
     expect(newHandSize).toEqual(prevHandSize);

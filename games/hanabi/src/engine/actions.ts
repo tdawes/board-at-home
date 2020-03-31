@@ -14,10 +14,10 @@ export const removeInfoToken = (state: State) => {
   state.board.infoTokens -= 1;
 };
 
-export const drawCard = (state: State) => {
+export const drawCard = (state: State, cardIdx: number) => {
   const drawnCard = state.board.deck.shift();
   if (drawnCard) {
-    state.board.hands[state.currentPlayer].push(drawnCard);
+    state.board.hands[state.currentPlayer].splice(cardIdx, 0, drawnCard);
   }
 };
 
@@ -83,7 +83,7 @@ export const playCard = (
     state.board.discardPile[card.colour].push(card);
     state.board.fuseTokens -= 1;
   }
-  drawCard(state);
+  drawCard(state, cardIdx);
 };
 
 export const discardCard = (
@@ -98,7 +98,7 @@ export const discardCard = (
     card,
   );
   addInfoToken(state, maxInfoTokens);
-  drawCard(state);
+  drawCard(state, cardIdx);
 };
 
 export const advancePlayer = (
