@@ -7,7 +7,6 @@ import Table from "./Table";
 import { ThisPlayerHand, OtherPlayerHand } from "./Hands";
 import PlayerMessage from "./PlayerMessage";
 
-// TODO: mobile friendly?
 // TODO: animations, highlight token and card changes
 export const Board = ({
   game,

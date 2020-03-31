@@ -27,8 +27,8 @@ export default ({ game }: { game: StartedGame<State, Config> }) => {
         borderRadius: "4px",
         width: "320px",
       }}
-      ml={3}
       p={3}
+      m={1}
     >
       <Flex sx={{ height: CARD_HEIGHT }}>
         {(Object.keys(

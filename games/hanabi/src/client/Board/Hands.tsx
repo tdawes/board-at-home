@@ -23,26 +23,34 @@ export const OtherPlayerHand = ({
   name: string;
   isCurrentPlayer: boolean;
 }) => (
-  <Flex sx={{ alignItems: "center" }} key={name} mt={3}>
-    <span
-      style={{ marginRight: "4px", color: isCurrentPlayer ? "#00897B" : "" }}
-    >
-      <FontAwesomeIcon icon={faUser} style={{ marginRight: "4px" }} />
-      {name}
-    </span>
-    's hand:{" "}
-    {hand.map((card, cardIdx) => (
-      <CardDisplay
-        card={card}
-        key={cardIdx}
-        selected={selected.includes(cardIdx)}
-        onSelect={
-          canAct
-            ? () => act({ type: "select", handIdx: handIdx, cardIdx })
-            : undefined
-        }
-      />
-    ))}
+  <Flex
+    sx={{ alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}
+    key={name}
+    mt={3}
+  >
+    <div>
+      <span
+        style={{ marginRight: "4px", color: isCurrentPlayer ? "#00897B" : "" }}
+      >
+        <FontAwesomeIcon icon={faUser} style={{ marginRight: "4px" }} />
+        {name}
+      </span>
+      's hand:{" "}
+    </div>
+    <Flex>
+      {hand.map((card, cardIdx) => (
+        <CardDisplay
+          card={card}
+          key={cardIdx}
+          selected={selected.includes(cardIdx)}
+          onSelect={
+            canAct
+              ? () => act({ type: "select", handIdx: handIdx, cardIdx })
+              : undefined
+          }
+        />
+      ))}
+    </Flex>
   </Flex>
 );
 
@@ -62,7 +70,7 @@ export const ThisPlayerHand = ({
   canGiveInfo: boolean;
 }) => (
   <>
-    <Flex mb={3}>
+    <Flex mb={3} sx={{ flexWrap: "wrap", justifyContent: "center" }}>
       {hand.map((_card, cardIdx) => (
         <ActionableCard
           key={cardIdx}
