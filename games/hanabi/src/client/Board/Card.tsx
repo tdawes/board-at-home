@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card, Colour } from "../../api";
+import { Card, Colour, colourMap } from "../../api";
 import { Flex, IconButton, Button } from "theme-ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,13 +19,6 @@ const commonCardStyles = (selected: boolean): React.CSSProperties => ({
   border: selected ? "1px solid darkgrey" : "1px solid white",
   minWidth: "41px",
 });
-
-const colourMap = {
-  red: "#E53935",
-  blue: "#039BE5",
-  green: "#66BB6A",
-  yellow: "#FDD835",
-};
 
 //"linear-gradient(to bottom, blue, blue, green, green, yellow, yellow, orange, red, red, red)",
 //"linear-gradient(to bottom, #039BE5, #039BE5, #66BB6A, #66BB6A, #FDD835, #FDD835, orange, #E53935, #E53935, #E53935)",

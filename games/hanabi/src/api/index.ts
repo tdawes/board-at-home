@@ -113,3 +113,11 @@ export const getEmptyPiles = (
 export const getEmptyDiscardPile = (
   gameType: GameType,
 ): { [key in Colour]: Card[] } => mapToColours([], gameType);
+
+export const hanabiColour = "#00897B";
+export const colourMap = {
+  red: "#E53935",
+  blue: "#039BE5",
+  green: "#66BB6A",
+  yellow: "#FDD835",
+};

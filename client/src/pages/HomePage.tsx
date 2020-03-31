@@ -87,7 +87,7 @@ export default () => {
   return (
     <Container p={3} sx={{ width: "360px", textAlign: "center" }}>
       <CreateNewGame />
-      <Divider mt={3} mb={3} />
+      <Divider my={3} />
       <JoinGame />
     </Container>
   );
