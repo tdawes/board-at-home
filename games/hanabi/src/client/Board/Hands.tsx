@@ -62,7 +62,7 @@ export const ThisPlayerHand = ({
   canGiveInfo: boolean;
 }) => (
   <>
-    <Flex mb={2}>
+    <Flex mb={3}>
       {hand.map((_card, cardIdx) => (
         <ActionableCard
           key={cardIdx}
@@ -101,7 +101,7 @@ export const ThisPlayerHand = ({
     <Button
       variant={canGiveInfo ? "hanabi" : "hanabiDisabled"}
       onClick={canGiveInfo ? () => act({ type: "info" }) : undefined}
-      mb={2}
+      mb={3}
       sx={{ fontSize: "13px" }}
     >
       <FontAwesomeIcon icon={faInfoCircle} /> Give information

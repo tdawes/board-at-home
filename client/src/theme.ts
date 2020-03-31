@@ -5,6 +5,8 @@ import { Theme } from "theme-ui";
 export default {
   ...system,
   fonts: {
+    body: "system-ui, sans-serif",
+    heading: "Georgia, serif",
     fantasy: "pristina",
   },
   colors: {

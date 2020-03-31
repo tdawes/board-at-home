@@ -7,6 +7,8 @@ import Table from "./Table";
 import { ThisPlayerHand, OtherPlayerHand } from "./Hands";
 import PlayerMessage from "./PlayerMessage";
 
+// TODO: mobile friendly?
+// TODO: animations, highlight token and card changes
 export const Board = ({
   game,
   playerId,
@@ -21,7 +23,10 @@ export const Board = ({
     game.state.board.infoTokens > 0;
 
   return (
-    <Flex className="board" sx={{ width: "100%", justifyContent: "center" }}>
+    <Flex
+      className="board"
+      sx={{ width: "100%", justifyContent: "center", flexWrap: "wrap" }}
+    >
       <Flex
         sx={{
           flexDirection: "column",
@@ -42,21 +47,29 @@ export const Board = ({
           finished={game.state.finished}
           piles={game.state.board.piles}
         />
-        {Object.keys(game.players).map((id, idx) =>
-          id != playerId ? (
-            <OtherPlayerHand
-              hand={game.state.board.hands[idx]}
-              selected={game.state.selectedCards[idx]}
-              canAct={canAct}
-              act={act}
-              name={game.players[id].name || game.players[id].id}
-              handIdx={idx}
-              isCurrentPlayer={game.state.currentPlayer === idx}
-            />
-          ) : (
-            <div key={id} />
-          ),
-        )}
+        <Flex
+          sx={{
+            flexDirection: "column",
+            alignItems: "flex-end",
+          }}
+          mb={3}
+        >
+          {Object.keys(game.players).map((id, idx) =>
+            id != playerId ? (
+              <OtherPlayerHand
+                hand={game.state.board.hands[idx]}
+                selected={game.state.selectedCards[idx]}
+                canAct={canAct}
+                act={act}
+                name={game.players[id].name || game.players[id].id}
+                handIdx={idx}
+                isCurrentPlayer={game.state.currentPlayer === idx}
+              />
+            ) : (
+              <div key={id} />
+            ),
+          )}
+        </Flex>
       </Flex>
       <Table game={game} />
     </Flex>

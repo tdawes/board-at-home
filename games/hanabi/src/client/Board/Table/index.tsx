@@ -15,13 +15,7 @@ import * as _ from "lodash";
 const CARD_HEIGHT = "72px";
 
 export default ({ game }: { game: StartedGame<State, Config> }) => {
-  // Currently displaying as a somewhat organized list, may reconsider
-  // (in which case rethink data structure/org)
-  const discarded = _.flatten(
-    Object.values(game.state.board.discardPile).map(colour =>
-      _.sortBy(colour, c => c.num).reverse(),
-    ),
-  );
+  const discarded = _.flatten(Object.values(game.state.board.discardPile));
 
   return (
     <Flex
@@ -67,13 +61,22 @@ export default ({ game }: { game: StartedGame<State, Config> }) => {
       <Flex
         sx={{
           minHeight: CARD_HEIGHT,
+          flexDirection: "column",
           alignItems: "center",
-          flexWrap: "wrap",
         }}
         m={2}
       >
-        {discarded.map((card, idx) => (
-          <CardDisplay card={card} key={idx} selected={false} />
+        {Object.values(game.state.board.discardPile).map((pile, pileIdx) => (
+          <Flex
+            sx={{
+              flexWrap: "wrap",
+            }}
+            key={pileIdx}
+          >
+            {pile.map((card, idx) => (
+              <CardDisplay card={card} key={idx} selected={false} />
+            ))}
+          </Flex>
         ))}
       </Flex>
     </Flex>

@@ -17,6 +17,7 @@ const commonCardStyles = (selected: boolean): React.CSSProperties => ({
   padding: "15px 10px",
   borderRadius: "4px",
   border: selected ? "1px solid darkgrey" : "1px solid white",
+  minWidth: "41px",
 });
 
 const colourMap = {
