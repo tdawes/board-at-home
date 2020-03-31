@@ -7,7 +7,7 @@ import {
 import {
   cardsPerNumber,
   getColours,
-  emptyDiscardPile,
+  getEmptyDiscardPile,
   getHandSize,
 } from "../../src/api";
 import * as _ from "lodash";
@@ -18,14 +18,14 @@ describe("createDeck", () => {
     const deck = createDeck(gameType);
     const expectedDeckSize =
       _.sum(Object.values(cardsPerNumber)) * getColours(gameType).length;
-    expect(deck.length).toBe(expectedDeckSize);
+    expect(deck.length).toEqual(expectedDeckSize);
   });
   it("Creates a full deck with rainbow if specified", () => {
     const gameType = "rainbow";
     const deck = createDeck(gameType);
     const expectedDeckSize =
       _.sum(Object.values(cardsPerNumber)) * getColours(gameType).length;
-    expect(deck.length).toBe(expectedDeckSize);
+    expect(deck.length).toEqual(expectedDeckSize);
   });
 });
 
@@ -43,11 +43,11 @@ describe("cannotCompleteSet", () => {
 });
 
 describe("cannotCompleteEverySet", () => {
+  const pile = getEmptyDiscardPile("basic");
   it("Returns false if all sets can still be completed", () => {
-    expect(cannotCompleteEverySet(emptyDiscardPile)).toBeFalsy;
+    expect(cannotCompleteEverySet(pile)).toBeFalsy;
   });
   it("Returns true if a set can not be completed anymore", () => {
-    const pile = emptyDiscardPile;
     pile["red"] = [{ colour: "red", num: 5 }];
     expect(cannotCompleteEverySet(pile)).toBeTruthy;
   });
@@ -60,9 +60,9 @@ describe("deal", () => {
     const startingDeckSize = deck.length;
     const handSize = getHandSize(numPlayers);
     const hands = deal(deck, numPlayers);
-    expect(hands.length).toBe(numPlayers);
-    expect(hands[0].length).toBe(handSize);
-    expect(hands[1].length).toBe(handSize);
-    expect(deck.length).toBe(startingDeckSize - numPlayers * handSize);
+    expect(hands).toHaveLength(numPlayers);
+    expect(hands[0]).toHaveLength(handSize);
+    expect(hands[1]).toHaveLength(handSize);
+    expect(deck).toHaveLength(startingDeckSize - numPlayers * handSize);
   });
 });

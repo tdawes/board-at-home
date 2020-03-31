@@ -2,8 +2,8 @@ import {
   Board,
   maxCardNum,
   Card,
-  emptyPiles,
-  emptyDiscardPile,
+  getEmptyPiles,
+  getEmptyDiscardPile,
   Config,
 } from "../api";
 import { cannotCompleteEverySet, createDeck, deal } from "./deck";
@@ -12,8 +12,8 @@ import * as _ from "lodash";
 export const getInitialBoard = (numPlayers: number, config: Config): Board => {
   const deck: Card[] = createDeck(config.gameType);
   return {
-    piles: emptyPiles,
-    discardPile: emptyDiscardPile,
+    piles: getEmptyPiles(config.gameType),
+    discardPile: getEmptyDiscardPile(config.gameType),
     deck,
     hands: deal(deck, numPlayers),
     infoTokens: config.infoTokens,

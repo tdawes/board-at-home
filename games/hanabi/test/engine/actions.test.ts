@@ -30,12 +30,12 @@ describe("addInfoToken", () => {
       board: { infoTokens: defaultConfig.infoTokens - 1, ...startState.board },
     };
     addInfoToken(testState, defaultConfig.infoTokens);
-    expect(testState.board.infoTokens === defaultConfig.infoTokens);
+    expect(testState.board.infoTokens).toEqual(defaultConfig.infoTokens);
   });
   it("Does not increase when info tokens are full", () => {
     const testState = { ...startState };
     addInfoToken(testState, defaultConfig.infoTokens);
-    expect(testState.board.infoTokens === defaultConfig.infoTokens);
+    expect(testState.board.infoTokens).toEqual(defaultConfig.infoTokens);
   });
 });
 
@@ -43,15 +43,14 @@ describe("removeInfoToken", () => {
   it("Decreases the number of info tokens by one when not empty", () => {
     const testState = { ...startState };
     removeInfoToken(testState);
-    expect(testState.board.infoTokens === defaultConfig.infoTokens - 1);
+    expect(testState.board.infoTokens).toEqual(defaultConfig.infoTokens - 1);
   });
   it("Does not decrease when info tokens are empty", () => {
     const testState = {
       ...startState,
-      board: { infoTokens: 0, ...startState.board },
+      board: { ...startState.board, infoTokens: 0 },
     };
-    removeInfoToken(testState);
-    expect(testState.board.infoTokens === 0);
+    expect(() => removeInfoToken(testState)).toThrow();
   });
 });
 
@@ -62,12 +61,12 @@ describe("drawCard", () => {
     const prevHandSize = testState.board.hands[testState.currentPlayer].length;
     const topCard = testState.board.deck[0];
     drawCard(testState);
-    expect(testState.board.deck.length).toBe(prevDeckSize - 1);
+    expect(testState.board.deck).toHaveLength(prevDeckSize - 1);
     const newHandSize = testState.board.hands[testState.currentPlayer].length;
-    expect(newHandSize).toBe(prevHandSize + 1);
+    expect(newHandSize).toEqual(prevHandSize + 1);
     expect(
       testState.board.hands[testState.currentPlayer][newHandSize - 1],
-    ).toBe(topCard);
+    ).toEqual(topCard);
   });
   it("Adds nothing when drawing from empty deck", () => {
     const testState = {
@@ -76,12 +75,14 @@ describe("drawCard", () => {
     };
     const prevHandSize = testState.board.hands[testState.currentPlayer].length;
     drawCard(testState);
-    expect(testState.board.deck.length).toBe(0);
+    expect(testState.board.deck.length).toEqual(0);
     const newHandSize = testState.board.hands[testState.currentPlayer].length;
-    expect(newHandSize).toBe(prevHandSize);
+    expect(newHandSize).toEqual(prevHandSize);
     expect(
       testState.board.hands[testState.currentPlayer][newHandSize - 1],
-    ).toBe(startState.board.hands[startState.currentPlayer][prevHandSize - 1]);
+    ).toEqual(
+      startState.board.hands[startState.currentPlayer][prevHandSize - 1],
+    );
   });
 });
 
@@ -196,7 +197,7 @@ describe("playCard", () => {
     };
     testState.board.hands[testState.currentPlayer][cardIdx] = card;
     playCard(testState, cardIdx, defaultConfig.infoTokens);
-    expect(testState.board.piles[card.colour]).toBe(card.num);
+    expect(testState.board.piles[card.colour]).toEqual(card.num);
   });
   it("If invalid, adds card to discard pile from the hand and removes fuse token", () => {
     const card: Card = {
@@ -207,7 +208,7 @@ describe("playCard", () => {
     const prevFuseTokens = testState.board.fuseTokens;
     playCard(testState, cardIdx, defaultConfig.infoTokens);
     expect(testState.board.discardPile[card.colour]).toContain(card);
-    expect(testState.board.fuseTokens).toBe(prevFuseTokens - 1);
+    expect(testState.board.fuseTokens).toEqual(prevFuseTokens - 1);
   });
   it("Adds an info token when completing a stack", () => {
     const prevInfoTokens = 3;
@@ -219,12 +220,12 @@ describe("playCard", () => {
     testState.board.piles[card.colour] = maxCardNum - 1;
     testState.board.hands[testState.currentPlayer][cardIdx] = card;
     playCard(testState, cardIdx, defaultConfig.infoTokens);
-    expect(testState.board.piles[card.colour]).toBe(card.num);
-    expect(testState.board.infoTokens).toBe(prevInfoTokens + 1);
+    expect(testState.board.piles[card.colour]).toEqual(card.num);
+    expect(testState.board.infoTokens).toEqual(prevInfoTokens + 1);
   });
   it("Draws a new card to replenish hand", () => {
     playCard(testState, cardIdx, defaultConfig.infoTokens);
-    expect(testState.board.hands[testState.currentPlayer].length).toBe(
+    expect(testState.board.hands[testState.currentPlayer]).toHaveLength(
       prevHandSize,
     );
   });
@@ -242,10 +243,10 @@ describe("discardCard", () => {
     expect(testState.board.discardPile[card.colour]).toContain(card);
   });
   it("Adds an info token", () => {
-    expect(testState.board.infoTokens).toBe(prevInfoTokens + 1);
+    expect(testState.board.infoTokens).toEqual(prevInfoTokens + 1);
   });
   it("Draws a new card to replenish hand", () => {
-    expect(testState.board.hands[testState.currentPlayer].length).toBe(
+    expect(testState.board.hands[testState.currentPlayer]).toHaveLength(
       prevHandSize,
     );
   });
@@ -259,7 +260,7 @@ describe("advancePlayer", () => {
       defaultConfig.royalFavour,
       testState.board.deck.length,
     );
-    expect(testState.currentPlayer === 1);
+    expect(testState.currentPlayer).toEqual(1);
   });
   it("Wraps to first player after last player", () => {
     const testState = {
@@ -271,7 +272,7 @@ describe("advancePlayer", () => {
       defaultConfig.royalFavour,
       testState.board.deck.length,
     );
-    expect(testState.currentPlayer === 0);
+    expect(testState.currentPlayer).toEqual(0);
   });
   it("Resets selection", () => {
     const testState = {
@@ -292,7 +293,7 @@ describe("advancePlayer", () => {
     };
     const prevPlayer = testState.currentPlayer;
     advancePlayer(testState, defaultConfig.royalFavour, 1);
-    expect(testState.finalPlayer).toBe(prevPlayer);
+    expect(testState.finalPlayer).toEqual(prevPlayer);
   });
   it("Does not trigger end of game if RF and deck is empty", () => {
     const testState = {

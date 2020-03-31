@@ -95,13 +95,21 @@ export const noSelectedCards: number[][] = Array.from(
 );
 export const getHandSize = (numPlayers: number) => (numPlayers >= 4 ? 4 : 5);
 
-export const mapToColours = <T>(defaultValue: T): { [key in Colour]: T } => {
+export const mapToColours = <T>(
+  defaultValue: T,
+  gameType: GameType,
+): { [key in Colour]: T } => {
   const piles: { [key: string]: T } = {};
-  colours.map(colour => {
+  const selectedColours = getColours(gameType) || colours;
+  selectedColours.map(colour => {
     piles[colour] = defaultValue;
   });
   return piles as { [key in Colour]: T };
 };
 
-export const emptyPiles: { [key in Colour]: number } = mapToColours(0);
-export const emptyDiscardPile: { [key in Colour]: Card[] } = mapToColours([]);
+export const getEmptyPiles = (
+  gameType: GameType,
+): { [key in Colour]: number } => mapToColours(0, gameType);
+export const getEmptyDiscardPile = (
+  gameType: GameType,
+): { [key in Colour]: Card[] } => mapToColours([], gameType);

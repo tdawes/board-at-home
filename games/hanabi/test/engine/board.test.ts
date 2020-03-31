@@ -1,15 +1,15 @@
 import { isFinished, getInitialBoard } from "../../src/engine/board";
-import { Board, mapToColours } from "../../src/api";
+import { Board, mapToColours, Config } from "../../src/api";
 import { defaultConfig } from "../../src/client";
 import * as _ from "lodash";
 
 describe("isFinished", () => {
-  const basicConfig = {
+  const basicConfig: Config = {
     royalFavour: false,
     ...defaultConfig,
   };
   const board: Board = getInitialBoard(2, defaultConfig);
-  const fullPiles = mapToColours(5);
+  const fullPiles = mapToColours(5, basicConfig.gameType);
   it("returns false for an initial state", () => {
     expect(isFinished(board, 0, basicConfig.royalFavour)).toBeFalsy();
   });
@@ -35,15 +35,15 @@ describe("isFinished", () => {
   });
 
   // Royal Favour variant
-  const rfConfig = {
+  const rfConfig: Config = {
     ...defaultConfig,
     royalFavour: true,
   };
   const rfBoard: Board = getInitialBoard(2, rfConfig);
-  it("returns false for an initial state  in RF", () => {
+  it("returns false for an initial state in RF", () => {
     expect(isFinished(rfBoard, 0, rfConfig.royalFavour)).toBeFalsy();
   });
-  it("return true if all piles have been completed  in RF", () => {
+  it("return true if all piles have been completed in RF", () => {
     expect(
       isFinished({ ...rfBoard, piles: fullPiles }, 0, rfConfig.royalFavour),
     ).toBeTruthy();
@@ -75,6 +75,28 @@ describe("isFinished", () => {
         0,
         rfConfig.royalFavour,
       ),
+    ).toBeTruthy();
+  });
+
+  // Rainbow variant
+  const rainbowConfig: Config = {
+    ...defaultConfig,
+    gameType: "rainbow",
+  };
+  const rainbowBoard: Board = getInitialBoard(2, rainbowConfig);
+  const rainbowFullPiles = mapToColours(5, rainbowConfig.gameType);
+  it("return true if all piles have been completed including rainbow", () => {
+    expect(
+      isFinished(
+        { ...rainbowBoard, piles: rainbowFullPiles },
+        0,
+        rainbowConfig.royalFavour,
+      ),
+    ).toBeTruthy();
+  });
+  it("return true if all piles have been completed including rainbow in RF", () => {
+    expect(
+      isFinished({ ...rainbowBoard, piles: rainbowFullPiles }, 0, true),
     ).toBeTruthy();
   });
 });
