@@ -1,4 +1,5 @@
 import { State, noSelectedCards, maxCardNum } from "../api";
+import * as _ from "lodash";
 
 export const addInfoToken = (state: State, maxInfoTokens: number) => {
   if (state.board.infoTokens < maxInfoTokens) {
@@ -13,10 +14,10 @@ export const removeInfoToken = (state: State) => {
   state.board.infoTokens -= 1;
 };
 
-export const drawCard = (state: State) => {
+export const drawCard = (state: State, cardIdx: number) => {
   const drawnCard = state.board.deck.shift();
   if (drawnCard) {
-    state.board.hands[state.currentPlayer].push(drawnCard);
+    state.board.hands[state.currentPlayer].splice(cardIdx, 0, drawnCard);
   }
 };
 
@@ -82,7 +83,7 @@ export const playCard = (
     state.board.discardPile[card.colour].push(card);
     state.board.fuseTokens -= 1;
   }
-  drawCard(state);
+  drawCard(state, cardIdx);
 };
 
 export const discardCard = (
@@ -91,9 +92,17 @@ export const discardCard = (
   maxInfoTokens: number,
 ) => {
   const card = state.board.hands[state.currentPlayer].splice(cardIdx, 1)[0];
-  state.board.discardPile[card.colour].push(card);
+  state.board.discardPile[card.colour].splice(
+    _.sortedIndexBy(
+      state.board.discardPile[card.colour],
+      card,
+      card => -card.num,
+    ),
+    0,
+    card,
+  );
   addInfoToken(state, maxInfoTokens);
-  drawCard(state);
+  drawCard(state, cardIdx);
 };
 
 export const advancePlayer = (

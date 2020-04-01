@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import * as React from "react";
 import { Game, Player } from "@board-at-home/api/src";
-import { jsx, Input, Flex, Heading, Divider, IconButton } from "theme-ui";
+import { jsx, Input, Flex, Heading, Divider, IconButton, Box } from "theme-ui";
 import { dispatch } from "../model";
 import { setPlayerName } from "../actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -63,10 +63,16 @@ const PlayerName = ({ code, player }: { code: string; player: Player }) => {
   }
 
   return (
-    <Flex sx={{ alignItems: "baseline" }}>
-      <div>
+    <Flex sx={{ alignItems: "baseline", maxWidth: "50vw" }}>
+      <Box
+        sx={{
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+        }}
+      >
         Player name: <b>{player.name || player.id}</b>
-      </div>
+      </Box>
       <IconButton onClick={() => setEditing(true)} ml={1}>
         <FontAwesomeIcon icon={faEdit} />
       </IconButton>
@@ -87,6 +93,7 @@ export default ({ game, player }: Props) => (
       <Flex
         sx={{
           alignItems: "baseline",
+          flexWrap: "wrap",
         }}
       >
         <Heading as="h1" mr={2}>
@@ -96,6 +103,6 @@ export default ({ game, player }: Props) => (
       </Flex>
       <PlayerName code={game.code} player={player} />
     </Flex>
-    <Divider mb={3} sx={{ color: "black" }} />
+    <Divider mb={3} sx={{ borderColor: "black" }} />
   </div>
 );

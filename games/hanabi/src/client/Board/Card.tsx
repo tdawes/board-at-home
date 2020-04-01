@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card, Colour } from "../../api";
+import { Card, Colour, colourMap } from "../../api";
 import { Flex, IconButton, Button } from "theme-ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -17,17 +17,10 @@ const commonCardStyles = (selected: boolean): React.CSSProperties => ({
   padding: "15px 10px",
   borderRadius: "4px",
   border: selected ? "1px solid darkgrey" : "1px solid white",
+  transition: "borderColor 100ms ease-in-out",
+  minWidth: "41px",
 });
 
-const colourMap = {
-  red: "#E53935",
-  blue: "#039BE5",
-  green: "#66BB6A",
-  yellow: "#FDD835",
-};
-
-//"linear-gradient(to bottom, blue, blue, green, green, yellow, yellow, orange, red, red, red)",
-//"linear-gradient(to bottom, #039BE5, #039BE5, #66BB6A, #66BB6A, #FDD835, #FDD835, orange, #E53935, #E53935, #E53935)",
 const cardColorStyles = (colour: Colour): React.CSSProperties => {
   if (colour === "rainbow") {
     return {
@@ -91,7 +84,7 @@ export const ActionableCard = ({
   onMoveLeft?: () => any;
   onMoveRight?: () => any;
 }) => (
-  <Flex sx={{ flexDirection: "column", width: "100px" }} m={1}>
+  <Flex sx={{ flexDirection: "column", width: "85px" }} m={1}>
     <div
       style={{
         ...commonCardStyles(selected),
@@ -106,27 +99,30 @@ export const ActionableCard = ({
     </div>
     <Flex sx={{ justifyContent: "space-between" }}>
       {onMoveLeft ? (
-        <IconButton onClick={onMoveLeft}>
+        <IconButton onClick={onMoveLeft} title="Swap card to the left">
           <FontAwesomeIcon icon={faArrowLeft} style={{ margin: "5px" }} />
         </IconButton>
       ) : (
         <div />
       )}
       {onMoveRight && (
-        <IconButton onClick={onMoveRight}>
+        <IconButton onClick={onMoveRight} title="Swap card to the right">
           <FontAwesomeIcon icon={faArrowRight} style={{ margin: "5px" }} />
         </IconButton>
       )}
     </Flex>
-    {canAct && (
-      <Button variant="hanabi" onClick={onPlay} mb={1}>
-        <FontAwesomeIcon icon={faPlay} /> Play
-      </Button>
-    )}
-    {canAct && (
-      <Button variant="hanabi" onClick={onDiscard}>
-        <FontAwesomeIcon icon={faTrash} /> Discard
-      </Button>
-    )}
+    <Button
+      variant={canAct ? "hanabi" : "hanabiDisabled"}
+      onClick={canAct ? onPlay : undefined}
+      mb={1}
+    >
+      <FontAwesomeIcon icon={faPlay} /> Play
+    </Button>
+    <Button
+      variant={canAct ? "hanabi" : "hanabiDisabled"}
+      onClick={canAct ? onDiscard : undefined}
+    >
+      <FontAwesomeIcon icon={faTrash} /> Discard
+    </Button>
   </Flex>
 );

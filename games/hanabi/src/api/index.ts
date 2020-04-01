@@ -7,22 +7,22 @@ export interface Config {
   royalFavour: boolean;
 }
 
-export const colours = [
-  "red",
-  "blue",
-  "green",
-  "yellow",
-  "white",
-  "rainbow",
-] as const;
+const colourValues = {
+  white: "white",
+  blue: "blue",
+  green: "green",
+  yellow: "yellow",
+  red: "red",
+  rainbow: "rainbow",
+} as const;
+const colours = Object.values(colourValues);
 export type Colour = typeof colours[number];
+export const getColours = (gameType: GameType): Colour[] =>
+  gameType === "rainbow" ? colours : colours.filter(c => c !== "rainbow");
+
 export const numbers = [1, 2, 3, 4, 5] as const;
 export type Number = typeof numbers[number];
 export const maxCardNum = numbers[numbers.length - 1];
-export const getColours = (gameType: GameType): Colour[] =>
-  gameType === "rainbow"
-    ? colours.slice()
-    : colours.filter(c => c != "rainbow");
 
 export interface Card {
   colour: Colour;
@@ -95,13 +95,29 @@ export const noSelectedCards: number[][] = Array.from(
 );
 export const getHandSize = (numPlayers: number) => (numPlayers >= 4 ? 4 : 5);
 
-export const mapToColours = <T>(defaultValue: T): { [key in Colour]: T } => {
+export const mapToColours = <T>(
+  defaultValue: T,
+  gameType: GameType,
+): { [key in Colour]: T } => {
   const piles: { [key: string]: T } = {};
-  colours.map(colour => {
+  const selectedColours = getColours(gameType) || colours;
+  selectedColours.map(colour => {
     piles[colour] = defaultValue;
   });
   return piles as { [key in Colour]: T };
 };
 
-export const emptyPiles: { [key in Colour]: number } = mapToColours(0);
-export const emptyDiscardPile: { [key in Colour]: Card[] } = mapToColours([]);
+export const getEmptyPiles = (
+  gameType: GameType,
+): { [key in Colour]: number } => mapToColours(0, gameType);
+export const getEmptyDiscardPile = (
+  gameType: GameType,
+): { [key in Colour]: Card[] } => mapToColours([], gameType);
+
+export const hanabiColour = "#00897B";
+export const colourMap = {
+  red: "#E53935",
+  blue: "#039BE5",
+  green: "#66BB6A",
+  yellow: "#FDD835",
+};

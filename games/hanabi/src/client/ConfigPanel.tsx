@@ -26,9 +26,9 @@ export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
         checked={config.royalFavour}
         onChange={() => setConfig({ royalFavour: !config.royalFavour })}
       />
-      Royal Favour (complete all sets)
+      Royal Favour (finish all sets)
     </Label>
-    <Label sx={{ alignItems: "center", width: "auto" }}>
+    <Label sx={{ alignItems: "center", width: "170px" }}>
       <Input
         type="number"
         min="1"
@@ -42,7 +42,7 @@ export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
       <FontAwesomeIcon icon={faInfoCircle} style={{ margin: "5px" }} />
       info tokens
     </Label>
-    <Label sx={{ alignItems: "center", width: "auto" }}>
+    <Label sx={{ alignItems: "center", width: "170px" }}>
       <Input
         type="number"
         min="1"

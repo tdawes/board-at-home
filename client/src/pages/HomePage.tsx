@@ -32,7 +32,7 @@ const HomePageButton = ({
     disabled={disabled}
     variant={disabled ? "disabled" : "primary"}
     onClick={onClick}
-    sx={{ width: "120px" }}
+    sx={{ width: "110px" }}
   >
     {text}
   </Button>
@@ -85,9 +85,9 @@ const JoinGame = () => {
 
 export default () => {
   return (
-    <Container p={4} sx={{ width: "400px", textAlign: "center" }}>
+    <Container p={3} sx={{ width: "360px", textAlign: "center" }}>
       <CreateNewGame />
-      <Divider mt={4} mb={4} />
+      <Divider my={3} />
       <JoinGame />
     </Container>
   );

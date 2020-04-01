@@ -23,5 +23,13 @@ export default ({
   if (currentPlayer.id === playerId) {
     return <div>It's your turn.</div>;
   }
-  return <div>Waiting for {currentPlayer.name || currentPlayer.id}.</div>;
+  return (
+    <div>
+      Waiting for{" "}
+      <span style={{ color: "#00897B" }}>
+        {currentPlayer.name || currentPlayer.id}
+      </span>
+      .
+    </div>
+  );
 };
