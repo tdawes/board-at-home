@@ -8,6 +8,11 @@ import { ThisPlayerHand, OtherPlayerHand } from "./Hands";
 import PlayerMessage from "./PlayerMessage";
 
 // TODO: animations, highlight card changes
+// flip on play/discard
+// then highlight/slide in to table piles
+// slide away from deck when drawing
+// and slide into place in hand in on draw
+// swap on move (easier if we assume big screen...)
 export const Board = ({
   game,
   playerId,

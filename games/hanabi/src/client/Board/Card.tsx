@@ -99,14 +99,14 @@ export const ActionableCard = ({
     </div>
     <Flex sx={{ justifyContent: "space-between" }}>
       {onMoveLeft ? (
-        <IconButton onClick={onMoveLeft}>
+        <IconButton onClick={onMoveLeft} title="Swap card to the left">
           <FontAwesomeIcon icon={faArrowLeft} style={{ margin: "5px" }} />
         </IconButton>
       ) : (
         <div />
       )}
       {onMoveRight && (
-        <IconButton onClick={onMoveRight}>
+        <IconButton onClick={onMoveRight} title="Swap card to the right">
           <FontAwesomeIcon icon={faArrowRight} style={{ margin: "5px" }} />
         </IconButton>
       )}

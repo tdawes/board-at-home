@@ -111,6 +111,7 @@ export const ThisPlayerHand = ({
       onClick={canGiveInfo ? () => act({ type: "info" }) : undefined}
       mb={3}
       sx={{ fontSize: "13px" }}
+      title="If you want to select cards, do it before clicking this, as it will end your turn."
     >
       <FontAwesomeIcon icon={faInfoCircle} /> Give information
     </Button>
