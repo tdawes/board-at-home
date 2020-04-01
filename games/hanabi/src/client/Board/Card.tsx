@@ -84,7 +84,7 @@ export const ActionableCard = ({
   onMoveLeft?: () => any;
   onMoveRight?: () => any;
 }) => (
-  <Flex sx={{ flexDirection: "column", width: "100px" }} m={1}>
+  <Flex sx={{ flexDirection: "column", width: "85px" }} m={1}>
     <div
       style={{
         ...commonCardStyles(selected),

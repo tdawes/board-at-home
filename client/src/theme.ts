@@ -81,15 +81,17 @@ export default {
       "&:hover": {
         bg: "#00695C",
       },
+      fontSize: "11px",
       m: 1,
-      fontSize: "12px",
+      p: 2,
     },
     hanabiDisabled: {
       color: "white",
       bg: "#BDBDBD",
       cursor: "not-allowed",
-      fontSize: "12px",
+      fontSize: "11px",
       m: 1,
+      p: 2,
     },
   },
   forms: {
