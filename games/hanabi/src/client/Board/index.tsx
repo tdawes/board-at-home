@@ -61,6 +61,7 @@ export const Board = ({
           {Object.keys(game.players).map((id, idx) =>
             id !== playerId ? (
               <OtherPlayerHand
+                key={id}
                 hand={game.state.board.hands[idx]}
                 selected={game.state.selectedCards[idx]}
                 canAct={canAct}
