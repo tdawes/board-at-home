@@ -31,8 +31,10 @@
   },
   "dependencies": {
     "@board-at-home/api": "*",
-    "@board-at-home/tic-tac-toe": "*",
+    "@board-at-home/coup": "*",
     "@board-at-home/hanabi": "*",
+    "@board-at-home/quiz": "*",
+    "@board-at-home/tic-tac-toe": "*",
     "immer": "^6.0.2",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",

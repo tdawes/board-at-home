@@ -1,17 +1,17 @@
-import * as MemoryCache from "memory-cache";
 import {
   Game,
-  UnstartedGame,
-  StartedGame,
-  Player,
   GameEngine,
+  Player,
+  StartedGame,
+  UnstartedGame,
 } from "@board-at-home/api";
-import ticTacToe from "@board-at-home/tic-tac-toe/dist/engine";
-import hanabi from "@board-at-home/hanabi/dist/engine";
 import coup from "@board-at-home/coup/dist/engine";
-
-import { randomCode } from "./utils";
+import hanabi from "@board-at-home/hanabi/dist/engine";
+import quiz from "@board-at-home/quiz/dist/engine";
+import ticTacToe from "@board-at-home/tic-tac-toe/dist/engine";
 import produce from "immer";
+import * as MemoryCache from "memory-cache";
+import { randomCode } from "./utils";
 
 export interface GameController {
   newGame: (type: string, owner: string) => string;
@@ -35,6 +35,7 @@ const engines: { [key: string]: GameEngine<any, any, any> } = {
   ticTacToe,
   coup,
   hanabi,
+  quiz,
 };
 
 const getEngine = (type: string) => {
@@ -124,7 +125,7 @@ export default (): GameController => {
     updateGame({
       type,
       code,
-      owner: owner,
+      owner,
       players: { [owner]: { id: owner } },
       started: false,
     });

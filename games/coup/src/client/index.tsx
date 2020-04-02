@@ -1,17 +1,17 @@
 /** @jsx jsx */
-import { State, Action, Config, Card, Hand, HistoryEvent } from "../api";
-import { ConfigProps, BoardProps, StartedGame } from "@board-at-home/api";
-import { jsx, Label, Checkbox, Input, Flex, Box } from "theme-ui";
+import { BoardProps, ConfigProps, StartedGame } from "@board-at-home/api";
+import indefinite from "indefinite";
+import _ from "lodash";
 import pluralize from "pluralize";
+import { Box, Checkbox, Flex, Input, jsx, Label } from "theme-ui";
+import { Action, Card, Config, Hand, HistoryEvent, State } from "../api";
 import Actions from "./actions";
 import { name } from "./utils";
-import _ from "lodash";
-import indefinite from "indefinite";
 
-export const defaultConfig: Config = {
+export const defaultConfig = (): Config => ({
   useExpansion: false,
   numberOfEachCard: 3,
-};
+});
 
 export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
   <div>
@@ -49,7 +49,7 @@ const Message = ({
   playerId: string;
 }) => {
   if (game.state.finished) {
-    if (game.state.winner == playerId) {
+    if (game.state.winner === playerId) {
       return <div>You win!</div>;
     } else if (game.state.winner != null) {
       return <div>{name(game, game.state.winner)} wins!</div>;
@@ -94,14 +94,19 @@ const OtherPlayers = ({
     {Object.keys(game.players)
       .filter(other => other !== playerId)
       .map(other => (
-        <Flex sx={{ flexGrow: 1, maxWidth: "200px", flexDirection: "column" }}>
+        <Flex
+          key={other}
+          sx={{ flexGrow: 1, maxWidth: "200px", flexDirection: "column" }}
+        >
           <Label>{name(game, other)}:</Label>
           <Flex>
-            {game.state.players[other].deadCards.map((card: Card) => (
-              <SimpleCard card={card} dead />
-            ))}
-            {game.state.players[other].liveCards.map(() => (
-              <SimpleCard />
+            {game.state.players[other].deadCards.map(
+              (card: Card, index: number) => (
+                <SimpleCard key={index} card={card} dead />
+              ),
+            )}
+            {game.state.players[other].liveCards.map((_card, index: number) => (
+              <SimpleCard key={index} />
             ))}
           </Flex>
           <Flex>
@@ -120,11 +125,11 @@ const Hand = ({ hand }: { hand: Hand }) => (
   <div>
     <Label>Hand:</Label>
     <Flex>
-      {hand.liveCards.map(card => (
-        <SimpleCard card={card} />
+      {hand.liveCards.map((card, index) => (
+        <SimpleCard key={index} card={card} />
       ))}
-      {hand.deadCards.map(card => (
-        <SimpleCard card={card} dead />
+      {hand.deadCards.map((card, index) => (
+        <SimpleCard key={index} card={card} dead />
       ))}
     </Flex>
     <Box>
@@ -256,8 +261,12 @@ export const Board = ({
       <Actions game={game} playerId={playerId} act={act} />
     </Flex>
     <Flex sx={{ flexDirection: "column" }}>
-      {game.state.history.slice(-10).map(event => (
-        <Log game={game} event={event} />
+      {game.state.history.slice(-10).map((event, index) => (
+        <Log
+          key={Math.max(game.state.history.length - 10, 0) + index}
+          game={game}
+          event={event}
+        />
       ))}
     </Flex>
   </Flex>

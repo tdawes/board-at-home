@@ -1,11 +1,11 @@
+import { BoardProps, ConfigProps, StartedGame } from "@board-at-home/api";
 import * as React from "react";
-import { State, Action, Config } from "../api";
-import { ConfigProps, BoardProps, StartedGame } from "@board-at-home/api";
-import { Input, Flex, Box } from "theme-ui";
+import { Box, Flex, Input } from "theme-ui";
+import { Action, Config, State } from "../api";
 
-export const defaultConfig: Config = {
+export const defaultConfig = (): Config => ({
   size: 3,
-};
+});
 
 export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
   <Flex sx={{ alignItems: "baseline" }}>
@@ -15,7 +15,7 @@ export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
       min="3"
       max="5"
       value={config.size}
-      onChange={e => setConfig({ size: parseInt(e.target.value) })}
+      onChange={e => setConfig({ size: parseInt(e.target.value, 10) })}
       sx={{ width: "80px" }}
       ml={2}
     />
@@ -31,7 +31,7 @@ const Message = ({
 }) => {
   if (game.state.finished) {
     let text = "";
-    if (game.state.winner == playerId) {
+    if (game.state.winner === playerId) {
       text = "You win!";
     } else if (game.state.winner != null) {
       text = "You lose!";

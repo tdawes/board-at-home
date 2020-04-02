@@ -1,11 +1,11 @@
 /** @jsx jsx */
-import * as React from "react";
 import { Game, Player } from "@board-at-home/api/src";
-import { jsx, Input, Flex, Heading, Divider, IconButton, Box } from "theme-ui";
-import { dispatch } from "../model";
-import { setPlayerName } from "../actions";
+import { faCheck, faEdit, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTimes, faCheck } from "@fortawesome/free-solid-svg-icons";
+import * as React from "react";
+import { Box, Divider, Flex, Heading, IconButton, Input, jsx } from "theme-ui";
+import { setPlayerName } from "../actions";
+import { dispatch } from "../model";
 
 export interface Props {
   game: Game<any, any>;
