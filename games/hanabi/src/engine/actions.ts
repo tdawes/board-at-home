@@ -1,5 +1,5 @@
-import { State, noSelectedCards, maxCardNum } from "../api";
 import * as _ from "lodash";
+import { maxCardNum, noSelectedCards, State } from "../api";
 
 export const addInfoToken = (state: State, maxInfoTokens: number) => {
   if (state.board.infoTokens < maxInfoTokens) {
@@ -31,7 +31,7 @@ export const deselectCard = (
   cardIdx: number,
 ) => {
   state.selectedCards[handIdx] = state.selectedCards[handIdx].filter(
-    idx => idx != cardIdx,
+    idx => idx !== cardIdx,
   );
 };
 
@@ -53,7 +53,7 @@ export const moveCard = (
   oldPos: number,
   direction: "left" | "right",
 ) => {
-  const newPos = direction == "right" ? oldPos + 1 : oldPos - 1;
+  const newPos = direction === "right" ? oldPos + 1 : oldPos - 1;
   if (newPos < 0 || newPos >= state.board.hands[playerIdx].length) {
     throw new Error("Moving card out of bounds");
   }
@@ -62,7 +62,7 @@ export const moveCard = (
   state.board.hands[playerIdx].splice(newPos, 0, card);
 
   const selected = state.selectedCards[playerIdx];
-  if (selected.includes(oldPos) != selected.includes(newPos)) {
+  if (selected.includes(oldPos) !== selected.includes(newPos)) {
     toggleCardSelection(state, playerIdx, oldPos);
     toggleCardSelection(state, playerIdx, newPos);
   }
@@ -76,7 +76,7 @@ export const playCard = (
   const card = state.board.hands[state.currentPlayer].splice(cardIdx, 1)[0];
   if (state.board.piles[card.colour] === card.num - 1) {
     state.board.piles[card.colour] = card.num;
-    if (card.num == maxCardNum) {
+    if (card.num === maxCardNum) {
       addInfoToken(state, maxInfoTokens);
     }
   } else {

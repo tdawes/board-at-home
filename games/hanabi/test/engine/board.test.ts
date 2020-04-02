@@ -1,7 +1,7 @@
-import { isFinished, getInitialBoard } from "../../src/engine/board";
-import { Board, mapToColours, Config } from "../../src/api";
-import { defaultConfig } from "../../src/client";
 import * as _ from "lodash";
+import { Board, Config, mapToColours } from "../../src/api";
+import { defaultConfig } from "../../src/client";
+import { getInitialBoard, isFinished } from "../../src/engine/board";
 
 describe("isFinished", () => {
   const basicConfig: Config = {

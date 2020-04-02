@@ -1,10 +1,10 @@
+import { faInfoCircle, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as _ from "lodash";
 import * as React from "react";
 import { Button, Flex } from "theme-ui";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle, faUser } from "@fortawesome/free-solid-svg-icons";
-import * as _ from "lodash";
+import { Action, Card } from "../../api";
 import { ActionableCard, CardDisplay } from "./Card";
-import { Card, Action } from "../../api";
 
 export const OtherPlayerHand = ({
   hand,
@@ -44,9 +44,7 @@ export const OtherPlayerHand = ({
           key={cardIdx}
           selected={selected.includes(cardIdx)}
           onSelect={
-            canAct
-              ? () => act({ type: "select", handIdx: handIdx, cardIdx })
-              : undefined
+            canAct ? () => act({ type: "select", handIdx, cardIdx }) : undefined
           }
         />
       ))}
@@ -79,9 +77,7 @@ export const ThisPlayerHand = ({
           onPlay={() => act({ type: "play", cardIdx })}
           onDiscard={() => act({ type: "discard", cardIdx })}
           onSelect={
-            canAct
-              ? () => act({ type: "select", handIdx: handIdx, cardIdx })
-              : undefined
+            canAct ? () => act({ type: "select", handIdx, cardIdx }) : undefined
           }
           onMoveLeft={
             cardIdx > 0

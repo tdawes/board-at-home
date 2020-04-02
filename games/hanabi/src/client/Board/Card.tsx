@@ -1,13 +1,13 @@
-import * as React from "react";
-import { Card, Colour, colourMap } from "../../api";
-import { Flex, IconButton, Button } from "theme-ui";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faArrowLeft,
+  faArrowRight,
   faPlay,
   faTrash,
-  faArrowRight,
-  faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as React from "react";
+import { Button, Flex, IconButton } from "theme-ui";
+import { Card, Colour, colourMap } from "../../api";
 
 const commonCardStyles = (selected: boolean): React.CSSProperties => ({
   backgroundColor: "#EEEEEE",

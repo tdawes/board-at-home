@@ -1,7 +1,7 @@
-import * as React from "react";
 import { Player } from "@board-at-home/api/src";
-import { maxCardNum, Colour } from "../../api";
 import * as _ from "lodash";
+import * as React from "react";
+import { Colour, maxCardNum } from "../../api";
 
 export default ({
   playerId,
@@ -15,7 +15,7 @@ export default ({
   piles: { [key in Colour]: number };
 }) => {
   if (finished) {
-    if (_.every(Object.values(piles), num => num == maxCardNum)) {
+    if (_.every(Object.values(piles), num => num === maxCardNum)) {
       return <div>You won!</div>;
     }
     return <div>You lost... Score: {_.sum(Object.values(piles))}</div>;

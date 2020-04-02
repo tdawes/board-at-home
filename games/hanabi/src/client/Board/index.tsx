@@ -1,11 +1,11 @@
-import * as React from "react";
-import { State, Action, Config } from "../../api";
 import { BoardProps } from "@board-at-home/api";
-import { Flex } from "theme-ui";
 import * as _ from "lodash";
-import Table from "./Table";
-import { ThisPlayerHand, OtherPlayerHand } from "./Hands";
+import * as React from "react";
+import { Flex } from "theme-ui";
+import { Action, Config, State } from "../../api";
+import { OtherPlayerHand, ThisPlayerHand } from "./Hands";
 import PlayerMessage from "./PlayerMessage";
+import Table from "./Table";
 
 // TODO: animations, highlight card changes
 // flip on play/discard
@@ -19,7 +19,7 @@ export const Board = ({
   act,
 }: BoardProps<State, Action, Config>) => {
   const playerIdx = Object.keys(game.players).indexOf(playerId);
-  const canAct = !game.state.finished && game.state.currentPlayer == playerIdx;
+  const canAct = !game.state.finished && game.state.currentPlayer === playerIdx;
   const canGiveInfo =
     canAct &&
     !game.state.finished &&
@@ -59,7 +59,7 @@ export const Board = ({
           mb={3}
         >
           {Object.keys(game.players).map((id, idx) =>
-            id != playerId ? (
+            id !== playerId ? (
               <OtherPlayerHand
                 hand={game.state.board.hands[idx]}
                 selected={game.state.selectedCards[idx]}

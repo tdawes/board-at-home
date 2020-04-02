@@ -1,16 +1,16 @@
-import {
-  createDeck,
-  cannotCompleteSet,
-  cannotCompleteEverySet,
-  deal,
-} from "../../src/engine/deck";
+import * as _ from "lodash";
 import {
   cardsPerNumber,
   getColours,
   getEmptyDiscardPile,
   getHandSize,
 } from "../../src/api";
-import * as _ from "lodash";
+import {
+  cannotCompleteEverySet,
+  cannotCompleteSet,
+  createDeck,
+  deal,
+} from "../../src/engine/deck";
 
 describe("createDeck", () => {
   it("Creates a full basic deck", () => {
@@ -48,7 +48,7 @@ describe("cannotCompleteEverySet", () => {
     expect(cannotCompleteEverySet(pile)).toBeFalsy;
   });
   it("Returns true if a set can not be completed anymore", () => {
-    pile["red"] = [{ colour: "red", num: 5 }];
+    pile.red = [{ colour: "red", num: 5 }];
     expect(cannotCompleteEverySet(pile)).toBeTruthy;
   });
 });

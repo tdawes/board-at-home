@@ -1,7 +1,7 @@
 /** @jsx jsx */
-import { jsx, Box } from "theme-ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as _ from "lodash";
+import { Box, jsx } from "theme-ui";
 import { colourMap, hanabiColour } from "../../../api";
 
 const gainKeyframe = {
@@ -20,7 +20,7 @@ const loseKeyframe = {
     color: "inherit",
   },
   "50%": {
-    color: colourMap["red"],
+    color: colourMap.red,
   },
   "100%": {
     color: "lightgrey",

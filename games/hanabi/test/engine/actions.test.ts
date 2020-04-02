@@ -1,18 +1,18 @@
+import { Board, Card, maxCardNum, noSelectedCards, State } from "../../src/api";
+import { defaultConfig } from "../../src/client";
 import {
+  addInfoToken,
+  advancePlayer,
+  deselectCard,
+  discardCard,
   drawCard,
   moveCard,
-  selectCard,
-  deselectCard,
-  toggleCardSelection,
   playCard,
-  discardCard,
-  addInfoToken,
   removeInfoToken,
-  advancePlayer,
+  selectCard,
+  toggleCardSelection,
 } from "../../src/engine/actions";
 import { getInitialBoard } from "../../src/engine/board";
-import { defaultConfig } from "../../src/client";
-import { Board, State, Card, noSelectedCards, maxCardNum } from "../../src/api";
 
 const board: Board = getInitialBoard(2, defaultConfig);
 const startState: State = {

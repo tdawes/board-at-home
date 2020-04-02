@@ -1,13 +1,13 @@
+import * as _ from "lodash";
 import {
-  Colour,
   Card,
-  numbers,
   cardsPerNumber,
-  getHandSize,
+  Colour,
   GameType,
   getColours,
+  getHandSize,
+  numbers,
 } from "../api";
-import * as _ from "lodash";
 
 const cardsForColor = (colour: Colour): Card[] =>
   _.flatten(

@@ -1,28 +1,28 @@
 import {
-  GameEngine,
-  UnstartedGame,
-  StartedGame,
   BaseGame,
+  GameEngine,
+  StartedGame,
+  UnstartedGame,
 } from "@board-at-home/api";
+import produce from "immer";
+import * as _ from "lodash";
 import {
-  State,
   Action,
   Config,
   maxPlayers,
   minPlayers,
   noSelectedCards,
+  State,
 } from "../api";
-import * as _ from "lodash";
-import produce from "immer";
-import { isFinished, getInitialBoard } from "./board";
 import {
-  moveCard,
-  toggleCardSelection,
-  playCard,
-  discardCard,
-  removeInfoToken,
   advancePlayer,
+  discardCard,
+  moveCard,
+  playCard,
+  removeInfoToken,
+  toggleCardSelection,
 } from "./actions";
+import { getInitialBoard, isFinished } from "./board";
 
 const getNumPlayers = (game: BaseGame) => Object.keys(game.players).length;
 
