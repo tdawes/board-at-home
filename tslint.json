@@ -1,0 +1,20 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier",
+    "tslint-plugin-prettier",
+    "tslint-react"
+  ],
+  "rules": {
+    "interface-name": false,
+    "jsx-no-multiline-js": false,
+    "jsx-wrap-multiline": false,
+    "jsx-boolean-value": false,
+    "jsx-no-lambda": false,
+    "ordered-imports": true,
+    "no-shadowed-variable": false,
+    "no-object-literal-type-assertion": false,
+    "no-submodule-imports": false
+  }
+}

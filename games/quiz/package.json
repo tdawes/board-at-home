@@ -1,0 +1,32 @@
+{
+  "name": "@board-at-home/quiz",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc -p .",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "test": "jest"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@board-at-home/api": "*",
+    "immer": "^6.0.3",
+    "lodash": "^4.17.15",
+    "react": "^16.13.0",
+    "theme-ui": "^0.3.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.149",
+    "@types/react": "^16.9.23",
+    "@types/theme-ui": "^0.3.0",
+    "tslint": "^6.1.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.2.0",
+    "tslint-react": "^4.2.0",
+    "typescript": "^3.8.3"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  }
+}

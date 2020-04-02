@@ -1,29 +1,29 @@
 /** @jsx jsx */
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import io from "socket.io-client";
-import { dispatch, watch, state, local } from "../model";
 import {
-  registerSocket,
-  joinGame,
-  startGame,
-  applyPlayerAction,
-  kickPlayer,
-  clearServerError,
-} from "../actions";
-import {
-  jsx,
   Alert,
-  Container,
   Button,
   Close,
-  Spinner,
-  IconButton,
+  Container,
   Flex,
+  IconButton,
+  jsx,
+  Spinner,
 } from "theme-ui";
-import games from "../games";
+import {
+  applyPlayerAction,
+  clearServerError,
+  joinGame,
+  kickPlayer,
+  registerSocket,
+  startGame,
+} from "../actions";
 import TopBar from "../components/TopBar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import games from "../games";
+import { dispatch, local, state, watch } from "../model";
 
 export interface Props {
   code: string;
@@ -61,7 +61,7 @@ export default ({ code }: Props) => {
 
   React.useEffect(() => {
     if (game != null) {
-      setConfig(games[game.type].defaultConfig);
+      setConfig(games[game.type].defaultConfig(game));
     }
   }, [game && game.type]);
 
@@ -114,10 +114,11 @@ export default ({ code }: Props) => {
           userId === game.owner && (
             <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
               <ConfigPanel
-                config={config || games[game.type].defaultConfig}
+                game={game}
+                config={config || games[game.type].defaultConfig(game)}
                 setConfig={(c: any) =>
                   setConfig({
-                    ...(config || games[game.type].defaultConfig),
+                    ...(config || games[game.type].defaultConfig(game)),
                     ...c,
                   })
                 }

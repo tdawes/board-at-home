@@ -1,18 +1,18 @@
-import { GameEngine, UnstartedGame, StartedGame } from "@board-at-home/api";
-import { State, Action, Config, Hand, Card } from "../api";
+import { GameEngine, StartedGame, UnstartedGame } from "@board-at-home/api";
+import produce from "immer";
 import _ from "lodash";
+import { Action, Card, Config, Hand, State } from "../api";
+import acceptMove from "./accept-move";
+import challenge from "./challenge";
+import commitCurrentAction from "./commit-current-action";
+import discard from "./discard";
+import forceReplace from "./force-replace";
+import forceReplaceCancel from "./force-replace-cancel";
+import loseInfluence from "./lose-influence";
 import play from "./play";
 import react from "./react";
-import challenge from "./challenge";
-import discard from "./discard";
-import produce from "immer";
-import forceReplace from "./force-replace";
-import loseInfluence from "./lose-influence";
 import respondToChallenge from "./respond-to-challenge";
 import reveal from "./reveal";
-import forceReplaceCancel from "./force-replace-cancel";
-import commitCurrentAction from "./commit-current-action";
-import acceptMove from "./accept-move";
 
 const newDeck = (numberOfEachCard: number, useExpansion: boolean) =>
   _.flatten(

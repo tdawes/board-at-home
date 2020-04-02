@@ -1,5 +1,5 @@
-import { State, Card } from "../api";
 import _ from "lodash";
+import { Card, State } from "../api";
 
 export default (state: State, playerId: string, target: string, card: Card) => {
   const targetHand = state.players[target];

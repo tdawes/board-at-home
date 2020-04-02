@@ -1,18 +1,18 @@
 /** @jsx jsx */
+import { BoardProps, StartedGame } from "@board-at-home/api";
 import _ from "lodash";
 import * as React from "react";
-import { jsx, Button } from "theme-ui";
-import { BoardProps, StartedGame } from "@board-at-home/api/src";
+import Modal from "react-modal";
+import { Button, jsx } from "theme-ui";
 import {
-  State,
   Action,
   Config,
   DecideDiscardUserInput,
   DiscardCardUserInput,
   RespondToChallengeUserInput,
   RevealCardUserInput,
+  State,
 } from "../api";
-import Modal from "react-modal";
 import { conditionFromAction, isCurrentPlayer } from "../utils";
 import { name } from "./utils";
 
@@ -45,7 +45,7 @@ const ChooseTargetModal = ({
   return (
     <Modal isOpen={!!show}>
       {possibleTargets.map(other => (
-        <Button onClick={() => onSelect(other)}>
+        <Button key={other} onClick={() => onSelect(other)}>
           {game.players[other].name || other}
         </Button>
       ))}
@@ -155,7 +155,7 @@ const ConvertOtherButton = ({
         }}
         game={game}
         playerId={playerId}
-        ownTeam
+        ownTeam={true}
         onClose={() => setShowModal(false)}
       />
       <Button onClick={() => setShowModal(true)}>Recruit</Button>
@@ -471,8 +471,11 @@ export const LoseInfluenceButton = ({
   return (
     <div>
       <div>Choose a card to lose:</div>
-      {game.state.players[playerId].liveCards.map(card => (
-        <Button onClick={() => act({ type: "lose-influence", playerId, card })}>
+      {game.state.players[playerId].liveCards.map((card, index) => (
+        <Button
+          key={index}
+          onClick={() => act({ type: "lose-influence", playerId, card })}
+        >
           {_.capitalize(card)}
         </Button>
       ))}
@@ -535,8 +538,9 @@ const RevealCardButton = ({
 }) => (
   <div>
     <div>Choose a card to reveal to {name(game, event.target)}:</div>
-    {game.state.players[playerId].liveCards.map(card => (
+    {game.state.players[playerId].liveCards.map((card, index) => (
       <Button
+        key={index}
         onClick={() =>
           act({ type: "reveal", playerId, target: event.target, card })
         }
@@ -588,7 +592,7 @@ export default (props: BoardProps<State, Action, Config>) => {
           {Object.keys(game.state.requiredUserInputs)
             .filter(other => game.state.requiredUserInputs[other].length > 0)
             .map(other => (
-              <div>
+              <div key={other}>
                 Waiting for {name(game, other)} to{" "}
                 {game.state.requiredUserInputs[other]
                   .map(userEvent => {

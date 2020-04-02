@@ -33,6 +33,7 @@ export interface GameEngine<State, Action, Config> {
 }
 
 export interface ConfigProps<Config> {
+  game: UnstartedGame;
   config: Config;
   setConfig: (config: Partial<Config>) => void;
 }

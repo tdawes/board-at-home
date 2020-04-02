@@ -1,9 +1,9 @@
-import * as React from "react";
 import { ConfigProps } from "@board-at-home/api/src";
-import { Config } from "../api";
-import { Flex, Label, Checkbox, Input, Select } from "theme-ui";
+import { faBomb, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle, faBomb } from "@fortawesome/free-solid-svg-icons";
+import * as React from "react";
+import { Checkbox, Flex, Input, Label, Select } from "theme-ui";
+import { Config } from "../api";
 
 export const ConfigPanel = ({ config, setConfig }: ConfigProps<Config>) => (
   <Flex sx={{ flexDirection: "column", alignItems: "center" }} mt={3}>
