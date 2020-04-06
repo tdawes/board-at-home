@@ -1,5 +1,5 @@
 import { Board, Card, maxCardNum, noSelectedCards, State } from "../../src/api";
-import { defaultConfig } from "../../src/client";
+import { defaultConfig as clientDefaultConfig } from "../../src/client";
 import {
   addInfoToken,
   advancePlayer,
@@ -14,6 +14,7 @@ import {
 } from "../../src/engine/actions";
 import { getInitialBoard } from "../../src/engine/board";
 
+const defaultConfig = clientDefaultConfig();
 const board: Board = getInitialBoard(2, defaultConfig);
 const startState: State = {
   board,

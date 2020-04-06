@@ -6,9 +6,9 @@ import { getInitialBoard, isFinished } from "../../src/engine/board";
 describe("isFinished", () => {
   const basicConfig: Config = {
     royalFavour: false,
-    ...defaultConfig,
+    ...defaultConfig(),
   };
-  const board: Board = getInitialBoard(2, defaultConfig);
+  const board: Board = getInitialBoard(2, defaultConfig());
   const fullPiles = mapToColours(5, basicConfig.gameType);
   it("returns false for an initial state", () => {
     expect(isFinished(board, 0, basicConfig.royalFavour)).toBeFalsy();
@@ -36,7 +36,7 @@ describe("isFinished", () => {
 
   // Royal Favour variant
   const rfConfig: Config = {
-    ...defaultConfig,
+    ...defaultConfig(),
     royalFavour: true,
   };
   const rfBoard: Board = getInitialBoard(2, rfConfig);
@@ -80,7 +80,7 @@ describe("isFinished", () => {
 
   // Rainbow variant
   const rainbowConfig: Config = {
-    ...defaultConfig,
+    ...defaultConfig(),
     gameType: "rainbow",
   };
   const rainbowBoard: Board = getInitialBoard(2, rainbowConfig);
