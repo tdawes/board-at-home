@@ -18,6 +18,7 @@ import {
   CardMargin,
   CardWidth,
 } from "./Card";
+import { PlayerName } from "./PlayerMessage";
 
 export const OtherPlayerHand = ({
   hand,
@@ -46,19 +47,13 @@ export const OtherPlayerHand = ({
     key={name}
     mt={3}
   >
-    <Flex>
+    <Flex
+      sx={{
+        alignItems: "center",
+      }}
+    >
       <FontAwesomeIcon icon={faUser} style={{ marginRight: "4px" }} />
-      <div
-        style={{
-          maxWidth: "300px",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          marginRight: "4px",
-          color: isCurrentPlayer ? "#00897B" : "",
-        }}
-      >
-        {name}
-      </div>
+      <PlayerName name={name} isCurrentPlayer={isCurrentPlayer} />
       's hand:{" "}
     </Flex>
     <Flex>
@@ -76,7 +71,6 @@ export const OtherPlayerHand = ({
   </Flex>
 );
 
-// TODO: show them one by one vertically and allow moving that way on mobile?
 export const ThisPlayerHand = ({
   hand,
   selected,

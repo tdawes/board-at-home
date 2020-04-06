@@ -6,7 +6,29 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as _ from "lodash";
 import * as React from "react";
+import { Flex } from "theme-ui";
 import { Colour, maxCardNum } from "../../api";
+
+export const PlayerName = ({
+  isCurrentPlayer,
+  name,
+}: {
+  isCurrentPlayer: boolean;
+  name: string;
+}) => (
+  <div
+    style={{
+      maxWidth: "230px",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      marginRight: "4px",
+      color: isCurrentPlayer ? "#00897B" : "",
+    }}
+  >
+    {name}
+  </div>
+);
 
 export default ({
   playerId,
@@ -24,7 +46,7 @@ export default ({
       marginTop: "8px",
       maxWidth: "440px",
       fontSize: "14px",
-      height: "42px",
+      height: "60px",
     }}
   >
     {finished ? (
@@ -39,16 +61,22 @@ export default ({
           <FontAwesomeIcon icon={faExclamationCircle} /> It's your turn.
         </span>{" "}
         You can choose a card to play or discard, or select other players' cards
-        to give other players information about them.
+        to give information about them.
       </>
     ) : (
-      <>
-        <FontAwesomeIcon icon={faHourglassHalf} /> Waiting for{" "}
-        <span style={{ color: "#00897B" }}>
-          {currentPlayer.name || currentPlayer.id}
-        </span>
-        .
-      </>
+      <Flex
+        sx={{
+          alignItems: "center",
+        }}
+        pt={3}
+      >
+        <FontAwesomeIcon icon={faHourglassHalf} />
+        <span style={{ margin: "0 4px" }}> Waiting for</span>
+        <PlayerName
+          name={currentPlayer.name || currentPlayer.id}
+          isCurrentPlayer={true}
+        />
+      </Flex>
     )}
   </div>
 );
