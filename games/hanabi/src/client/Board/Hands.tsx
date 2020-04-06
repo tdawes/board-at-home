@@ -1,4 +1,9 @@
-import { faInfoCircle, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faInfoCircle,
+  faPlay,
+  faTrash,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as _ from "lodash";
 import * as React from "react";
@@ -75,18 +80,19 @@ export const OtherPlayerHand = ({
 export const ThisPlayerHand = ({
   hand,
   selected,
+  handIdx,
   canAct,
   act,
-  handIdx,
   canGiveInfo,
 }: {
   hand: Card[];
   selected: number[];
+  handIdx: number;
   canAct: boolean;
   act: (action: Action) => any;
-  handIdx: number;
   canGiveInfo: boolean;
 }) => {
+  const [selectedCard, setSelectedCard] = React.useState(-1);
   const mod = CardWidth + 2 * CardMargin;
   const fn = (
     order: number[],
@@ -124,14 +130,22 @@ export const ThisPlayerHand = ({
     newOrder.splice(curIndex, 1);
     newOrder.splice(curCol, 0, originalIndex);
     setSprings(fn(newOrder, down, originalIndex, curIndex, x) as any);
-    if (!down) order.current = newOrder;
+    if (!down) {
+      if (!_.isEqual(order.current, newOrder)) {
+        order.current = newOrder;
+      } else if (canAct) {
+        setSelectedCard(originalIndex);
+        act({ type: "selectOnly", cardIdx: originalIndex, handIdx });
+      }
+    }
   });
+  const readyToAct = canAct && selectedCard >= 0;
 
   return (
     <>
       <div
         style={{
-          margin: "16px",
+          margin: "8px",
           height: `${CardHeight + 2 * CardMargin}px`,
           width: `${hand.length * mod}px`,
           position: "relative",
@@ -161,28 +175,68 @@ export const ThisPlayerHand = ({
           >
             <ActionableCard
               key={cardIdx}
-              canAct={canAct}
-              selected={selected.includes(cardIdx)}
-              onPlay={() => act({ type: "play", cardIdx })}
-              onDiscard={() => act({ type: "discard", cardIdx })}
-              onSelect={
-                canAct
-                  ? () => act({ type: "select", handIdx, cardIdx })
-                  : undefined
+              selected={
+                canAct ? selectedCard === cardIdx : selected.includes(cardIdx)
               }
             />
           </animated.div>
         ))}
       </div>
-      <Button
-        variant={canGiveInfo ? "hanabi" : "hanabiDisabled"}
-        onClick={canGiveInfo ? () => act({ type: "info" }) : undefined}
-        mb={3}
-        sx={{ fontSize: "13px" }}
-        title="If you want to select cards, do it before clicking this, as it will end your turn."
-      >
-        <FontAwesomeIcon icon={faInfoCircle} /> Give information
-      </Button>
+      <Flex>
+        <Button
+          variant={canGiveInfo ? "hanabi" : "hanabiDisabled"}
+          onClick={canGiveInfo ? () => act({ type: "info" }) : undefined}
+          mb={3}
+          sx={{ fontSize: "13px" }}
+          title={
+            canGiveInfo
+              ? "If you want to select cards, do it before clicking this, as it will end your turn."
+              : canAct
+              ? "Out of information tokens."
+              : "Wait for your turn."
+          }
+        >
+          <FontAwesomeIcon icon={faInfoCircle} /> Give information
+        </Button>
+        <Button
+          variant={readyToAct ? "hanabi" : "hanabiDisabled"}
+          onClick={
+            canAct
+              ? () => act({ type: "play", cardIdx: selectedCard })
+              : undefined
+          }
+          mb={3}
+          sx={{ fontSize: "13px" }}
+          title={
+            readyToAct
+              ? `Play card in position ${selectedCard + 1}`
+              : canAct
+              ? "Please select a card to play first."
+              : "Wait for your turn."
+          }
+        >
+          <FontAwesomeIcon icon={faPlay} /> Play selected card
+        </Button>
+        <Button
+          variant={readyToAct ? "hanabi" : "hanabiDisabled"}
+          onClick={
+            canAct
+              ? () => act({ type: "discard", cardIdx: selectedCard })
+              : undefined
+          }
+          mb={3}
+          sx={{ fontSize: "13px" }}
+          title={
+            readyToAct
+              ? `Discard card in position ${selectedCard + 1}`
+              : canAct
+              ? "Please select a card to discard first."
+              : "Wait for your turn."
+          }
+        >
+          <FontAwesomeIcon icon={faTrash} /> Discard selected card
+        </Button>
+      </Flex>
     </>
   );
 };

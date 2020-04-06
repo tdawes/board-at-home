@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card, Colour, colourMap } from "../../api";
+import { Card, Colour, colourMap, hanabiColour } from "../../api";
 
 const commonCardStyles = (selected: boolean): React.CSSProperties => ({
   backgroundColor: "#EEEEEE",
@@ -7,7 +7,7 @@ const commonCardStyles = (selected: boolean): React.CSSProperties => ({
   textAlign: "center",
   padding: "15px 10px",
   borderRadius: "4px",
-  border: selected ? "1px solid darkgrey" : "1px solid white",
+  border: selected ? `1px solid ${hanabiColour}` : "1px solid white",
   transition: "borderColor 100ms ease-in-out",
   minWidth: "41px",
 });
@@ -63,16 +63,7 @@ export const CardWidth = 50;
 export const CardHeight = 80;
 export const CardMargin = 8;
 
-export const ActionableCard = ({
-  selected,
-  onSelect,
-}: {
-  selected: boolean;
-  canAct: boolean;
-  onPlay: () => any;
-  onDiscard: () => any;
-  onSelect?: () => any;
-}) => (
+export const ActionableCard = ({ selected }: { selected: boolean }) => (
   <div
     style={{
       ...commonCardStyles(selected),
@@ -82,9 +73,7 @@ export const ActionableCard = ({
       color: "darkgrey",
       alignSelf: "center",
       fontSize: "50px",
-      cursor: onSelect ? "pointer" : "default",
     }}
-    onClick={onSelect}
   >
     ?
   </div>

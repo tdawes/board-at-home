@@ -72,12 +72,19 @@ export interface SelectAction {
   handIdx: number;
 }
 
+export interface SelectOnlyAction {
+  type: "selectOnly";
+  cardIdx: number;
+  handIdx: number;
+}
+
 export type Action =
   | PlayAction
   | DiscardAction
   | InfoAction
   | MoveAction
-  | SelectAction;
+  | SelectAction
+  | SelectOnlyAction;
 
 export const cardsPerNumber: { [key in HanabiNumber]: number } = {
   1: 3,

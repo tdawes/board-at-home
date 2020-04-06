@@ -53,6 +53,8 @@ const engine: GameEngine<State, Action, Config> = {
       if (action.type === "move") {
         const playerIdx = Object.keys(getGame().players).indexOf(playerId);
         moveCard(state, playerIdx, action.cardIdx, action.direction);
+      } else if (action.type === "selectOnly") {
+        state.selectedCards[action.handIdx] = [action.cardIdx];
       } else if (action.type === "select") {
         toggleCardSelection(state, action.handIdx, action.cardIdx);
       } else {
