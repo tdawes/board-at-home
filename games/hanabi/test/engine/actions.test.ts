@@ -10,6 +10,7 @@ import {
   playCard,
   removeInfoToken,
   selectCard,
+  selectOnlyCard,
   toggleCardSelection,
 } from "../../src/engine/actions";
 import { getInitialBoard } from "../../src/engine/board";
@@ -89,7 +90,7 @@ describe("drawCard", () => {
 });
 
 describe("selectCard", () => {
-  it("Marks only this card as selected", () => {
+  it("Marks this card as selected and affects no others", () => {
     const testState = {
       ...startState,
       selectedCards: [[], [], [3], [], []],
@@ -105,8 +106,24 @@ describe("selectCard", () => {
   });
 });
 
+describe("selectCard", () => {
+  it("Marks only this card as selected and deselects any others", () => {
+    const testState = {
+      ...startState,
+      selectedCards: [[], [], [3], [], []],
+    };
+    selectOnlyCard(testState, 0, 0);
+    expect(testState.selectedCards[0]).toContain(0);
+    expect(testState.selectedCards[1]).toEqual([]);
+    selectOnlyCard(testState, 0, 1);
+    expect(testState.selectedCards[0]).toContain(1);
+    expect(testState.selectedCards[1]).toEqual([]);
+    expect(testState.selectedCards[2]).toEqual([3]);
+  });
+});
+
 describe("deselectCard", () => {
-  it("Marks only this card as not selected", () => {
+  it("Marks this card as not selected and affects no others", () => {
     const testState = {
       ...startState,
       selectedCards: [[0], [0, 1, 2], [0], [], []],
@@ -139,12 +156,14 @@ describe("toggleCardSelection", () => {
 
 describe("moveCard", () => {
   const testState = getStartStateCopy();
-  const move = { hand: 1, card: 1 };
+  const move = { hand: 0, card: 1 };
+  const oneLeft = move.card - 1;
+  const oneRight = move.card + 1;
   it("Moves card to the left", () => {
     const card = { ...testState.board.hands[move.hand][move.card] };
     const leftCard = { ...testState.board.hands[move.hand][move.card - 1] };
     const rightCard = { ...testState.board.hands[move.hand][move.card + 1] };
-    moveCard(testState, move.hand, move.card, "left");
+    moveCard(testState, move.hand, move.card, oneLeft);
     expect(testState.board.hands[move.hand][move.card - 1]).toEqual(card);
     expect(testState.board.hands[move.hand][move.card]).toEqual(leftCard);
     expect(testState.board.hands[move.hand][move.card + 1]).toEqual(rightCard);
@@ -153,37 +172,42 @@ describe("moveCard", () => {
     const card = testState.board.hands[move.hand][move.card];
     const leftCard = testState.board.hands[move.hand][move.card - 1];
     const rightCard = testState.board.hands[move.hand][move.card + 1];
-    moveCard(testState, move.hand, move.card, "right");
+    moveCard(testState, move.hand, move.card, oneRight);
     expect(testState.board.hands[move.hand][move.card + 1]).toEqual(card);
     expect(testState.board.hands[move.hand][move.card]).toEqual(rightCard);
     expect(testState.board.hands[move.hand][move.card - 1]).toEqual(leftCard);
   });
   it("Doesn't allow moving leftmost card further left", () => {
-    expect(() => moveCard(testState, move.hand, 0, "left")).toThrow();
+    expect(() => moveCard(testState, move.hand, 0, -1)).toThrow();
   });
   it("Doesn't allow moving rightmost card further right", () => {
     const rightmost = testState.board.hands[move.hand].length - 1;
-    expect(() => moveCard(testState, move.hand, rightmost, "right")).toThrow();
+    expect(() =>
+      moveCard(testState, move.hand, rightmost, rightmost + 1),
+    ).toThrow();
   });
   it("Moves selection too", () => {
-    selectCard(testState, move.hand, move.card);
-    expect(testState.selectedCards[move.hand]).toEqual([move.card]);
-    moveCard(testState, move.hand, move.card, "right");
-    expect(testState.selectedCards[move.hand]).toEqual([move.card + 1]);
-    deselectCard(testState, move.hand, move.card + 1); // clean up
+    selectOnlyCard(testState, move.hand, 2);
+    expect(testState.selectedCards[move.hand]).toEqual([2]);
+    moveCard(testState, move.hand, 2, 3);
+    expect(testState.selectedCards[move.hand]).toEqual([3]);
+    moveCard(testState, move.hand, 3, 2);
+    expect(testState.selectedCards[move.hand]).toEqual([2]);
+    moveCard(testState, move.hand, 1, 2);
+    expect(testState.selectedCards[move.hand]).toEqual([1]);
+    moveCard(testState, move.hand, 2, 1);
+    expect(testState.selectedCards[move.hand]).toEqual([2]);
+    moveCard(testState, move.hand, 0, 4);
+    expect(testState.selectedCards[move.hand]).toEqual([1]);
+    moveCard(testState, move.hand, 4, 0);
+    expect(testState.selectedCards[move.hand]).toEqual([2]);
+    deselectCard(testState, move.hand, 2); // clean up
   });
-  it("If both selected, doesn't alter selection", () => {
-    selectCard(testState, move.hand, move.card);
-    selectCard(testState, move.hand, move.card + 1);
-    expect(testState.selectedCards[move.hand]).toEqual([
-      move.card,
-      move.card + 1,
-    ]);
-    moveCard(testState, move.hand, move.card, "right");
-    expect(testState.selectedCards[move.hand]).toEqual([
-      move.card,
-      move.card + 1,
-    ]);
+  it("If neither selected & moved, doesn't alter selection", () => {
+    selectOnlyCard(testState, move.hand, 0);
+    expect(testState.selectedCards[move.hand]).toEqual([0]);
+    moveCard(testState, move.hand, 1, 2);
+    expect(testState.selectedCards[move.hand]).toEqual([0]);
   });
 });
 

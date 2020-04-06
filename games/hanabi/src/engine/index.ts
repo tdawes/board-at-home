@@ -20,6 +20,7 @@ import {
   moveCard,
   playCard,
   removeInfoToken,
+  selectOnlyCard,
   toggleCardSelection,
 } from "./actions";
 import { getInitialBoard, isFinished } from "./board";
@@ -52,9 +53,9 @@ const engine: GameEngine<State, Action, Config> = {
       // Reordering or selecting cards does not finish your turn, everything else does
       if (action.type === "move") {
         const playerIdx = Object.keys(getGame().players).indexOf(playerId);
-        moveCard(state, playerIdx, action.cardIdx, action.direction);
+        moveCard(state, playerIdx, action.cardIdx, action.newIdx);
       } else if (action.type === "selectOnly") {
-        state.selectedCards[action.handIdx] = [action.cardIdx];
+        selectOnlyCard(state, action.handIdx, action.cardIdx);
       } else if (action.type === "select") {
         toggleCardSelection(state, action.handIdx, action.cardIdx);
       } else {

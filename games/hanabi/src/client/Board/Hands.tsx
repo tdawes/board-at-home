@@ -113,28 +113,34 @@ export const ThisPlayerHand = ({
 
   const order = React.useRef(hand.map((_, index) => index));
   const [springs, setSprings] = useSprings(hand.length, fn(order.current));
+
   const bind = useDrag(({ args: [originalIndex], down, movement: [x] }) => {
     const curIndex = order.current.indexOf(originalIndex);
-    const curCol = _.clamp(
+    const newIndex = _.clamp(
       Math.round((curIndex * mod + x) / mod),
       0,
       hand.length - 1,
     );
     const newOrder: number[] = order.current.slice();
     newOrder.splice(curIndex, 1);
-    newOrder.splice(curCol, 0, originalIndex);
+    newOrder.splice(newIndex, 0, originalIndex);
     setSprings(fn(newOrder, down, originalIndex, curIndex, x) as any);
     if (!down) {
       if (!_.isEqual(order.current, newOrder)) {
+        act({
+          type: "move",
+          cardIdx: curIndex,
+          newIdx: newIndex,
+        });
         order.current = newOrder;
       } else if (canAct) {
         setSelectedCard(originalIndex);
-        act({ type: "selectOnly", cardIdx: originalIndex, handIdx });
+        act({ type: "selectOnly", cardIdx: curIndex, handIdx });
       }
     }
   });
-  const readyToAct = canAct && selectedCard >= 0;
 
+  const readyToAct = canAct && selectedCard >= 0;
   return (
     <>
       <div

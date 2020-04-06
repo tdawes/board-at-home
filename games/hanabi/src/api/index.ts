@@ -63,7 +63,7 @@ export interface InfoAction {
 export interface MoveAction {
   type: "move";
   cardIdx: number;
-  direction: "left" | "right";
+  newIdx: number;
 }
 
 export interface SelectAction {
