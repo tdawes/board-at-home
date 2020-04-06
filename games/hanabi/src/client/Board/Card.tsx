@@ -1,19 +1,10 @@
-import {
-  faArrowLeft,
-  faArrowRight,
-  faPlay,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { Button, Flex, IconButton } from "theme-ui";
 import { Card, Colour, colourMap } from "../../api";
 
 const commonCardStyles = (selected: boolean): React.CSSProperties => ({
   backgroundColor: "#EEEEEE",
   lineHeight: 1,
   textAlign: "center",
-  margin: "4px",
   padding: "15px 10px",
   borderRadius: "4px",
   border: selected ? "1px solid darkgrey" : "1px solid white",
@@ -53,6 +44,7 @@ export const CardDisplay = ({
       ...commonCardStyles(selected),
       cursor: onSelect ? "pointer" : "default",
       color: card.colour,
+      margin: "4px",
     }}
     onClick={onSelect}
   >
@@ -67,62 +59,33 @@ export const CardDisplay = ({
   </div>
 );
 
+export const CardWidth = 50;
+export const CardHeight = 80;
+export const CardMargin = 8;
+
 export const ActionableCard = ({
   selected,
-  canAct,
-  onPlay,
-  onDiscard,
   onSelect,
-  onMoveLeft,
-  onMoveRight,
 }: {
   selected: boolean;
   canAct: boolean;
   onPlay: () => any;
   onDiscard: () => any;
   onSelect?: () => any;
-  onMoveLeft?: () => any;
-  onMoveRight?: () => any;
 }) => (
-  <Flex sx={{ flexDirection: "column", width: "85px" }} m={1}>
-    <div
-      style={{
-        ...commonCardStyles(selected),
-        color: "darkgrey",
-        alignSelf: "center",
-        fontSize: "50px",
-        cursor: onSelect ? "pointer" : "default",
-      }}
-      onClick={onSelect}
-    >
-      ?
-    </div>
-    <Flex sx={{ justifyContent: "space-between" }}>
-      {onMoveLeft ? (
-        <IconButton onClick={onMoveLeft} title="Swap card to the left">
-          <FontAwesomeIcon icon={faArrowLeft} style={{ margin: "5px" }} />
-        </IconButton>
-      ) : (
-        <div />
-      )}
-      {onMoveRight && (
-        <IconButton onClick={onMoveRight} title="Swap card to the right">
-          <FontAwesomeIcon icon={faArrowRight} style={{ margin: "5px" }} />
-        </IconButton>
-      )}
-    </Flex>
-    <Button
-      variant={canAct ? "hanabi" : "hanabiDisabled"}
-      onClick={canAct ? onPlay : undefined}
-      mb={1}
-    >
-      <FontAwesomeIcon icon={faPlay} /> Play
-    </Button>
-    <Button
-      variant={canAct ? "hanabi" : "hanabiDisabled"}
-      onClick={canAct ? onDiscard : undefined}
-    >
-      <FontAwesomeIcon icon={faTrash} /> Discard
-    </Button>
-  </Flex>
+  <div
+    style={{
+      ...commonCardStyles(selected),
+      flexDirection: "column",
+      width: `${CardWidth}px`,
+      height: `${CardHeight}px`,
+      color: "darkgrey",
+      alignSelf: "center",
+      fontSize: "50px",
+      cursor: onSelect ? "pointer" : "default",
+    }}
+    onClick={onSelect}
+  >
+    ?
+  </div>
 );
