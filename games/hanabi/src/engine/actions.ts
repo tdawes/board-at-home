@@ -1,5 +1,5 @@
-import { State, noSelectedCards, maxCardNum } from "../api";
 import * as _ from "lodash";
+import { maxCardNum, noSelectedCards, State } from "../api";
 
 export const addInfoToken = (state: State, maxInfoTokens: number) => {
   if (state.board.infoTokens < maxInfoTokens) {
@@ -25,13 +25,21 @@ export const selectCard = (state: State, handIdx: number, cardIdx: number) => {
   state.selectedCards[handIdx].push(cardIdx);
 };
 
+export const selectOnlyCard = (
+  state: State,
+  handIdx: number,
+  cardIdx: number,
+) => {
+  state.selectedCards[handIdx] = [cardIdx];
+};
+
 export const deselectCard = (
   state: State,
   handIdx: number,
   cardIdx: number,
 ) => {
   state.selectedCards[handIdx] = state.selectedCards[handIdx].filter(
-    idx => idx != cardIdx,
+    idx => idx !== cardIdx,
   );
 };
 
@@ -51,9 +59,8 @@ export const moveCard = (
   state: State,
   playerIdx: number,
   oldPos: number,
-  direction: "left" | "right",
+  newPos: number,
 ) => {
-  const newPos = direction == "right" ? oldPos + 1 : oldPos - 1;
   if (newPos < 0 || newPos >= state.board.hands[playerIdx].length) {
     throw new Error("Moving card out of bounds");
   }
@@ -61,10 +68,15 @@ export const moveCard = (
   state.board.hands[playerIdx].splice(oldPos, 1);
   state.board.hands[playerIdx].splice(newPos, 0, card);
 
-  const selected = state.selectedCards[playerIdx];
-  if (selected.includes(oldPos) != selected.includes(newPos)) {
-    toggleCardSelection(state, playerIdx, oldPos);
-    toggleCardSelection(state, playerIdx, newPos);
+  if (state.currentPlayer === playerIdx) {
+    const selectedCard = state.selectedCards[playerIdx][0];
+    if (oldPos === selectedCard) {
+      selectOnlyCard(state, playerIdx, newPos);
+    } else if (oldPos < selectedCard && newPos >= selectedCard) {
+      selectOnlyCard(state, playerIdx, selectedCard - 1);
+    } else if (oldPos > selectedCard && newPos <= selectedCard) {
+      selectOnlyCard(state, playerIdx, selectedCard + 1);
+    }
   }
 };
 
@@ -76,7 +88,7 @@ export const playCard = (
   const card = state.board.hands[state.currentPlayer].splice(cardIdx, 1)[0];
   if (state.board.piles[card.colour] === card.num - 1) {
     state.board.piles[card.colour] = card.num;
-    if (card.num == maxCardNum) {
+    if (card.num === maxCardNum) {
       addInfoToken(state, maxInfoTokens);
     }
   } else {

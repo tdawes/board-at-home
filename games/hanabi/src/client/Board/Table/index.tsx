@@ -1,16 +1,16 @@
-import * as React from "react";
 import { StartedGame } from "@board-at-home/api/src";
-import { State, Config, Colour } from "../../../api";
-import { CardDisplay } from "../Card";
-import { Flex } from "theme-ui";
-import Tokens from "./Tokens";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faInfoCircle,
   faBomb,
+  faInfoCircle,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as _ from "lodash";
+import * as React from "react";
+import { Flex } from "theme-ui";
+import { Colour, Config, HanabiNumber, State } from "../../../api";
+import { CardDisplay } from "../Card";
+import Tokens from "./Tokens";
 
 const CARD_HEIGHT = "72px";
 
@@ -35,7 +35,10 @@ export default ({ game }: { game: StartedGame<State, Config> }) => {
         ) as Colour[]).map((colour: Colour) =>
           game.state.board.piles[colour] > 0 ? (
             <CardDisplay
-              card={{ colour, num: game.state.board.piles[colour] }}
+              card={{
+                colour,
+                num: game.state.board.piles[colour] as HanabiNumber,
+              }}
               key={colour}
               selected={false}
             />

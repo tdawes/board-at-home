@@ -1,31 +1,9 @@
 /** @jsx jsx */
-import { jsx, Box } from "theme-ui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as _ from "lodash";
+import { animated, useTransition } from "react-spring";
+import { Box, jsx } from "theme-ui";
 import { colourMap, hanabiColour } from "../../../api";
-
-const gainKeyframe = {
-  "0%": {
-    color: "lightgrey",
-  },
-  "50%": {
-    color: hanabiColour,
-  },
-  "100%": {
-    color: "inherit",
-  },
-};
-const loseKeyframe = {
-  "0%": {
-    color: "inherit",
-  },
-  "50%": {
-    color: colourMap["red"],
-  },
-  "100%": {
-    color: "lightgrey",
-  },
-};
 
 export default ({
   num,
@@ -37,41 +15,43 @@ export default ({
   icon: any;
 }) => {
   const tokens = _.range(num);
-  const missing = _.range(total - num).reverse();
+  const transitions = useTransition(tokens, item => item, {
+    from: { color: hanabiColour },
+    enter: { color: "#333" },
+    leave: { color: colourMap.red },
+  });
 
   return (
-    <Box m={1}>
-      {tokens.map(idx => (
-        <FontAwesomeIcon
-          key={`have_${idx}`}
-          icon={icon}
-          style={{ margin: "5px" }}
-          css={{
-            WebkitAnimation: "gain 1s forwards",
-            animation: "gain 1s forwards",
-            "@webkit-keyframes gain": gainKeyframe,
-            "@keyframes gain": gainKeyframe,
-          }}
-        />
-      ))}
-      {missing.map(idx => (
-        <span
-          key={`used_${idx}`}
-          css={{
-            WebkitAnimation: "lose 1s forwards",
-            animation: "lose 1s forwards",
-            "@webkit-keyframes lose": loseKeyframe,
-            "@keyframes lose": loseKeyframe,
-          }}
-        >
+    <Box
+      m={1}
+      sx={{ height: "26px", width: `${26 * total}px`, position: "relative" }}
+    >
+      <div style={{ position: "absolute", top: 0, left: 0, display: "flex" }}>
+        {_.range(total).map(idx => (
           <FontAwesomeIcon
             icon={icon}
+            key={idx}
             style={{
               margin: "5px",
+              color: "lightgrey",
             }}
           />
-        </span>
-      ))}
+        ))}
+      </div>
+      <div style={{ position: "absolute", top: 0, left: 0, display: "flex" }}>
+        {transitions.map(({ props, key }) => (
+          <animated.span
+            key={key}
+            style={{
+              margin: "5px",
+              transition: "color 0.5s ease",
+              ...props,
+            }}
+          >
+            <FontAwesomeIcon icon={icon} />
+          </animated.span>
+        ))}
+      </div>
     </Box>
   );
 };

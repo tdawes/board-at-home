@@ -1,11 +1,11 @@
+import * as _ from "lodash";
 import {
-  getHandSize,
+  getColours,
   getEmptyDiscardPile,
   getEmptyPiles,
+  getHandSize,
   mapToColours,
-  getColours,
 } from "../src/api";
-import * as _ from "lodash";
 
 describe("getHandSize", () => {
   it("Returns 5 for 2 or 3 players", () => {
@@ -40,12 +40,12 @@ describe("getEmptyPiles", () => {
   it("Creates basic empty piles", () => {
     const piles = getEmptyPiles("basic");
     expect(Object.keys(piles)).toHaveLength(basicColours.length);
-    expect(piles["red"]).toEqual(0);
+    expect(piles.red).toEqual(0);
   });
   it("Creates rainbow empty piles", () => {
     const piles = getEmptyPiles("rainbow");
     expect(Object.keys(piles)).toHaveLength(rainbowColours.length);
-    expect(piles["rainbow"]).toEqual(0);
+    expect(piles.rainbow).toEqual(0);
   });
 });
 
@@ -53,11 +53,11 @@ describe("getEmptyDiscardPile", () => {
   it("Creates basic empty discard piles", () => {
     const piles = getEmptyDiscardPile("basic");
     expect(Object.keys(piles)).toHaveLength(basicColours.length);
-    expect(piles["red"]).toEqual([]);
+    expect(piles.red).toEqual([]);
   });
   it("Creates rainbow empty discard piles", () => {
     const piles = getEmptyDiscardPile("rainbow");
     expect(Object.keys(piles)).toHaveLength(rainbowColours.length);
-    expect(piles["rainbow"]).toEqual([]);
+    expect(piles.rainbow).toEqual([]);
   });
 });

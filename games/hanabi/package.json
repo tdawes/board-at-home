@@ -4,13 +4,21 @@
   "scripts": {
     "build": "tsc -p .",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "test": "jest"
+    "test": "jest",
+    "lint": "tslint -p ."
   },
   "license": "MIT",
   "dependencies": {
     "@board-at-home/api": "*",
+    "@fortawesome/fontawesome-svg-core": "^1.2.27",
+    "@fortawesome/free-solid-svg-icons": "^5.12.1",
+    "@fortawesome/react-fontawesome": "^0.1.9",
+    "immer": "^6.0.3",
     "lodash": "^4.17.15",
     "react": "^16.13.0",
+    "react-gesture": "^0.0.5",
+    "react-spring": "^8.0.27",
+    "react-use-gesture": "^7.0.9",
     "theme-ui": "^0.3.1"
   },
   "devDependencies": {

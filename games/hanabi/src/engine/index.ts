@@ -1,28 +1,29 @@
 import {
-  GameEngine,
-  UnstartedGame,
-  StartedGame,
   BaseGame,
+  GameEngine,
+  StartedGame,
+  UnstartedGame,
 } from "@board-at-home/api";
+import produce from "immer";
+import * as _ from "lodash";
 import {
-  State,
   Action,
   Config,
   maxPlayers,
   minPlayers,
   noSelectedCards,
+  State,
 } from "../api";
-import * as _ from "lodash";
-import produce from "immer";
-import { isFinished, getInitialBoard } from "./board";
 import {
-  moveCard,
-  toggleCardSelection,
-  playCard,
-  discardCard,
-  removeInfoToken,
   advancePlayer,
+  discardCard,
+  moveCard,
+  playCard,
+  removeInfoToken,
+  selectOnlyCard,
+  toggleCardSelection,
 } from "./actions";
+import { getInitialBoard, isFinished } from "./board";
 
 const getNumPlayers = (game: BaseGame) => Object.keys(game.players).length;
 
@@ -52,7 +53,9 @@ const engine: GameEngine<State, Action, Config> = {
       // Reordering or selecting cards does not finish your turn, everything else does
       if (action.type === "move") {
         const playerIdx = Object.keys(getGame().players).indexOf(playerId);
-        moveCard(state, playerIdx, action.cardIdx, action.direction);
+        moveCard(state, playerIdx, action.cardIdx, action.newIdx);
+      } else if (action.type === "selectOnly") {
+        selectOnlyCard(state, action.handIdx, action.cardIdx);
       } else if (action.type === "select") {
         toggleCardSelection(state, action.handIdx, action.cardIdx);
       } else {

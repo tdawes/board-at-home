@@ -21,12 +21,12 @@ export const getColours = (gameType: GameType): Colour[] =>
   gameType === "rainbow" ? colours : colours.filter(c => c !== "rainbow");
 
 export const numbers = [1, 2, 3, 4, 5] as const;
-export type Number = typeof numbers[number];
+export type HanabiNumber = typeof numbers[number];
 export const maxCardNum = numbers[numbers.length - 1];
 
 export interface Card {
   colour: Colour;
-  num: number;
+  num: HanabiNumber;
 }
 
 export interface Board {
@@ -63,11 +63,17 @@ export interface InfoAction {
 export interface MoveAction {
   type: "move";
   cardIdx: number;
-  direction: "left" | "right";
+  newIdx: number;
 }
 
 export interface SelectAction {
   type: "select";
+  cardIdx: number;
+  handIdx: number;
+}
+
+export interface SelectOnlyAction {
+  type: "selectOnly";
   cardIdx: number;
   handIdx: number;
 }
@@ -77,9 +83,10 @@ export type Action =
   | DiscardAction
   | InfoAction
   | MoveAction
-  | SelectAction;
+  | SelectAction
+  | SelectOnlyAction;
 
-export const cardsPerNumber: { [key in Number]: number } = {
+export const cardsPerNumber: { [key in HanabiNumber]: number } = {
   1: 3,
   2: 2,
   3: 2,
