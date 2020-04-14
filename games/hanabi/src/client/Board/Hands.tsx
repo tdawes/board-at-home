@@ -176,7 +176,9 @@ export const ThisPlayerHand = ({
             <ActionableCard
               key={cardIdx}
               selected={
-                canAct ? selectedCard === cardIdx : selected.includes(cardIdx)
+                canAct
+                  ? selectedCard === cardIdx
+                  : selected.includes(order.current.indexOf(cardIdx))
               }
             />
           </animated.div>
