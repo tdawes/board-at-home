@@ -77,6 +77,12 @@ export const moveCard = (
     } else if (oldPos > selectedCard && newPos <= selectedCard) {
       selectOnlyCard(state, playerIdx, selectedCard + 1);
     }
+  } else {
+    const selected = state.selectedCards[playerIdx];
+    if (selected.includes(oldPos) !== selected.includes(newPos)) {
+      toggleCardSelection(state, playerIdx, oldPos);
+      toggleCardSelection(state, playerIdx, newPos);
+    }
   }
 };
 
