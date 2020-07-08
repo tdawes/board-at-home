@@ -79,10 +79,19 @@ export const moveCard = (
     }
   } else {
     const selected = state.selectedCards[playerIdx];
-    if (selected.includes(oldPos) !== selected.includes(newPos)) {
-      toggleCardSelection(state, playerIdx, oldPos);
-      toggleCardSelection(state, playerIdx, newPos);
-    }
+    const newSelected: number[] = [];
+    selected.map(prevSelected => {
+      if (oldPos === prevSelected) {
+        newSelected.push(newPos);
+      } else if (prevSelected > oldPos && prevSelected <= newPos) {
+        newSelected.push(prevSelected - 1);
+      } else if (prevSelected < oldPos && prevSelected >= newPos) {
+        newSelected.push(prevSelected + 1);
+      } else {
+        newSelected.push(prevSelected);
+      }
+    });
+    state.selectedCards[playerIdx] = newSelected;
   }
 };
 

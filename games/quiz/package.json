@@ -4,7 +4,7 @@
   "scripts": {
     "build": "tsc -p .",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "license": "MIT",
   "dependencies": {

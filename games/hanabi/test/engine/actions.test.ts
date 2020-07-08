@@ -209,6 +209,14 @@ describe("moveCard", () => {
     moveCard(testState, move.hand, 1, 2);
     expect(testState.selectedCards[move.hand]).toEqual([0]);
   });
+  it("Adjusts selection if it has been moved as a side effect", () => {
+    selectOnlyCard(testState, move.hand, 1);
+    expect(testState.selectedCards[move.hand]).toEqual([1]);
+    moveCard(testState, move.hand, 0, 2);
+    expect(testState.selectedCards[move.hand]).toEqual([0]);
+    moveCard(testState, move.hand, 3, 0);
+    expect(testState.selectedCards[move.hand]).toEqual([1]);
+  });
 });
 
 describe("playCard", () => {
