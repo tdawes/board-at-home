@@ -66,7 +66,7 @@
     "@prodo/logger": "^0.1.5",
     "@prodo/route": "^0.1.5",
     "@theme-ui/presets": "^0.3.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chroma-js": "^2.1.0",
     "core-js": "^3.6.4",
     "history": "^4.10.1",
