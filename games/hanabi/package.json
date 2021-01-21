@@ -13,7 +13,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
     "@fortawesome/free-solid-svg-icons": "^5.12.1",
     "@fortawesome/react-fontawesome": "^0.1.9",
-    "immer": "^6.0.3",
+    "immer": "^8.0.1",
     "lodash": "^4.17.15",
     "react": "^16.13.0",
     "react-gesture": "^0.0.5",
