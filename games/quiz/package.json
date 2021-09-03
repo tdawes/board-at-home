@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "@board-at-home/api": "*",
-    "immer": "^6.0.3",
+    "immer": "^9.0.6",
     "lodash": "^4.17.15",
     "react": "^16.13.0",
     "theme-ui": "^0.3.1"
